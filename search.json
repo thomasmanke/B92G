@@ -1,0 +1,44 @@
+[
+  {
+    "objectID": "tutorials/index.html",
+    "href": "tutorials/index.html",
+    "title": "Tutorials",
+    "section": "",
+    "text": "Order By\n      Default\n      \n        Title\n      \n      \n        Date - Oldest\n      \n      \n        Date - Newest\n      \n      \n        Author\n      \n    \n  \n    \n      \n      \n    \n\n\n\n\n\n\n\n\n\n\nControlled Vocabulary and Ontologies\n\n\n\ncontrolled vocabulary\n\nontologies\n\nICD\n\nLOINC\n\nSnomed\n\nECL\n\n\n\nPlaying with FHIR\n\n\n\nThomas Manke\n\n\nJun 2, 2026\n\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "tutorials/00_ControlledVocabulary.html",
+    "href": "tutorials/00_ControlledVocabulary.html",
+    "title": "Controlled Vocabulary and Ontologies",
+    "section": "",
+    "text": "Code\nimport requests\nimport pandas as pd\n\nCT = \"https://clinicaltables.nlm.nih.gov/api/\"\nFHIR_URL = \"https://snowstorm-training.snomedtools.org/fhir/ValueSet/$expand\"\n\n# fails without permision API key\n#FHIR_URL = \"https://snowstorm.snomedtools.org/fhir/ValueSet/$expand\""
+  },
+  {
+    "objectID": "tutorials/00_ControlledVocabulary.html#imports-and-definitions",
+    "href": "tutorials/00_ControlledVocabulary.html#imports-and-definitions",
+    "title": "Controlled Vocabulary and Ontologies",
+    "section": "",
+    "text": "Code\nimport requests\nimport pandas as pd\n\nCT = \"https://clinicaltables.nlm.nih.gov/api/\"\nFHIR_URL = \"https://snowstorm-training.snomedtools.org/fhir/ValueSet/$expand\"\n\n# fails without permision API key\n#FHIR_URL = \"https://snowstorm.snomedtools.org/fhir/ValueSet/$expand\""
+  },
+  {
+    "objectID": "tutorials/00_ControlledVocabulary.html#controlled-vocabulary",
+    "href": "tutorials/00_ControlledVocabulary.html#controlled-vocabulary",
+    "title": "Controlled Vocabulary and Ontologies",
+    "section": "Controlled Vocabulary",
+    "text": "Controlled Vocabulary\nBelow you will explore some of the commonly used controlled vocabularies in biomedical data: ICD-10 for diseases, LOINC for procedures, …\nFor each of these vocabularies there are also different dedicated DB.\nHere I use NLM Clinical Tables because it provides a simple unified interface: NLM Clinical Tables.\n\nDiseases (ICD-10)\n\nICD history (WHO)\nICD-10 @ clinicaltables documentation\n\n\n\nCode\nurl = CT + \"icd10cm/v3/search\"\n\nterm = \"vitamin D deficiency\"\n# search for {term} in search fields sf: \"code\" and \"name\"\nparams = {\"sf\": \"code,name\", \"terms\": term, \"maxList\": 100}\n\nr = requests.get(url, params=params)\nr.raise_for_status()\nprint(f\"Request Status: {r.status_code}.\")\n\ndata = r.json()\nn = data[0]                # number of matches\ndf = pd.DataFrame(data[3]) # convert list to df\n\nprint(f\"{n} matches for term: {term}:\")\ndf.head()\n\n\nRequest Status: 200.\n24 matches for term: vitamin D deficiency:\n\n\n\n\n\n\n\n\n\n0\n1\n\n\n\n\n0\nE55.9\nVitamin D deficiency, unspecified\n\n\n1\nD51.0\nVitamin B12 deficiency anemia due to intrinsic...\n\n\n2\nD51.1\nVitamin B12 deficiency anemia due to selective...\n\n\n3\nD51.3\nOther dietary vitamin B12 deficiency anemia\n\n\n4\nD51.8\nOther vitamin B12 deficiency anemias\n\n\n\n\n\n\n\n\n\nProcedures (LOINC)\n\nLOINC @ clinicaltables documentation\n\n\n\nCode\nurl = CT + \"loinc_items/v3/search\"\n\nterm = \"blood glucose test\"\nparams = {\n    \"terms\": term,\n    \"df\": \"LOINC_NUM,LONG_COMMON_NAME,SHORTNAME\",\n    \"maxList\": 200\n}\n\ndata = requests.get(url, params=params).json()\npd.DataFrame(data[3]).head()\n\n\n\n\n\n\n\n\n\n0\n1\n2\n\n\n\n\n0\n5914-7\nGlucose [Presence] in Blood by Test strip\nGlucose Bld Ql Strip\n\n\n1\n2341-6\nGlucose [Mass/volume] in Blood by Test strip m...\nGlucose Bld Manual Strip-mCnc\n\n\n2\n2340-8\nGlucose [Mass/volume] in Blood by Automated te...\nGlucose Bld Strip.auto-mCnc\n\n\n3\n72516-8\nGlucose [Moles/volume] in Blood by Automated t...\nGlucose Bld Strip.auto-sCnc\n\n\n4\n104875-0\nHematocrit [Volume Fraction] of Blood --30 min...\nHct 30M p Glc VFr Bld\n\n\n\n\n\n\n\n\n\n\n\n\n\nImportantCV Tasks\n\n\n\n\nWith ICD-10:\n\nsearch for “sickle cell”, “influenza”, “type 2 diabetes”, or a disease of your choice\nHow many matched ICD-10 codes does this contain?\n\nWith LOINC:\n\nHow many different “chest Xray” are recorded in LOINC?\nWhich gene is tested for “Glu6Val” mutation?"
+  },
+  {
+    "objectID": "tutorials/00_ControlledVocabulary.html#ontologies",
+    "href": "tutorials/00_ControlledVocabulary.html#ontologies",
+    "title": "Controlled Vocabulary and Ontologies",
+    "section": "Ontologies",
+    "text": "Ontologies\nLarge-scale effort to represent medical knowledge.\n\nSnomed Browser\nSnowstorm-Training\n\nHere you will explore programmatic requests to Snowmed CT and ontology relationships.\n\nFHIR queries\n\nSearch for ConceptID\nExample: Identify the Snomed ID for the disorder concept “diabetes mellitus”\n\n\nCode\nconcept = \"diabetes mellitus\"\nparams = {\n    \"url\": \"http://snomed.info/sct?fhir_vs\",\n    \"filter\": concept,\n    \"count\": 20\n}\n\nr = requests.get(FHIR_URL, params=params)\nr.raise_for_status()\nresults = r.json()[\"expansion\"][\"contains\"]\npd.DataFrame(results).head()\n\n\n\n\n\n\n\n\n\nsystem\ncode\ndisplay\n\n\n\n\n0\nhttp://snomed.info/sct\n73211009\nDM - Diabetes mellitus\n\n\n1\nhttp://snomed.info/sct\n160303001\nFamily history of diabetes mellitus\n\n\n2\nhttp://snomed.info/sct\n161445009\nH/O: diabetes mellitus\n\n\n3\nhttp://snomed.info/sct\n46635009\nDiabetes mellitus type I\n\n\n4\nhttp://snomed.info/sct\n44054006\nType II diabetes mellitus\n\n\n\n\n\n\n\n\n\nQuery ECL Template\nSnomed CT codes form a large ontology. Queries into this data and be formulated with a so called Expression Constraint Language (ECL).\n\n\nCode\ndef query_ecl(ecl_expression):\n    \"\"\"\n    Sends ECL query to FHIR endpoint\n    Returns list of concepts names     \n    \"\"\"\n    params = {\n        \"url\": f\"http://snomed.info/sct?fhir_vs=ecl/{ecl_expression}\",\n        \"count\": 500\n    }\n    r = requests.get(FHIR_URL, params=params)\n    r.raise_for_status()\n    \n    data = r.json() \n    # data.keys(): resourceType, url (=query), expansion\n\n    # return list of concepts data[\"expansion\"][\"contains\"]\n    return data.get(\"expansion\", {}).get(\"contains\", [])\n\n\nSimple Usage Example: retrieve a single concept\n\n\nCode\ndisease = \"73211009\" # Diabetes mellitus\n\nquery = f\"{disease}\" # very basic ECL query\nresults = query_ecl(query)\n\npd.DataFrame(results)\n\n\n\n\n\n\n\n\n\nsystem\ncode\ndisplay\n\n\n\n\n0\nhttp://snomed.info/sct\n73211009\nDM - Diabetes mellitus\n\n\n\n\n\n\n\n\n\nComplex ECL queries\nMore complicated ECL queries can also be used to search and retrieve multiple (related) concepts and attributes from the Snomed Ontology, e.g.\n\nconcept: “{code}”\nparents: “&gt;{code}”\nchildren: “&lt;{code}”\nmore examples: ECL quick reference\n\n\n\n\n\n\n\nImportantOntology Task\n\n\n\n\nFind the Snomed CT code for disease “Obesity”\nFind the ECL expression to determine\n\nall parents concept for disease “obesity”\nall children diseases for disease “obesity”\n\nDetermine all attributes (“Due to”) for disease “Diabetes Mellitus”\nHelp\n\nECL help\nSnowstorm Training. Browser & API\n\n\n\n\nCode\ndisease=\"...\"                # find code for \"obesity\"\n\n# find ECL expression for \nparents  = query_ecl(f\"...\") # children (=direct descendants)\nchildren = query_ecl(f\"...\") # parents (=direct ancestors)\n\n\nprint(f'Retrieved: {disease}')\nprint('Parents:  \\n', pd.DataFrame(parents))\nprint('Children: \\n', pd.DataFrame(children))\n\ndisease = \"...\"              # find code for Diabetes mellitus\nattrib  = \"...\"              # find code for attribute \"due to\"\nresults = query_ecl(f\"...\")  # find query to extract attributes\nprint('Attributes: \\n', pd.DataFrame(results))"
+  },
+  {
+    "objectID": "lectures/index.html",
+    "href": "lectures/index.html",
+    "title": "Lectures",
+    "section": "",
+    "text": "No matching items"
+  }
+]
