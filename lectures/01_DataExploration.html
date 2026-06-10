@@ -1,2 +1,1639 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"></html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.27">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Thomas Manke">
+<meta name="dcterms.date" content="2026-06-06">
+<meta name="description" content="Beyond Barplots">
+
+<title>Data Exploration – Analysis of Medical Data</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-8b4baf804e461d9b72633f0de59a0cac.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-f1aadacce99040138bbb613f9330654f.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-8b4baf804e461d9b72633f0de59a0cac.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-1abac204f8572279f73a3a6fba0370a3.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-6f36548bdacd96f03b119c706dbfb928.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-1abac204f8572279f73a3a6fba0370a3.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Analysis of Medical Data</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../lectures/index.html"> <i class="bi bi-book" role="img">
+</i> 
+<span class="menu-text">Lectures</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../tutorials/index.html"> <i class="bi bi-bricks" role="img">
+</i> 
+<span class="menu-text">Tutorials</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../general/Chalkboard.html"> <i class="bi bi-clipboard-fill" role="img">
+</i> 
+<span class="menu-text">Chalkboard</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/thomasmanke/"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#software-first" id="toc-software-first" class="nav-link active" data-scroll-target="#software-first">Software First</a></li>
+  <li><a href="#generate-synthetic-data" id="toc-generate-synthetic-data" class="nav-link" data-scroll-target="#generate-synthetic-data">Generate synthetic data</a></li>
+  <li><a href="#data-reshaping" id="toc-data-reshaping" class="nav-link" data-scroll-target="#data-reshaping">Data Reshaping</a></li>
+  <li><a href="#barplots" id="toc-barplots" class="nav-link" data-scroll-target="#barplots">Barplots</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content column-page-left" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title">Data Exploration</h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
+  <div class="quarto-categories">
+    <div class="quarto-category">barplot</div>
+    <div class="quarto-category">violinplot</div>
+  </div>
+  </div>
+
+<div>
+  <div class="description">
+    Beyond Barplots
+  </div>
+</div>
+
+
+<div class="quarto-title-meta column-page-left">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Thomas Manke </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">June 6, 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="software-first" class="level2">
+<h2 class="anchored" data-anchor-id="software-first">Software First</h2>
+<div id="load_packages" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1"></a><span class="im">import</span> requests</span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb1-6"><a href="#cb1-6"></a><span class="im">from</span> scipy.stats <span class="im">import</span> ttest_ind, ttest_rel</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+</section>
+<section id="generate-synthetic-data" class="level2">
+<h2 class="anchored" data-anchor-id="generate-synthetic-data">Generate synthetic data</h2>
+<p>This data set will be used throughout this notebook.</p>
+<p>The idea is to simulate the effect of a hypothetical drug treatment to lower HbA1c levels in patients with diabetes. We will then explore different ways to visualize the data and interpret the results.</p>
+<div id="cell-define_data_group" class="cell" data-execution_count="2">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1"></a>np.random.seed(<span class="dv">42</span>)</span>
+<span id="cb2-2"><a href="#cb2-2"></a>n <span class="op">=</span> <span class="dv">30</span></span>
+<span id="cb2-3"><a href="#cb2-3"></a></span>
+<span id="cb2-4"><a href="#cb2-4"></a><span class="co"># synthetic HbA1c-Werte [in %]</span></span>
+<span id="cb2-5"><a href="#cb2-5"></a><span class="co"># normal 5%, ehoeht: 6%, Diabetes mellitus: &gt; 6.5%, 8% Handlungsbedarf</span></span>
+<span id="cb2-6"><a href="#cb2-6"></a>before <span class="op">=</span> np.random.normal(loc<span class="op">=</span><span class="fl">9.0</span>, scale<span class="op">=</span><span class="dv">1</span>, size<span class="op">=</span>n)</span>
+<span id="cb2-7"><a href="#cb2-7"></a></span>
+<span id="cb2-8"><a href="#cb2-8"></a><span class="co"># Two treatmentgroups</span></span>
+<span id="cb2-9"><a href="#cb2-9"></a>group <span class="op">=</span> np.random.choice([<span class="st">"A"</span>, <span class="st">"B"</span>], size<span class="op">=</span>n, p<span class="op">=</span>[<span class="fl">0.25</span>, <span class="fl">0.75</span>])</span>
+<span id="cb2-10"><a href="#cb2-10"></a></span>
+<span id="cb2-11"><a href="#cb2-11"></a>after <span class="op">=</span> before.copy()</span>
+<span id="cb2-12"><a href="#cb2-12"></a>after[group <span class="op">==</span> <span class="st">"A"</span>] <span class="op">-=</span> np.random.normal(<span class="fl">0.5</span>, <span class="fl">0.1</span>, size<span class="op">=</span>(group <span class="op">==</span> <span class="st">"A"</span>).<span class="bu">sum</span>())</span>
+<span id="cb2-13"><a href="#cb2-13"></a>after[group <span class="op">==</span> <span class="st">"B"</span>] <span class="op">+=</span> np.random.normal(<span class="fl">0.0</span>, <span class="fl">0.1</span>, size<span class="op">=</span>(group <span class="op">==</span> <span class="st">"B"</span>).<span class="bu">sum</span>())</span>
+<span id="cb2-14"><a href="#cb2-14"></a></span>
+<span id="cb2-15"><a href="#cb2-15"></a>df <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb2-16"><a href="#cb2-16"></a>    <span class="st">"patient"</span>: np.arange(n),</span>
+<span id="cb2-17"><a href="#cb2-17"></a>    <span class="st">"before"</span>: before,</span>
+<span id="cb2-18"><a href="#cb2-18"></a>    <span class="st">"after"</span>: after,</span>
+<span id="cb2-19"><a href="#cb2-19"></a>    <span class="st">"group"</span>: group</span>
+<span id="cb2-20"><a href="#cb2-20"></a>})</span>
+<span id="cb2-21"><a href="#cb2-21"></a></span>
+<span id="cb2-22"><a href="#cb2-22"></a>df[[<span class="st">"before"</span>,<span class="st">"after"</span>]].head()</span>
+<span id="cb2-23"><a href="#cb2-23"></a><span class="co">#print(df[["before", "after"]].mean())</span></span>
+<span id="cb2-24"><a href="#cb2-24"></a><span class="co">#df.groupby("group").describe().T</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div id="define_data_group" class="cell-output cell-output-display" data-execution_count="14">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">before</th>
+<th data-quarto-table-cell-role="th">after</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>9.496714</td>
+<td>9.594269</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>8.861736</td>
+<td>8.813818</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>9.647689</td>
+<td>9.215381</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>10.523030</td>
+<td>10.504464</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>8.765847</td>
+<td>8.204679</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Questions
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>Why do we need to summarize this data?</li>
+<li>Why do we need data visualization</li>
+<li>Which tools?</li>
+</ul>
+</div>
+</div>
+<!-- 
+    summary: data compression: Data -> Distribution -> Means -> Labels 
+    visualization: mis/understand data, communicate, hypothesis generation
+    tools: Excel, Tableau, R(ggplot), Python (sns)
+-->
+</section>
+<section id="data-reshaping" class="level2">
+<h2 class="anchored" data-anchor-id="data-reshaping">Data Reshaping</h2>
+<p>For some visualization tasks it will be better to have data in a <code>long</code> format. We will use the <code>melt</code> function from pandas to reshape the data. I use a categorical time variable to distinguish <code>before</code> and <code>after</code> treatment.</p>
+<div id="cell-melt" class="cell" data-execution_count="4">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1"></a><span class="bu">long</span> <span class="op">=</span> df.melt(</span>
+<span id="cb3-2"><a href="#cb3-2"></a>        id_vars<span class="op">=</span>[<span class="st">"patient"</span>],</span>
+<span id="cb3-3"><a href="#cb3-3"></a>        value_vars<span class="op">=</span>[<span class="st">"before"</span>, <span class="st">"after"</span>],</span>
+<span id="cb3-4"><a href="#cb3-4"></a>        var_name<span class="op">=</span><span class="st">"time"</span>,</span>
+<span id="cb3-5"><a href="#cb3-5"></a>        value_name<span class="op">=</span><span class="st">"hba1c"</span></span>
+<span id="cb3-6"><a href="#cb3-6"></a>    )</span>
+<span id="cb3-7"><a href="#cb3-7"></a></span>
+<span id="cb3-8"><a href="#cb3-8"></a><span class="co"># define a consitent order for the time variable</span></span>
+<span id="cb3-9"><a href="#cb3-9"></a>ORDER <span class="op">=</span> [<span class="st">"before"</span>, <span class="st">"after"</span>]</span>
+<span id="cb3-10"><a href="#cb3-10"></a><span class="bu">long</span>[<span class="st">"time"</span>] <span class="op">=</span> pd.Categorical(</span>
+<span id="cb3-11"><a href="#cb3-11"></a>    <span class="bu">long</span>[<span class="st">"time"</span>],</span>
+<span id="cb3-12"><a href="#cb3-12"></a>    categories<span class="op">=</span>ORDER,</span>
+<span id="cb3-13"><a href="#cb3-13"></a>    ordered<span class="op">=</span><span class="va">True</span></span>
+<span id="cb3-14"><a href="#cb3-14"></a>)</span>
+<span id="cb3-15"><a href="#cb3-15"></a></span>
+<span id="cb3-16"><a href="#cb3-16"></a><span class="bu">long</span>.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div id="melt" class="cell-output cell-output-display" data-execution_count="15">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">patient</th>
+<th data-quarto-table-cell-role="th">time</th>
+<th data-quarto-table-cell-role="th">hba1c</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>0</td>
+<td>before</td>
+<td>9.496714</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>1</td>
+<td>before</td>
+<td>8.861736</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>2</td>
+<td>before</td>
+<td>9.647689</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>3</td>
+<td>before</td>
+<td>10.523030</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>4</td>
+<td>before</td>
+<td>8.765847</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="barplots" class="level2">
+<h2 class="anchored" data-anchor-id="barplots">Barplots</h2>
+<div id="cell-barplot01" class="cell" data-execution_count="5">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1"></a>sns.barplot(data<span class="op">=</span><span class="bu">long</span>, x<span class="op">=</span><span class="st">"time"</span>, y<span class="op">=</span><span class="st">"hba1c"</span>, errorbar<span class="op">=</span><span class="va">None</span>)</span>
+<span id="cb4-2"><a href="#cb4-2"></a>plt.ylim(<span class="fl">8.6</span>, <span class="fl">8.9</span>)</span>
+<span id="cb4-3"><a href="#cb4-3"></a>plt.title(<span class="st">"Clear effect on Mean"</span>)</span>
+<span id="cb4-4"><a href="#cb4-4"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="01_DataExploration_files/figure-html/barplot01-output-1.png" id="barplot01" width="933" height="702" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-caution callout-empty-content callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Caution</span>What is wrong with this plot ?
+</div>
+</div>
+<div class="callout-body-container callout-body">
+
+</div>
+</div>
+<div id="cell-barplot02" class="cell" data-execution_count="6">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1"></a>sns.barplot(data<span class="op">=</span><span class="bu">long</span>, x<span class="op">=</span><span class="st">"time"</span>, y<span class="op">=</span><span class="st">"hba1c"</span>, errorbar<span class="op">=</span><span class="va">None</span>)</span>
+<span id="cb5-2"><a href="#cb5-2"></a>plt.title(<span class="st">"Almost no effect"</span>)</span>
+<span id="cb5-3"><a href="#cb5-3"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="01_DataExploration_files/figure-html/barplot02-output-1.png" id="barplot02" width="900" height="702" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>We tend to give meaning to barplot length, rather than position.</p>
+<p>Until now we have focused on the mean values. But to discuss any potential treatment effect we will also have to analyse (and visualize) the variability.</p>
+<div id="cell-barplot03" class="cell" data-execution_count="7">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1"></a>sns.barplot(data<span class="op">=</span><span class="bu">long</span>, x<span class="op">=</span><span class="st">"time"</span>, y<span class="op">=</span><span class="st">"hba1c"</span>, errorbar<span class="op">=</span><span class="st">'se'</span>)</span>
+<span id="cb6-2"><a href="#cb6-2"></a>plt.title(<span class="st">"Mean ± SE. Perhaps a small effect?"</span>)</span>
+<span id="cb6-3"><a href="#cb6-3"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="01_DataExploration_files/figure-html/barplot03-output-1.png" id="barplot03" width="900" height="702" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Variance, Standard Deviation &amp; Standard Error
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Variance Estimate: <span class="math display">\[
+\sigma^2 = \frac{1}{N-1} \sum_{i=1}^N (x_i - \bar{x})^2 \approx E[(X - \mu)^2]
+\]</span></p>
+<p>Standard Deviation (SD): <span class="math display">\[
+\sigma = \sqrt{\sigma^2}
+\]</span></p>
+<p>Standard Error (SE): <span class="math display">\[
+SE = \frac{\sigma}{\sqrt{N}} \longrightarrow 0 \text{ for } N \rightarrow \infty
+\]</span></p>
+</div>
+</div>
+</div>
+<p>The standard error (SE) of the mean is not a measure of variability in the data. For more data it will approach zero. The standard deviation (SD) is a better measure of variability in the data.</p>
+<div id="cell-barplot04" class="cell" data-execution_count="8">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1"></a>sns.barplot(data<span class="op">=</span><span class="bu">long</span>, x<span class="op">=</span><span class="st">"time"</span>, y<span class="op">=</span><span class="st">"hba1c"</span>, errorbar<span class="op">=</span><span class="st">'sd'</span>)</span>
+<span id="cb7-2"><a href="#cb7-2"></a>plt.title(<span class="st">"Mean ± SD. Probably no effect."</span>)</span>
+<span id="cb7-3"><a href="#cb7-3"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="01_DataExploration_files/figure-html/barplot04-output-1.png" id="barplot04" width="913" height="702" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="cell-boxplot" class="cell" data-execution_count="9">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1"></a><span class="co"># you are allowed to remove zero with boxplots</span></span>
+<span id="cb8-2"><a href="#cb8-2"></a>sns.boxplot(data<span class="op">=</span><span class="bu">long</span>, x<span class="op">=</span><span class="st">"time"</span>, y<span class="op">=</span><span class="st">"hba1c"</span>)</span>
+<span id="cb8-3"><a href="#cb8-3"></a>plt.title(<span class="st">"Maybe some effect after all?"</span>)</span>
+<span id="cb8-4"><a href="#cb8-4"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="01_DataExploration_files/figure-html/boxplot-output-1.png" id="boxplot" width="933" height="702" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="cell-violinplot" class="cell" data-execution_count="10">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1"></a>sns.violinplot(data<span class="op">=</span><span class="bu">long</span>, x<span class="op">=</span><span class="st">"time"</span>, y<span class="op">=</span><span class="st">"hba1c"</span>)</span>
+<span id="cb9-2"><a href="#cb9-2"></a>plt.title(<span class="st">"Violin plot: Beware of smoothing artefacts!"</span>)</span>
+<span id="cb9-3"><a href="#cb9-3"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="01_DataExploration_files/figure-html/violinplot-output-1.png" id="violinplot" width="913" height="702" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The violin plot employs some smoothing to visyualize the distribution. For small data sets this can be misleading. If possible, it is always better to show the data.</p>
+<p>A statistical test can be used to support the visual impression.</p>
+<div id="cell-strip" class="cell" data-execution_count="11">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1"></a>sns.stripplot( data<span class="op">=</span><span class="bu">long</span>, x<span class="op">=</span><span class="st">"time"</span>, y<span class="op">=</span><span class="st">"hba1c"</span>,</span>
+<span id="cb10-2"><a href="#cb10-2"></a>    <span class="co"># optional: switch off jitter</span></span>
+<span id="cb10-3"><a href="#cb10-3"></a>    jitter<span class="op">=</span><span class="va">False</span></span>
+<span id="cb10-4"><a href="#cb10-4"></a>)</span>
+<span id="cb10-5"><a href="#cb10-5"></a></span>
+<span id="cb10-6"><a href="#cb10-6"></a>t, p <span class="op">=</span> ttest_ind( df[<span class="st">"before"</span>], df[<span class="st">"after"</span>])</span>
+<span id="cb10-7"><a href="#cb10-7"></a>title <span class="op">=</span> <span class="ss">f"Show data &amp; test. p-value = </span><span class="sc">{</span>p<span class="sc">:.5f}</span><span class="ss">"</span></span>
+<span id="cb10-8"><a href="#cb10-8"></a>plt.title(title)</span>
+<span id="cb10-9"><a href="#cb10-9"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="01_DataExploration_files/figure-html/strip-output-1.png" id="strip" width="933" height="702" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>In the above we have assumed independent samples. But since we have repeated measures (before and after treatment) we should use a paired test. Here I also visualize the dependencies by connecting related data points explicitly with lines. This is only possible if we have a unique identifier for each patient (here: <code>patient</code> variable).</p>
+<div id="cell-lineplot" class="cell" data-execution_count="12">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1"></a>sns.lineplot(data<span class="op">=</span><span class="bu">long</span>, x<span class="op">=</span><span class="st">"time"</span>, y<span class="op">=</span><span class="st">"hba1c"</span>,</span>
+<span id="cb11-2"><a href="#cb11-2"></a>    units<span class="op">=</span><span class="st">"patient"</span>,</span>
+<span id="cb11-3"><a href="#cb11-3"></a>    estimator<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb11-4"><a href="#cb11-4"></a>    marker<span class="op">=</span><span class="st">"o"</span></span>
+<span id="cb11-5"><a href="#cb11-5"></a>)</span>
+<span id="cb11-6"><a href="#cb11-6"></a>t, p <span class="op">=</span> ttest_rel( df[<span class="st">"before"</span>], df[<span class="st">"after"</span>])</span>
+<span id="cb11-7"><a href="#cb11-7"></a>title <span class="op">=</span> <span class="ss">f"Data Dependencies? p-value </span><span class="sc">{</span>p<span class="sc">:.5f}</span><span class="ss">"</span></span>
+<span id="cb11-8"><a href="#cb11-8"></a>plt.title(title)</span>
+<span id="cb11-9"><a href="#cb11-9"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="01_DataExploration_files/figure-html/lineplot-output-1.png" id="lineplot" width="933" height="702" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>There seems to be a significant reduction in HbA1c levels for some patients. Are there other variables that can explain this difference?</p>
+<div id="cell-lineplot_group" class="cell" data-execution_count="13">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1"></a>long_group <span class="op">=</span> df.melt(</span>
+<span id="cb12-2"><a href="#cb12-2"></a>        id_vars<span class="op">=</span>[<span class="st">"patient"</span>,<span class="st">"group"</span>],</span>
+<span id="cb12-3"><a href="#cb12-3"></a>        value_vars<span class="op">=</span>[<span class="st">"before"</span>, <span class="st">"after"</span>],</span>
+<span id="cb12-4"><a href="#cb12-4"></a>        var_name<span class="op">=</span><span class="st">"time"</span>,</span>
+<span id="cb12-5"><a href="#cb12-5"></a>        value_name<span class="op">=</span><span class="st">"hba1c"</span></span>
+<span id="cb12-6"><a href="#cb12-6"></a>    )</span>
+<span id="cb12-7"><a href="#cb12-7"></a></span>
+<span id="cb12-8"><a href="#cb12-8"></a>ORDER <span class="op">=</span> [<span class="st">"before"</span>, <span class="st">"after"</span>]</span>
+<span id="cb12-9"><a href="#cb12-9"></a>long_group[<span class="st">"time"</span>] <span class="op">=</span> pd.Categorical(</span>
+<span id="cb12-10"><a href="#cb12-10"></a>    long_group[<span class="st">"time"</span>],</span>
+<span id="cb12-11"><a href="#cb12-11"></a>    categories<span class="op">=</span>ORDER,</span>
+<span id="cb12-12"><a href="#cb12-12"></a>    ordered<span class="op">=</span><span class="va">True</span></span>
+<span id="cb12-13"><a href="#cb12-13"></a>)</span>
+<span id="cb12-14"><a href="#cb12-14"></a></span>
+<span id="cb12-15"><a href="#cb12-15"></a>sns.lineplot(data<span class="op">=</span>long_group, x<span class="op">=</span><span class="st">"time"</span>, y<span class="op">=</span><span class="st">"hba1c"</span>,</span>
+<span id="cb12-16"><a href="#cb12-16"></a>    units<span class="op">=</span><span class="st">"patient"</span>,</span>
+<span id="cb12-17"><a href="#cb12-17"></a>    estimator<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb12-18"><a href="#cb12-18"></a>    marker<span class="op">=</span><span class="st">"o"</span>,</span>
+<span id="cb12-19"><a href="#cb12-19"></a>    hue<span class="op">=</span><span class="st">"group"</span></span>
+<span id="cb12-20"><a href="#cb12-20"></a>)</span>
+<span id="cb12-21"><a href="#cb12-21"></a>t, p <span class="op">=</span> ttest_rel( df[<span class="st">"before"</span>], df[<span class="st">"after"</span>])</span>
+<span id="cb12-22"><a href="#cb12-22"></a>title <span class="op">=</span> <span class="ss">f"Discover new variables"</span></span>
+<span id="cb12-23"><a href="#cb12-23"></a>plt.title(title)</span>
+<span id="cb12-24"><a href="#cb12-24"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="01_DataExploration_files/figure-html/lineplot_group-output-1.png" id="lineplot_group" width="933" height="702" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>But is this also a clinically relevant effect? We should always be careful to distinguish statistical significance from medical significance.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>Summary
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>Don’t cut barplots !</li>
+<li>Show variability in data (clarify SE or SD)</li>
+<li>better show the range <span class="math inline">\(\to\)</span> boxplots &amp; violinplots</li>
+<li>beware of smoothing violins (especially for small data sets)</li>
+<li>show all the data if you can <span class="math inline">\(\to\)</span> stripplot</li>
+<li>multimodal distribution &amp; additional group variables?</li>
+<li>data exploration is visual and iterative</li>
+<li>statistical significance <span class="math inline">\(\ne\)</span> medical significance</li>
+</ul>
+</div>
+</div>
+
+
+<!-- -->
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13" data-shortcodes="false"><pre class="sourceCode numberSource markdown number-lines code-with-copy"><code class="sourceCode markdown"><span id="cb13-1"><a href="#cb13-1"></a><span class="co">---</span></span>
+<span id="cb13-2"><a href="#cb13-2"></a><span class="an">title:</span><span class="co"> "Data Exploration"</span></span>
+<span id="cb13-3"><a href="#cb13-3"></a><span class="an">date:</span><span class="co">  last-modified</span></span>
+<span id="cb13-4"><a href="#cb13-4"></a><span class="an">categories:</span></span>
+<span id="cb13-5"><a href="#cb13-5"></a><span class="co">    - barplot</span></span>
+<span id="cb13-6"><a href="#cb13-6"></a><span class="co">    - violinplot</span></span>
+<span id="cb13-7"><a href="#cb13-7"></a><span class="an">jupyter:</span><span class="co"> b92g</span></span>
+<span id="cb13-8"><a href="#cb13-8"></a><span class="an">code-fold:</span><span class="co"> true</span></span>
+<span id="cb13-9"><a href="#cb13-9"></a><span class="an">draft:</span><span class="co"> false</span></span>
+<span id="cb13-10"><a href="#cb13-10"></a><span class="an">description:</span><span class="co"> Beyond Barplots</span></span>
+<span id="cb13-11"><a href="#cb13-11"></a><span class="co">---</span></span>
+<span id="cb13-12"><a href="#cb13-12"></a></span>
+<span id="cb13-13"><a href="#cb13-13"></a><span class="fu">## Software First</span></span>
+<span id="cb13-16"><a href="#cb13-16"></a><span class="in">```{python}</span></span>
+<span id="cb13-17"><a href="#cb13-17"></a><span class="co">#| label: load_packages</span></span>
+<span id="cb13-18"><a href="#cb13-18"></a><span class="co">#| warning: false</span></span>
+<span id="cb13-19"><a href="#cb13-19"></a><span class="im">import</span> requests</span>
+<span id="cb13-20"><a href="#cb13-20"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb13-21"><a href="#cb13-21"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb13-22"><a href="#cb13-22"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb13-23"><a href="#cb13-23"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb13-24"><a href="#cb13-24"></a><span class="im">from</span> scipy.stats <span class="im">import</span> ttest_ind, ttest_rel</span>
+<span id="cb13-25"><a href="#cb13-25"></a><span class="in">```</span></span>
+<span id="cb13-26"><a href="#cb13-26"></a></span>
+<span id="cb13-27"><a href="#cb13-27"></a><span class="fu">## Generate synthetic data</span></span>
+<span id="cb13-28"><a href="#cb13-28"></a></span>
+<span id="cb13-29"><a href="#cb13-29"></a>This data set will be used throughout this notebook.</span>
+<span id="cb13-30"><a href="#cb13-30"></a></span>
+<span id="cb13-31"><a href="#cb13-31"></a>The idea is to simulate the effect of a hypothetical drug treatment to lower HbA1c levels in patients with diabetes. We will then explore different ways to visualize the data and interpret the results.</span>
+<span id="cb13-32"><a href="#cb13-32"></a></span>
+<span id="cb13-35"><a href="#cb13-35"></a><span class="in">```{python}</span></span>
+<span id="cb13-36"><a href="#cb13-36"></a><span class="co">#| label: define_data_group</span></span>
+<span id="cb13-37"><a href="#cb13-37"></a>np.random.seed(<span class="dv">42</span>)</span>
+<span id="cb13-38"><a href="#cb13-38"></a>n <span class="op">=</span> <span class="dv">30</span></span>
+<span id="cb13-39"><a href="#cb13-39"></a></span>
+<span id="cb13-40"><a href="#cb13-40"></a><span class="co"># synthetic HbA1c-Werte [in %]</span></span>
+<span id="cb13-41"><a href="#cb13-41"></a><span class="co"># normal 5%, ehoeht: 6%, Diabetes mellitus: &gt; 6.5%, 8% Handlungsbedarf</span></span>
+<span id="cb13-42"><a href="#cb13-42"></a>before <span class="op">=</span> np.random.normal(loc<span class="op">=</span><span class="fl">9.0</span>, scale<span class="op">=</span><span class="dv">1</span>, size<span class="op">=</span>n)</span>
+<span id="cb13-43"><a href="#cb13-43"></a></span>
+<span id="cb13-44"><a href="#cb13-44"></a><span class="co"># Two treatmentgroups</span></span>
+<span id="cb13-45"><a href="#cb13-45"></a>group <span class="op">=</span> np.random.choice([<span class="st">"A"</span>, <span class="st">"B"</span>], size<span class="op">=</span>n, p<span class="op">=</span>[<span class="fl">0.25</span>, <span class="fl">0.75</span>])</span>
+<span id="cb13-46"><a href="#cb13-46"></a></span>
+<span id="cb13-47"><a href="#cb13-47"></a>after <span class="op">=</span> before.copy()</span>
+<span id="cb13-48"><a href="#cb13-48"></a>after[group <span class="op">==</span> <span class="st">"A"</span>] <span class="op">-=</span> np.random.normal(<span class="fl">0.5</span>, <span class="fl">0.1</span>, size<span class="op">=</span>(group <span class="op">==</span> <span class="st">"A"</span>).<span class="bu">sum</span>())</span>
+<span id="cb13-49"><a href="#cb13-49"></a>after[group <span class="op">==</span> <span class="st">"B"</span>] <span class="op">+=</span> np.random.normal(<span class="fl">0.0</span>, <span class="fl">0.1</span>, size<span class="op">=</span>(group <span class="op">==</span> <span class="st">"B"</span>).<span class="bu">sum</span>())</span>
+<span id="cb13-50"><a href="#cb13-50"></a></span>
+<span id="cb13-51"><a href="#cb13-51"></a>df <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb13-52"><a href="#cb13-52"></a>    <span class="st">"patient"</span>: np.arange(n),</span>
+<span id="cb13-53"><a href="#cb13-53"></a>    <span class="st">"before"</span>: before,</span>
+<span id="cb13-54"><a href="#cb13-54"></a>    <span class="st">"after"</span>: after,</span>
+<span id="cb13-55"><a href="#cb13-55"></a>    <span class="st">"group"</span>: group</span>
+<span id="cb13-56"><a href="#cb13-56"></a>})</span>
+<span id="cb13-57"><a href="#cb13-57"></a></span>
+<span id="cb13-58"><a href="#cb13-58"></a>df[[<span class="st">"before"</span>,<span class="st">"after"</span>]].head()</span>
+<span id="cb13-59"><a href="#cb13-59"></a><span class="co">#print(df[["before", "after"]].mean())</span></span>
+<span id="cb13-60"><a href="#cb13-60"></a><span class="co">#df.groupby("group").describe().T</span></span>
+<span id="cb13-61"><a href="#cb13-61"></a><span class="in">```</span></span>
+<span id="cb13-62"><a href="#cb13-62"></a></span>
+<span id="cb13-63"><a href="#cb13-63"></a></span>
+<span id="cb13-64"><a href="#cb13-64"></a></span>
+<span id="cb13-67"><a href="#cb13-67"></a><span class="in">```{python}</span></span>
+<span id="cb13-68"><a href="#cb13-68"></a><span class="co">#| label: define_data_nogroup</span></span>
+<span id="cb13-69"><a href="#cb13-69"></a><span class="co">#| eval: false</span></span>
+<span id="cb13-70"><a href="#cb13-70"></a><span class="co">#| echo: false</span></span>
+<span id="cb13-71"><a href="#cb13-71"></a>np.random.seed(<span class="dv">42</span>)</span>
+<span id="cb13-72"><a href="#cb13-72"></a>n <span class="op">=</span> <span class="dv">12</span></span>
+<span id="cb13-73"><a href="#cb13-73"></a></span>
+<span id="cb13-74"><a href="#cb13-74"></a><span class="co"># synthetic HbA1c-Werte [in %]</span></span>
+<span id="cb13-75"><a href="#cb13-75"></a><span class="co"># normal 5%, ehoeht: 6%, Diabetes mellitus: &gt; 6.5%, 8% Handlungsbedarf</span></span>
+<span id="cb13-76"><a href="#cb13-76"></a></span>
+<span id="cb13-77"><a href="#cb13-77"></a>baseline <span class="op">=</span> np.random.normal(</span>
+<span id="cb13-78"><a href="#cb13-78"></a>    loc<span class="op">=</span><span class="fl">8.5</span>,</span>
+<span id="cb13-79"><a href="#cb13-79"></a>    scale<span class="op">=</span><span class="fl">1.5</span>,</span>
+<span id="cb13-80"><a href="#cb13-80"></a>    size<span class="op">=</span>n</span>
+<span id="cb13-81"><a href="#cb13-81"></a>)</span>
+<span id="cb13-82"><a href="#cb13-82"></a></span>
+<span id="cb13-83"><a href="#cb13-83"></a>improvement <span class="op">=</span> np.random.normal(</span>
+<span id="cb13-84"><a href="#cb13-84"></a>    loc<span class="op">=</span><span class="fl">0.4</span>,</span>
+<span id="cb13-85"><a href="#cb13-85"></a>    scale<span class="op">=</span><span class="fl">0.15</span>,</span>
+<span id="cb13-86"><a href="#cb13-86"></a>    size<span class="op">=</span>n</span>
+<span id="cb13-87"><a href="#cb13-87"></a>)</span>
+<span id="cb13-88"><a href="#cb13-88"></a></span>
+<span id="cb13-89"><a href="#cb13-89"></a>followup <span class="op">=</span> baseline <span class="op">-</span> improvement</span>
+<span id="cb13-90"><a href="#cb13-90"></a></span>
+<span id="cb13-91"><a href="#cb13-91"></a>df <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb13-92"><a href="#cb13-92"></a>    <span class="st">"patient"</span>: np.arange(n),</span>
+<span id="cb13-93"><a href="#cb13-93"></a>    <span class="st">"before"</span>: baseline,</span>
+<span id="cb13-94"><a href="#cb13-94"></a>    <span class="st">"after"</span>: followup</span>
+<span id="cb13-95"><a href="#cb13-95"></a>})</span>
+<span id="cb13-96"><a href="#cb13-96"></a></span>
+<span id="cb13-97"><a href="#cb13-97"></a>df.head(<span class="dv">3</span>)</span>
+<span id="cb13-98"><a href="#cb13-98"></a><span class="in">```</span></span>
+<span id="cb13-99"><a href="#cb13-99"></a></span>
+<span id="cb13-100"><a href="#cb13-100"></a></span>
+<span id="cb13-101"><a href="#cb13-101"></a></span>
+<span id="cb13-102"><a href="#cb13-102"></a></span>
+<span id="cb13-103"><a href="#cb13-103"></a>::: {.callout-note}</span>
+<span id="cb13-104"><a href="#cb13-104"></a><span class="fu">### Questions</span></span>
+<span id="cb13-105"><a href="#cb13-105"></a><span class="ss">- </span>Why do we need to summarize this data?</span>
+<span id="cb13-106"><a href="#cb13-106"></a><span class="ss">- </span>Why do we need data visualization</span>
+<span id="cb13-107"><a href="#cb13-107"></a><span class="ss">- </span>Which tools?</span>
+<span id="cb13-108"><a href="#cb13-108"></a>:::</span>
+<span id="cb13-109"><a href="#cb13-109"></a></span>
+<span id="cb13-110"><a href="#cb13-110"></a><span class="co">&lt;!-- </span></span>
+<span id="cb13-111"><a href="#cb13-111"></a><span class="co">    summary: data compression: Data -&gt; Distribution -&gt; Means -&gt; Labels </span></span>
+<span id="cb13-112"><a href="#cb13-112"></a><span class="co">    visualization: mis/understand data, communicate, hypothesis generation</span></span>
+<span id="cb13-113"><a href="#cb13-113"></a><span class="co">    tools: Excel, Tableau, R(ggplot), Python (sns)</span></span>
+<span id="cb13-114"><a href="#cb13-114"></a><span class="co">--&gt;</span></span>
+<span id="cb13-115"><a href="#cb13-115"></a></span>
+<span id="cb13-116"><a href="#cb13-116"></a><span class="fu">## Data Reshaping</span></span>
+<span id="cb13-117"><a href="#cb13-117"></a></span>
+<span id="cb13-118"><a href="#cb13-118"></a>For some visualization tasks it will be better to have data in a <span class="in">`long`</span> format. We will use the <span class="in">`melt`</span> function from pandas to reshape the data.</span>
+<span id="cb13-119"><a href="#cb13-119"></a>I use a categorical time variable to distinguish <span class="in">`before`</span> and <span class="in">`after`</span> treatment.</span>
+<span id="cb13-120"><a href="#cb13-120"></a></span>
+<span id="cb13-123"><a href="#cb13-123"></a><span class="in">```{python}</span></span>
+<span id="cb13-124"><a href="#cb13-124"></a><span class="co">#| label: melt</span></span>
+<span id="cb13-125"><a href="#cb13-125"></a><span class="bu">long</span> <span class="op">=</span> df.melt(</span>
+<span id="cb13-126"><a href="#cb13-126"></a>        id_vars<span class="op">=</span>[<span class="st">"patient"</span>],</span>
+<span id="cb13-127"><a href="#cb13-127"></a>        value_vars<span class="op">=</span>[<span class="st">"before"</span>, <span class="st">"after"</span>],</span>
+<span id="cb13-128"><a href="#cb13-128"></a>        var_name<span class="op">=</span><span class="st">"time"</span>,</span>
+<span id="cb13-129"><a href="#cb13-129"></a>        value_name<span class="op">=</span><span class="st">"hba1c"</span></span>
+<span id="cb13-130"><a href="#cb13-130"></a>    )</span>
+<span id="cb13-131"><a href="#cb13-131"></a></span>
+<span id="cb13-132"><a href="#cb13-132"></a><span class="co"># define a consitent order for the time variable</span></span>
+<span id="cb13-133"><a href="#cb13-133"></a>ORDER <span class="op">=</span> [<span class="st">"before"</span>, <span class="st">"after"</span>]</span>
+<span id="cb13-134"><a href="#cb13-134"></a><span class="bu">long</span>[<span class="st">"time"</span>] <span class="op">=</span> pd.Categorical(</span>
+<span id="cb13-135"><a href="#cb13-135"></a>    <span class="bu">long</span>[<span class="st">"time"</span>],</span>
+<span id="cb13-136"><a href="#cb13-136"></a>    categories<span class="op">=</span>ORDER,</span>
+<span id="cb13-137"><a href="#cb13-137"></a>    ordered<span class="op">=</span><span class="va">True</span></span>
+<span id="cb13-138"><a href="#cb13-138"></a>)</span>
+<span id="cb13-139"><a href="#cb13-139"></a></span>
+<span id="cb13-140"><a href="#cb13-140"></a><span class="bu">long</span>.head()</span>
+<span id="cb13-141"><a href="#cb13-141"></a><span class="in">```</span></span>
+<span id="cb13-142"><a href="#cb13-142"></a></span>
+<span id="cb13-143"><a href="#cb13-143"></a></span>
+<span id="cb13-144"><a href="#cb13-144"></a><span class="fu">## Barplots</span></span>
+<span id="cb13-145"><a href="#cb13-145"></a></span>
+<span id="cb13-148"><a href="#cb13-148"></a><span class="in">```{python}</span></span>
+<span id="cb13-149"><a href="#cb13-149"></a><span class="co">#| label: barplot01</span></span>
+<span id="cb13-150"><a href="#cb13-150"></a>sns.barplot(data<span class="op">=</span><span class="bu">long</span>, x<span class="op">=</span><span class="st">"time"</span>, y<span class="op">=</span><span class="st">"hba1c"</span>, errorbar<span class="op">=</span><span class="va">None</span>)</span>
+<span id="cb13-151"><a href="#cb13-151"></a>plt.ylim(<span class="fl">8.6</span>, <span class="fl">8.9</span>)</span>
+<span id="cb13-152"><a href="#cb13-152"></a>plt.title(<span class="st">"Clear effect on Mean"</span>)</span>
+<span id="cb13-153"><a href="#cb13-153"></a>plt.show()</span>
+<span id="cb13-154"><a href="#cb13-154"></a><span class="in">```</span></span>
+<span id="cb13-155"><a href="#cb13-155"></a></span>
+<span id="cb13-156"><a href="#cb13-156"></a></span>
+<span id="cb13-157"><a href="#cb13-157"></a>::: {.callout-caution}</span>
+<span id="cb13-158"><a href="#cb13-158"></a><span class="fu">### What is wrong with this plot ?</span></span>
+<span id="cb13-159"><a href="#cb13-159"></a>:::</span>
+<span id="cb13-160"><a href="#cb13-160"></a></span>
+<span id="cb13-163"><a href="#cb13-163"></a><span class="in">```{python}</span></span>
+<span id="cb13-164"><a href="#cb13-164"></a><span class="co">#| label: barplot02</span></span>
+<span id="cb13-165"><a href="#cb13-165"></a>sns.barplot(data<span class="op">=</span><span class="bu">long</span>, x<span class="op">=</span><span class="st">"time"</span>, y<span class="op">=</span><span class="st">"hba1c"</span>, errorbar<span class="op">=</span><span class="va">None</span>)</span>
+<span id="cb13-166"><a href="#cb13-166"></a>plt.title(<span class="st">"Almost no effect"</span>)</span>
+<span id="cb13-167"><a href="#cb13-167"></a>plt.show()</span>
+<span id="cb13-168"><a href="#cb13-168"></a><span class="in">```</span></span>
+<span id="cb13-169"><a href="#cb13-169"></a></span>
+<span id="cb13-170"><a href="#cb13-170"></a>We tend to give meaning to barplot length, rather than position.</span>
+<span id="cb13-171"><a href="#cb13-171"></a></span>
+<span id="cb13-172"><a href="#cb13-172"></a>Until now we have focused on the mean values. But to discuss any potential treatment effect we will also have to analyse (and visualize) the variability.</span>
+<span id="cb13-175"><a href="#cb13-175"></a><span class="in">```{python}</span></span>
+<span id="cb13-176"><a href="#cb13-176"></a><span class="co">#| label: barplot03</span></span>
+<span id="cb13-177"><a href="#cb13-177"></a>sns.barplot(data<span class="op">=</span><span class="bu">long</span>, x<span class="op">=</span><span class="st">"time"</span>, y<span class="op">=</span><span class="st">"hba1c"</span>, errorbar<span class="op">=</span><span class="st">'se'</span>)</span>
+<span id="cb13-178"><a href="#cb13-178"></a>plt.title(<span class="st">"Mean ± SE. Perhaps a small effect?"</span>)</span>
+<span id="cb13-179"><a href="#cb13-179"></a>plt.show()</span>
+<span id="cb13-180"><a href="#cb13-180"></a><span class="in">```</span></span>
+<span id="cb13-181"><a href="#cb13-181"></a></span>
+<span id="cb13-182"><a href="#cb13-182"></a>::: {.callout-note collapse="true"}</span>
+<span id="cb13-183"><a href="#cb13-183"></a><span class="fu">### Variance, Standard Deviation &amp; Standard Error</span></span>
+<span id="cb13-184"><a href="#cb13-184"></a></span>
+<span id="cb13-185"><a href="#cb13-185"></a>Variance Estimate:</span>
+<span id="cb13-186"><a href="#cb13-186"></a>$$</span>
+<span id="cb13-187"><a href="#cb13-187"></a>\sigma^2 = \frac{1}{N-1} \sum_{i=1}^N (x_i - \bar{x})^2 \approx E<span class="co">[</span><span class="ot">(X - \mu)^2</span><span class="co">]</span></span>
+<span id="cb13-188"><a href="#cb13-188"></a>$$</span>
+<span id="cb13-189"><a href="#cb13-189"></a></span>
+<span id="cb13-190"><a href="#cb13-190"></a>Standard Deviation (SD):</span>
+<span id="cb13-191"><a href="#cb13-191"></a>$$</span>
+<span id="cb13-192"><a href="#cb13-192"></a>\sigma = \sqrt{\sigma^2}</span>
+<span id="cb13-193"><a href="#cb13-193"></a>$$</span>
+<span id="cb13-194"><a href="#cb13-194"></a></span>
+<span id="cb13-195"><a href="#cb13-195"></a>Standard Error (SE):</span>
+<span id="cb13-196"><a href="#cb13-196"></a>$$</span>
+<span id="cb13-197"><a href="#cb13-197"></a>SE = \frac{\sigma}{\sqrt{N}} \longrightarrow 0 \text{ for } N \rightarrow \infty</span>
+<span id="cb13-198"><a href="#cb13-198"></a>$$</span>
+<span id="cb13-199"><a href="#cb13-199"></a>:::</span>
+<span id="cb13-200"><a href="#cb13-200"></a></span>
+<span id="cb13-201"><a href="#cb13-201"></a>The standard error (SE) of the mean is not a measure of variability in the data. For more data it will approach zero. The standard deviation (SD) is a better measure of variability in the data.</span>
+<span id="cb13-202"><a href="#cb13-202"></a></span>
+<span id="cb13-205"><a href="#cb13-205"></a><span class="in">```{python}</span></span>
+<span id="cb13-206"><a href="#cb13-206"></a><span class="co">#| label: barplot04</span></span>
+<span id="cb13-207"><a href="#cb13-207"></a>sns.barplot(data<span class="op">=</span><span class="bu">long</span>, x<span class="op">=</span><span class="st">"time"</span>, y<span class="op">=</span><span class="st">"hba1c"</span>, errorbar<span class="op">=</span><span class="st">'sd'</span>)</span>
+<span id="cb13-208"><a href="#cb13-208"></a>plt.title(<span class="st">"Mean ± SD. Probably no effect."</span>)</span>
+<span id="cb13-209"><a href="#cb13-209"></a>plt.show()</span>
+<span id="cb13-210"><a href="#cb13-210"></a><span class="in">```</span></span>
+<span id="cb13-211"><a href="#cb13-211"></a></span>
+<span id="cb13-212"><a href="#cb13-212"></a></span>
+<span id="cb13-215"><a href="#cb13-215"></a><span class="in">```{python}</span></span>
+<span id="cb13-216"><a href="#cb13-216"></a><span class="co">#| label: boxplot</span></span>
+<span id="cb13-217"><a href="#cb13-217"></a></span>
+<span id="cb13-218"><a href="#cb13-218"></a><span class="co"># you are allowed to remove zero with boxplots</span></span>
+<span id="cb13-219"><a href="#cb13-219"></a>sns.boxplot(data<span class="op">=</span><span class="bu">long</span>, x<span class="op">=</span><span class="st">"time"</span>, y<span class="op">=</span><span class="st">"hba1c"</span>)</span>
+<span id="cb13-220"><a href="#cb13-220"></a>plt.title(<span class="st">"Maybe some effect after all?"</span>)</span>
+<span id="cb13-221"><a href="#cb13-221"></a>plt.show()</span>
+<span id="cb13-222"><a href="#cb13-222"></a><span class="in">```</span></span>
+<span id="cb13-223"><a href="#cb13-223"></a></span>
+<span id="cb13-226"><a href="#cb13-226"></a><span class="in">```{python}</span></span>
+<span id="cb13-227"><a href="#cb13-227"></a><span class="co">#| label: violinplot</span></span>
+<span id="cb13-228"><a href="#cb13-228"></a>sns.violinplot(data<span class="op">=</span><span class="bu">long</span>, x<span class="op">=</span><span class="st">"time"</span>, y<span class="op">=</span><span class="st">"hba1c"</span>)</span>
+<span id="cb13-229"><a href="#cb13-229"></a>plt.title(<span class="st">"Violin plot: Beware of smoothing artefacts!"</span>)</span>
+<span id="cb13-230"><a href="#cb13-230"></a>plt.show()</span>
+<span id="cb13-231"><a href="#cb13-231"></a><span class="in">```</span></span>
+<span id="cb13-232"><a href="#cb13-232"></a></span>
+<span id="cb13-233"><a href="#cb13-233"></a>The violin plot employs some smoothing to visyualize the distribution. For small data sets this can be misleading. If possible, it is always better to show the data. </span>
+<span id="cb13-234"><a href="#cb13-234"></a></span>
+<span id="cb13-235"><a href="#cb13-235"></a>A statistical test can be used to support the visual impression. </span>
+<span id="cb13-236"><a href="#cb13-236"></a></span>
+<span id="cb13-239"><a href="#cb13-239"></a><span class="in">```{python}</span></span>
+<span id="cb13-240"><a href="#cb13-240"></a><span class="co">#| label: strip</span></span>
+<span id="cb13-241"><a href="#cb13-241"></a>sns.stripplot( data<span class="op">=</span><span class="bu">long</span>, x<span class="op">=</span><span class="st">"time"</span>, y<span class="op">=</span><span class="st">"hba1c"</span>,</span>
+<span id="cb13-242"><a href="#cb13-242"></a>    <span class="co"># optional: switch off jitter</span></span>
+<span id="cb13-243"><a href="#cb13-243"></a>    jitter<span class="op">=</span><span class="va">False</span></span>
+<span id="cb13-244"><a href="#cb13-244"></a>)</span>
+<span id="cb13-245"><a href="#cb13-245"></a></span>
+<span id="cb13-246"><a href="#cb13-246"></a>t, p <span class="op">=</span> ttest_ind( df[<span class="st">"before"</span>], df[<span class="st">"after"</span>])</span>
+<span id="cb13-247"><a href="#cb13-247"></a>title <span class="op">=</span> <span class="ss">f"Show data &amp; test. p-value = </span><span class="sc">{</span>p<span class="sc">:.5f}</span><span class="ss">"</span></span>
+<span id="cb13-248"><a href="#cb13-248"></a>plt.title(title)</span>
+<span id="cb13-249"><a href="#cb13-249"></a>plt.show()</span>
+<span id="cb13-250"><a href="#cb13-250"></a><span class="in">```</span></span>
+<span id="cb13-251"><a href="#cb13-251"></a></span>
+<span id="cb13-252"><a href="#cb13-252"></a>In the above we have assumed independent samples. But since we have repeated measures (before and after treatment) we should use a paired test.</span>
+<span id="cb13-253"><a href="#cb13-253"></a>Here I also visualize the dependencies by connecting related data points explicitly with lines. This is only possible if we have a unique identifier for each patient (here: <span class="in">`patient`</span> variable).</span>
+<span id="cb13-254"><a href="#cb13-254"></a></span>
+<span id="cb13-257"><a href="#cb13-257"></a><span class="in">```{python}</span></span>
+<span id="cb13-258"><a href="#cb13-258"></a><span class="co">#| label: lineplot</span></span>
+<span id="cb13-259"><a href="#cb13-259"></a></span>
+<span id="cb13-260"><a href="#cb13-260"></a>sns.lineplot(data<span class="op">=</span><span class="bu">long</span>, x<span class="op">=</span><span class="st">"time"</span>, y<span class="op">=</span><span class="st">"hba1c"</span>,</span>
+<span id="cb13-261"><a href="#cb13-261"></a>    units<span class="op">=</span><span class="st">"patient"</span>,</span>
+<span id="cb13-262"><a href="#cb13-262"></a>    estimator<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb13-263"><a href="#cb13-263"></a>    marker<span class="op">=</span><span class="st">"o"</span></span>
+<span id="cb13-264"><a href="#cb13-264"></a>)</span>
+<span id="cb13-265"><a href="#cb13-265"></a>t, p <span class="op">=</span> ttest_rel( df[<span class="st">"before"</span>], df[<span class="st">"after"</span>])</span>
+<span id="cb13-266"><a href="#cb13-266"></a>title <span class="op">=</span> <span class="ss">f"Data Dependencies? p-value </span><span class="sc">{</span>p<span class="sc">:.5f}</span><span class="ss">"</span></span>
+<span id="cb13-267"><a href="#cb13-267"></a>plt.title(title)</span>
+<span id="cb13-268"><a href="#cb13-268"></a>plt.show()</span>
+<span id="cb13-269"><a href="#cb13-269"></a><span class="in">```</span></span>
+<span id="cb13-270"><a href="#cb13-270"></a></span>
+<span id="cb13-271"><a href="#cb13-271"></a>There seems to be a significant reduction in HbA1c levels for some patients. Are there other variables that can explain this difference?</span>
+<span id="cb13-272"><a href="#cb13-272"></a></span>
+<span id="cb13-275"><a href="#cb13-275"></a><span class="in">```{python}</span></span>
+<span id="cb13-276"><a href="#cb13-276"></a><span class="co">#| label: lineplot_group</span></span>
+<span id="cb13-277"><a href="#cb13-277"></a></span>
+<span id="cb13-278"><a href="#cb13-278"></a>long_group <span class="op">=</span> df.melt(</span>
+<span id="cb13-279"><a href="#cb13-279"></a>        id_vars<span class="op">=</span>[<span class="st">"patient"</span>,<span class="st">"group"</span>],</span>
+<span id="cb13-280"><a href="#cb13-280"></a>        value_vars<span class="op">=</span>[<span class="st">"before"</span>, <span class="st">"after"</span>],</span>
+<span id="cb13-281"><a href="#cb13-281"></a>        var_name<span class="op">=</span><span class="st">"time"</span>,</span>
+<span id="cb13-282"><a href="#cb13-282"></a>        value_name<span class="op">=</span><span class="st">"hba1c"</span></span>
+<span id="cb13-283"><a href="#cb13-283"></a>    )</span>
+<span id="cb13-284"><a href="#cb13-284"></a></span>
+<span id="cb13-285"><a href="#cb13-285"></a>ORDER <span class="op">=</span> [<span class="st">"before"</span>, <span class="st">"after"</span>]</span>
+<span id="cb13-286"><a href="#cb13-286"></a>long_group[<span class="st">"time"</span>] <span class="op">=</span> pd.Categorical(</span>
+<span id="cb13-287"><a href="#cb13-287"></a>    long_group[<span class="st">"time"</span>],</span>
+<span id="cb13-288"><a href="#cb13-288"></a>    categories<span class="op">=</span>ORDER,</span>
+<span id="cb13-289"><a href="#cb13-289"></a>    ordered<span class="op">=</span><span class="va">True</span></span>
+<span id="cb13-290"><a href="#cb13-290"></a>)</span>
+<span id="cb13-291"><a href="#cb13-291"></a></span>
+<span id="cb13-292"><a href="#cb13-292"></a>sns.lineplot(data<span class="op">=</span>long_group, x<span class="op">=</span><span class="st">"time"</span>, y<span class="op">=</span><span class="st">"hba1c"</span>,</span>
+<span id="cb13-293"><a href="#cb13-293"></a>    units<span class="op">=</span><span class="st">"patient"</span>,</span>
+<span id="cb13-294"><a href="#cb13-294"></a>    estimator<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb13-295"><a href="#cb13-295"></a>    marker<span class="op">=</span><span class="st">"o"</span>,</span>
+<span id="cb13-296"><a href="#cb13-296"></a>    hue<span class="op">=</span><span class="st">"group"</span></span>
+<span id="cb13-297"><a href="#cb13-297"></a>)</span>
+<span id="cb13-298"><a href="#cb13-298"></a>t, p <span class="op">=</span> ttest_rel( df[<span class="st">"before"</span>], df[<span class="st">"after"</span>])</span>
+<span id="cb13-299"><a href="#cb13-299"></a>title <span class="op">=</span> <span class="ss">f"Discover new variables"</span></span>
+<span id="cb13-300"><a href="#cb13-300"></a>plt.title(title)</span>
+<span id="cb13-301"><a href="#cb13-301"></a>plt.show()</span>
+<span id="cb13-302"><a href="#cb13-302"></a><span class="in">```</span></span>
+<span id="cb13-303"><a href="#cb13-303"></a></span>
+<span id="cb13-304"><a href="#cb13-304"></a>But is this also a clinically relevant effect? We should always be careful to distinguish statistical significance from medical significance. </span>
+<span id="cb13-305"><a href="#cb13-305"></a></span>
+<span id="cb13-306"><a href="#cb13-306"></a></span>
+<span id="cb13-307"><a href="#cb13-307"></a>::: {.callout-important}</span>
+<span id="cb13-308"><a href="#cb13-308"></a><span class="fu">## Summary</span></span>
+<span id="cb13-309"><a href="#cb13-309"></a><span class="ss">- </span>Don't cut barplots !</span>
+<span id="cb13-310"><a href="#cb13-310"></a><span class="ss">- </span>Show variability in data (clarify SE or SD)</span>
+<span id="cb13-311"><a href="#cb13-311"></a><span class="ss">- </span>better show the range $\to$ boxplots &amp; violinplots</span>
+<span id="cb13-312"><a href="#cb13-312"></a><span class="ss">- </span>beware of smoothing violins (especially for small data sets)</span>
+<span id="cb13-313"><a href="#cb13-313"></a><span class="ss">- </span>show all the data if you can $\to$ stripplot</span>
+<span id="cb13-314"><a href="#cb13-314"></a><span class="ss">- </span>multimodal distribution &amp; additional group variables?</span>
+<span id="cb13-315"><a href="#cb13-315"></a><span class="ss">- </span>data exploration is visual and iterative</span>
+<span id="cb13-316"><a href="#cb13-316"></a><span class="ss">- </span>statistical significance $\ne$ medical significance</span>
+<span id="cb13-317"><a href="#cb13-317"></a>:::</span>
+</code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>Made with Quatro</p>
+</div>   
+    <div class="nav-footer-center">
+      <ul class="footer-items list-unstyled">
+    <li class="nav-item">
+    <a class="nav-link" href="../general/about.html">
+<p>About</p>
+</a>
+  </li>  
+</ul>
+    </div>
+    <div class="nav-footer-right">
+      <ul class="footer-items list-unstyled">
+    <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/thomasmanke/blog">
+      <i class="bi bi-github" role="img">
+</i> 
+    </a>
+  </li>  
+</ul>
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

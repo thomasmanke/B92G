@@ -4,7 +4,7 @@
     "href": "tutorials/index.html",
     "title": "Tutorials",
     "section": "",
-    "text": "Order By\n      Default\n      \n        Title\n      \n      \n        Date - Oldest\n      \n      \n        Date - Newest\n      \n      \n        Author\n      \n    \n  \n    \n      \n      \n    \n\n\n\n\n\n\n\n\n\n\nControlled Vocabulary and Ontologies\n\n\n\ncontrolled vocabulary\n\nontologies\n\nICD\n\nLOINC\n\nSnomed\n\nECL\n\n\n\nPlaying with FHIR\n\n\n\nThomas Manke\n\n\nJun 2, 2026\n\n\n\n\n\n\nNo matching items"
+    "text": "Order By\n      Default\n      \n        Title\n      \n      \n        Date - Oldest\n      \n      \n        Date - Newest\n      \n      \n        Author\n      \n    \n  \n    \n      \n      \n    \n\n\n\n\n\n\n\n\n\n\nControlled Vocabulary and Ontologies\n\n\n\ncontrolled vocabulary\n\nontologies\n\nICD\n\nLOINC\n\nSnomed\n\nECL\n\n\n\nPlaying with FHIR\n\n\n\nThomas Manke\n\n\nJun 2, 2026\n\n\n\n\n\n\n\n\n\n\n\nData Visualization Tasks\n\n\n\nbarplot\n\n\n\nImprove a plot\n\n\n\nThomas Manke\n\n\nJun 8, 2026\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "tutorials/00_ControlledVocabulary.html",
@@ -39,6 +39,202 @@
     "href": "lectures/index.html",
     "title": "Lectures",
     "section": "",
-    "text": "No matching items"
+    "text": "Order By\n      Default\n      \n        Title\n      \n      \n        Date - Oldest\n      \n      \n        Date - Newest\n      \n      \n        Author\n      \n    \n  \n    \n      \n      \n    \n\n\n\n\n\n\n\n\nData Visualization\n\n\n\nbarplot\n\n\n\nHelpful Bars and Hurdles\n\n\n\nThomas Manke\n\n\nJun 10, 2026\n\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "lectures/01_DataExploration.html",
+    "href": "lectures/01_DataExploration.html",
+    "title": "Data Exploration",
+    "section": "",
+    "text": "Code\nimport requests\nimport numpy as np\nimport matplotlib.pyplot as plt\nimport pandas as pd\nimport seaborn as sns\nfrom scipy.stats import ttest_ind, ttest_rel"
+  },
+  {
+    "objectID": "lectures/01_DataExploration.html#software-first",
+    "href": "lectures/01_DataExploration.html#software-first",
+    "title": "Data Exploration",
+    "section": "",
+    "text": "Code\nimport requests\nimport numpy as np\nimport matplotlib.pyplot as plt\nimport pandas as pd\nimport seaborn as sns\nfrom scipy.stats import ttest_ind, ttest_rel"
+  },
+  {
+    "objectID": "lectures/01_DataExploration.html#generate-synthetic-data",
+    "href": "lectures/01_DataExploration.html#generate-synthetic-data",
+    "title": "Data Exploration",
+    "section": "Generate synthetic data",
+    "text": "Generate synthetic data\nThis data set will be used throughout this notebook.\nThe idea is to simulate the effect of a hypothetical drug treatment to lower HbA1c levels in patients with diabetes. We will then explore different ways to visualize the data and interpret the results.\n\n\nCode\nnp.random.seed(42)\nn = 30\n\n# synthetic HbA1c-Werte [in %]\n# normal 5%, ehoeht: 6%, Diabetes mellitus: &gt; 6.5%, 8% Handlungsbedarf\nbefore = np.random.normal(loc=9.0, scale=1, size=n)\n\n# Two treatmentgroups\ngroup = np.random.choice([\"A\", \"B\"], size=n, p=[0.25, 0.75])\n\nafter = before.copy()\nafter[group == \"A\"] -= np.random.normal(0.5, 0.1, size=(group == \"A\").sum())\nafter[group == \"B\"] += np.random.normal(0.0, 0.1, size=(group == \"B\").sum())\n\ndf = pd.DataFrame({\n    \"patient\": np.arange(n),\n    \"before\": before,\n    \"after\": after,\n    \"group\": group\n})\n\ndf[[\"before\",\"after\"]].head()\n#print(df[[\"before\", \"after\"]].mean())\n#df.groupby(\"group\").describe().T\n\n\n\n\n\n\n\n\n\nbefore\nafter\n\n\n\n\n0\n9.496714\n9.594269\n\n\n1\n8.861736\n8.813818\n\n\n2\n9.647689\n9.215381\n\n\n3\n10.523030\n10.504464\n\n\n4\n8.765847\n8.204679\n\n\n\n\n\n\n\n\n\n\n\n\n\nNoteQuestions\n\n\n\n\nWhy do we need to summarize this data?\nWhy do we need data visualization\nWhich tools?"
+  },
+  {
+    "objectID": "lectures/01_DataExploration.html#data-reshaping",
+    "href": "lectures/01_DataExploration.html#data-reshaping",
+    "title": "Data Exploration",
+    "section": "Data Reshaping",
+    "text": "Data Reshaping\nFor some visualization tasks it will be better to have data in a long format. We will use the melt function from pandas to reshape the data. I use a categorical time variable to distinguish before and after treatment.\n\n\nCode\nlong = df.melt(\n        id_vars=[\"patient\"],\n        value_vars=[\"before\", \"after\"],\n        var_name=\"time\",\n        value_name=\"hba1c\"\n    )\n\n# define a consitent order for the time variable\nORDER = [\"before\", \"after\"]\nlong[\"time\"] = pd.Categorical(\n    long[\"time\"],\n    categories=ORDER,\n    ordered=True\n)\n\nlong.head()\n\n\n\n\n\n\n\n\n\npatient\ntime\nhba1c\n\n\n\n\n0\n0\nbefore\n9.496714\n\n\n1\n1\nbefore\n8.861736\n\n\n2\n2\nbefore\n9.647689\n\n\n3\n3\nbefore\n10.523030\n\n\n4\n4\nbefore\n8.765847"
+  },
+  {
+    "objectID": "lectures/01_DataExploration.html#barplots",
+    "href": "lectures/01_DataExploration.html#barplots",
+    "title": "Data Exploration",
+    "section": "Barplots",
+    "text": "Barplots\n\n\nCode\nsns.barplot(data=long, x=\"time\", y=\"hba1c\", errorbar=None)\nplt.ylim(8.6, 8.9)\nplt.title(\"Clear effect on Mean\")\nplt.show()\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nCautionWhat is wrong with this plot ?\n\n\n\n\n\n\n\n\nCode\nsns.barplot(data=long, x=\"time\", y=\"hba1c\", errorbar=None)\nplt.title(\"Almost no effect\")\nplt.show()\n\n\n\n\n\n\n\n\n\nWe tend to give meaning to barplot length, rather than position.\nUntil now we have focused on the mean values. But to discuss any potential treatment effect we will also have to analyse (and visualize) the variability.\n\n\nCode\nsns.barplot(data=long, x=\"time\", y=\"hba1c\", errorbar='se')\nplt.title(\"Mean ± SE. Perhaps a small effect?\")\nplt.show()\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nNoteVariance, Standard Deviation & Standard Error\n\n\n\n\n\nVariance Estimate: \\[\n\\sigma^2 = \\frac{1}{N-1} \\sum_{i=1}^N (x_i - \\bar{x})^2 \\approx E[(X - \\mu)^2]\n\\]\nStandard Deviation (SD): \\[\n\\sigma = \\sqrt{\\sigma^2}\n\\]\nStandard Error (SE): \\[\nSE = \\frac{\\sigma}{\\sqrt{N}} \\longrightarrow 0 \\text{ for } N \\rightarrow \\infty\n\\]\n\n\n\nThe standard error (SE) of the mean is not a measure of variability in the data. For more data it will approach zero. The standard deviation (SD) is a better measure of variability in the data.\n\n\nCode\nsns.barplot(data=long, x=\"time\", y=\"hba1c\", errorbar='sd')\nplt.title(\"Mean ± SD. Probably no effect.\")\nplt.show()\n\n\n\n\n\n\n\n\n\n\n\nCode\n# you are allowed to remove zero with boxplots\nsns.boxplot(data=long, x=\"time\", y=\"hba1c\")\nplt.title(\"Maybe some effect after all?\")\nplt.show()\n\n\n\n\n\n\n\n\n\n\n\nCode\nsns.violinplot(data=long, x=\"time\", y=\"hba1c\")\nplt.title(\"Violin plot: Beware of smoothing artefacts!\")\nplt.show()\n\n\n\n\n\n\n\n\n\nThe violin plot employs some smoothing to visyualize the distribution. For small data sets this can be misleading. If possible, it is always better to show the data.\nA statistical test can be used to support the visual impression.\n\n\nCode\nsns.stripplot( data=long, x=\"time\", y=\"hba1c\",\n    # optional: switch off jitter\n    jitter=False\n)\n\nt, p = ttest_ind( df[\"before\"], df[\"after\"])\ntitle = f\"Show data & test. p-value = {p:.5f}\"\nplt.title(title)\nplt.show()\n\n\n\n\n\n\n\n\n\nIn the above we have assumed independent samples. But since we have repeated measures (before and after treatment) we should use a paired test. Here I also visualize the dependencies by connecting related data points explicitly with lines. This is only possible if we have a unique identifier for each patient (here: patient variable).\n\n\nCode\nsns.lineplot(data=long, x=\"time\", y=\"hba1c\",\n    units=\"patient\",\n    estimator=None,\n    marker=\"o\"\n)\nt, p = ttest_rel( df[\"before\"], df[\"after\"])\ntitle = f\"Data Dependencies? p-value {p:.5f}\"\nplt.title(title)\nplt.show()\n\n\n\n\n\n\n\n\n\nThere seems to be a significant reduction in HbA1c levels for some patients. Are there other variables that can explain this difference?\n\n\nCode\nlong_group = df.melt(\n        id_vars=[\"patient\",\"group\"],\n        value_vars=[\"before\", \"after\"],\n        var_name=\"time\",\n        value_name=\"hba1c\"\n    )\n\nORDER = [\"before\", \"after\"]\nlong_group[\"time\"] = pd.Categorical(\n    long_group[\"time\"],\n    categories=ORDER,\n    ordered=True\n)\n\nsns.lineplot(data=long_group, x=\"time\", y=\"hba1c\",\n    units=\"patient\",\n    estimator=None,\n    marker=\"o\",\n    hue=\"group\"\n)\nt, p = ttest_rel( df[\"before\"], df[\"after\"])\ntitle = f\"Discover new variables\"\nplt.title(title)\nplt.show()\n\n\n\n\n\n\n\n\n\nBut is this also a clinically relevant effect? We should always be careful to distinguish statistical significance from medical significance.\n\n\n\n\n\n\nImportantSummary\n\n\n\n\nDon’t cut barplots !\nShow variability in data (clarify SE or SD)\nbetter show the range \\(\\to\\) boxplots & violinplots\nbeware of smoothing violins (especially for small data sets)\nshow all the data if you can \\(\\to\\) stripplot\nmultimodal distribution & additional group variables?\ndata exploration is visual and iterative\nstatistical significance \\(\\ne\\) medical significance"
+  },
+  {
+    "objectID": "tutorials/01_DataViz.html",
+    "href": "tutorials/01_DataViz.html",
+    "title": "Data Visualization Tasks",
+    "section": "",
+    "text": "Code\nimport requests\nimport warnings\nimport numpy as np\nimport matplotlib.pyplot as plt\nimport pandas as pd\nimport seaborn as sns\n\nFIGSIZE = (7, 4)"
+  },
+  {
+    "objectID": "tutorials/01_DataViz.html#imports",
+    "href": "tutorials/01_DataViz.html#imports",
+    "title": "Data Visualization Tasks",
+    "section": "",
+    "text": "Code\nimport requests\nimport warnings\nimport numpy as np\nimport matplotlib.pyplot as plt\nimport pandas as pd\nimport seaborn as sns\n\nFIGSIZE = (7, 4)"
+  },
+  {
+    "objectID": "tutorials/01_DataViz.html#data-and-definitons",
+    "href": "tutorials/01_DataViz.html#data-and-definitons",
+    "title": "Data Visualization Tasks",
+    "section": "Data and Definitons",
+    "text": "Data and Definitons\n\n\nCode\nfrom ucimlrepo import fetch_ucirepo \n  \ndataset = fetch_ucirepo(id=544) \nprint('keys: ', dataset.keys())  # data, metadata, variables\ndf = dataset.data.original \ncat_cols = df.select_dtypes(exclude='number').columns\n\nprint('categorical variables:', cat_cols)\n\n\nkeys:  dict_keys(['data', 'metadata', 'variables'])\ncategorical variables: Index(['Gender', 'family_history_with_overweight', 'FAVC', 'CAEC', 'SMOKE',\n       'SCC', 'CALC', 'MTRANS', 'NObeyesdad'],\n      dtype='object')"
+  },
+  {
+    "objectID": "tutorials/01_DataViz.html#task-1",
+    "href": "tutorials/01_DataViz.html#task-1",
+    "title": "Data Visualization Tasks",
+    "section": "Task 1",
+    "text": "Task 1\n\n\nCode\nvar1=\"NObeyesdad\"\nvar2=\"Gender\"\nct = pd.crosstab(df[var1], df[var2])\nplt.figure(figsize=FIGSIZE)\nsns.heatmap(ct, annot=True, fmt=\"d\", cmap=\"RdYlGn\")\nplt.show()\n\n\n\n\n\n\n\n\n\n\nExplain the problems with this plot\nimplement improvements to visualize the counts.\nnormalize the counts to visualize the joint distribution over the two variables\nreplace var1 with “SCC” (Monitoring Caloric Intake) and prepare a “Mosaic plot” to visualize the counts"
+  },
+  {
+    "objectID": "tutorials/01_DataViz.html#task-2-pie2bar",
+    "href": "tutorials/01_DataViz.html#task-2-pie2bar",
+    "title": "Data Visualization Tasks",
+    "section": "Task 2: Pie2Bar",
+    "text": "Task 2: Pie2Bar\nMarginal and conditional distributions for categorical variables are often visualized as Pie charts.\nThe following would visualize the proportions of obesity categories given a gender. \\[\nPr(\\mbox{Obesity Category}| \\mbox{Gender})\n\\]\n\n\nCode\nvar1, var2 = \"Gender\", \"NObeyesdad\"\ntab = pd.crosstab(df[var1], df[var2], normalize=\"index\")\n\n# notice transposition tab.T\naxes = tab.T.plot.pie(\n    subplots=True,\n    figsize=FIGSIZE,\n    legend=False,\n)\nplt.show()\n\n\n\n\n\nConditional distributions of obesity by gender\n\n\n\n\nHowever this is not a very good visual encoding.\n\nExplain why pie charts are difficult to interpret and compare visually.\nReplace the pie chart with a stacked barplot to compare the distribution of obesity category by Gender"
+  },
+  {
+    "objectID": "tutorials/01_DataViz.html#task-3-risk-factors-upsets",
+    "href": "tutorials/01_DataViz.html#task-3-risk-factors-upsets",
+    "title": "Data Visualization Tasks",
+    "section": "Task 3: Risk Factors & UpSets",
+    "text": "Task 3: Risk Factors & UpSets\nSeveral variables in the obesity dataset describe patient-level risk factors or behaviours. They can be encoded as Boolean variables and they define sets of individuals based on the Boolean status (True / False).\n\n\nCode\nfrom venn import venn\n\nrisk_vars = [\"family_history_with_overweight\", \"FAVC\", \"SMOKE\", \"SCC\"]\nrisk_bool = df[risk_vars].eq(\"yes\") # convert to Boolean\nrisk_bool.head(3)\n\n# construct sets of elements (= individuals)\nelements = risk_bool.index # all indicies of risk_bool\nvenn_sets = {\n    col: set(elements[risk_bool[col]])\n    for col in risk_bool.columns\n}\n\nplt.figure(figsize=FIGSIZE)\nvenn(venn_sets)\nplt.title(\"Venn Diagram\")\nplt.show()\n\n\n&lt;Figure size 1050x600 with 0 Axes&gt;\n\n\n\n\n\n\n\n\n\nBased on this Venn Diagram\n\nDetermine the total elements (individuals) in each set\nHow many individuals smoke and monitor their caloric intake (SCC=True)\nExplain why a Venn diagram becomes hard to read when several sets are compared\nPrepare an UpSet plot for the same analysis and sort by intersect size (cardinality)\n\nYou can use this package and data preparation\n\n\nCode\n# if needed\n# !pip install upsetplot\n\nfrom upsetplot import UpSet, from_indicators\n\nwarnings.filterwarnings(\n    \"ignore\",\n    category=FutureWarning,\n    module=\"upsetplot\"\n)\n\n# define multi-index of Booleans\nupset_data = from_indicators(risk_bool.columns, risk_bool)\n# count multi-index\nupset_counts = upset_data.index.value_counts()"
+  },
+  {
+    "objectID": "lectures/00_VisualizationBars.html",
+    "href": "lectures/00_VisualizationBars.html",
+    "title": "Data Visualization",
+    "section": "",
+    "text": "Code\nimport numpy as np\nimport matplotlib.pyplot as plt\nimport pandas as pd\nimport seaborn as sns\n\nFIGSIZE = (7, 4)"
+  },
+  {
+    "objectID": "lectures/00_VisualizationBars.html#scenario",
+    "href": "lectures/00_VisualizationBars.html#scenario",
+    "title": "Data Visualization",
+    "section": "Scenario",
+    "text": "Scenario\nA health minister was told that hospital-associated infections are a major concern in health care. She orders a review of all hospitals who submit the conditions of all their current patients in standardized ICD-10 format.\nThe minister asks:\n\n“Which hospital looks most worrying in this report?”\n\n\nGroup Challenge\nImagine you are the analyst team preparing a short briefing for the minister.\nYou have obtained a long table of patient-level data from all hospitals in the following format (first few rows shown)\n\n\nCode\nrng = np.random.default_rng(42)\n\n# hospital sizes\nN = {\"A\": 10000, \"B\": 5000, \"C\": 500}\n\n# infection rates\np = {\n    \"A\": 0.10,  \n    \"B\": 0.12,\n    \"C\": 0.12\n}\n\ndfs = []\n\nfor hospital, n in N.items():\n\n    condition = rng.choice(\n        [\"Y95\", \"Other\"],\n        size=n,\n        p=[p[hospital], 1 - p[hospital]]\n    )\n\n    dfs.append(\n        pd.DataFrame({\n            \"hospital\": hospital,\n            \"condition\": condition\n        })\n    )\n\ndf = pd.concat(dfs, ignore_index=True)\ndf.head()\n\n\n\n\n\n\n\n\n\nhospital\ncondition\n\n\n\n\n0\nA\nOther\n\n\n1\nA\nOther\n\n\n2\nA\nOther\n\n\n3\nA\nOther\n\n\n4\nA\nY95\n\n\n\n\n\n\n\nFor simplicity:\n\neach patient has only 1 condition and is represented by 1 row\nthere are thousands of ICD codes, but we have summarized to only two levels: “Y95” and “Other”\n\n\n\n\n\n\n\nImportantGroup Task (5min)\n\n\n\n\nWhat is the meaning for ICD-10 code “Y95” ?\nWhat type of variables are available in the data\nHow should we summarize the finding?"
+  },
+  {
+    "objectID": "lectures/00_VisualizationBars.html#base-line---prevalence",
+    "href": "lectures/00_VisualizationBars.html#base-line---prevalence",
+    "title": "Data Visualization",
+    "section": "Base line - prevalence",
+    "text": "Base line - prevalence\nFirst we would probably want to have a baseline of\n\n\nCode\ncondition_table = df[\"condition\"].value_counts(dropna=True)\nprint(condition_table)\n\n\ncondition\nOther    13887\nY95       1613\nName: count, dtype: int64\n\n\nNotice: for simplicity, in this example there are only two conditions (“Y95” and “Other”). In general there would be many more conditions.\nIt might be easier to report this as proportions\n\n\nCode\ncondition_table = df[\"condition\"].value_counts(dropna=True, normalize=True)\nprint(condition_table)\n\n\ncondition\nOther    0.895935\nY95      0.104065\nName: proportion, dtype: float64\n\n\nNotice: This is called the marginal distribution, because we ignore the variable hospital.\nJargon: summed over (=marginalized) over all hospitals"
+  },
+  {
+    "objectID": "lectures/00_VisualizationBars.html#conditional-distribution",
+    "href": "lectures/00_VisualizationBars.html#conditional-distribution",
+    "title": "Data Visualization",
+    "section": "Conditional Distribution",
+    "text": "Conditional Distribution\nThe minister (and we) suspect a different number of patients with condition=“Y95” in different hopsitals. Let’s first filter the data for the condition of interest.\n\n\nCode\ndf_sub = df[df[\"condition\"] == \"Y95\"]\ndf_sub.head()\n\n\n\n\n\n\n\n\n\nhospital\ncondition\n\n\n\n\n4\nA\nY95\n\n\n17\nA\nY95\n\n\n27\nA\nY95\n\n\n51\nA\nY95\n\n\n68\nA\nY95\n\n\n\n\n\n\n\nJargon: Such a filter step is also called conditioning\nNow let’s summarize this subset of patient-wise data per hospital (and normalize)\n\n\nCode\n# summarize by counting\ncount_summary = df_sub[\"hospital\"].value_counts(dropna=True, normalize=True)\nprint(\"Conditional Distribution:\\n\", count_summary)\n\n\nConditional Distribution:\n hospital\nA    0.610043\nB    0.352139\nC    0.037818\nName: proportion, dtype: float64\n\n\n\n\nCode\n# This answers P(hospital|condition)\ncount_summary.plot.pie(autopct=\"%1.1f%%\")\n# bars and stacked bars would be better still\n# count_summary.plot(kind=\"bar\")\n# count_summary.to_frame().T.plot(kind=\"bar\", stacked=True)\nplt.title('Conditional Distribution (condition = Y95)')\nplt.show()\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nImportantQuestions\n\n\n\n\nShould we just report this plot to the minister?\nWhich hospital is the worst?"
+  },
+  {
+    "objectID": "lectures/00_VisualizationBars.html#marginal-distribution",
+    "href": "lectures/00_VisualizationBars.html#marginal-distribution",
+    "title": "Data Visualization",
+    "section": "Marginal Distribution",
+    "text": "Marginal Distribution\nJust like with the prior probability for condition we should also take into account the number of patients per hospital. This is equivalent to summing (marginalizing) over all conditions\n\\[\nPr(\\mbox{Hospital}) = \\sum_{\\mbox{condition}} Pr(\\mbox{Hospital, condition})\n\\]\n\n\nCode\nmarg_summary = df[\"hospital\"].value_counts()\n\nfig, ax = plt.subplots(1, 2, figsize=FIGSIZE)\ncount_summary.plot.pie(autopct=\"%1.1f%%\", ax=ax[0])\nmarg_summary.plot.pie(autopct=\"%1.1f%%\", ax=ax[1])\nax[0].set_title('Conditional Distribution \\n (cond=\"Y95\")')\nax[1].set_title('Marginal Distribution \\n (cond=\"All)')\nplt.show()\n\n\n\n\n\nMarginal Distributions change our expectation\n\n\n\n\n\n\n\n\n\n\nNoteConditional Challenges\n\n\n\n\nMarginal distributions define our expectations: more patients \\(\\to\\) more diseases\nP(Hosptial|Condition) \\(\\ne\\) Pr(Condition|Hospital)\n\n\n\n\n\nCode\n# this will only calculate row margins, since each column (hospital) is normalized to 1\ntab = pd.crosstab(df[\"condition\"], df[\"hospital\"], \n    normalize=\"columns\", margins=True)\nfig, axes = plt.subplots( 2, 2, figsize=(8, 8))\naxes = axes.flatten()\n\nfor ax, col in zip(axes, tab.columns):\n    tab[col].plot.pie(\n        ax=ax,\n        legend=False,\n        explode=[0.1, 0.0]\n    )\n    ax.set_title(col)\n\nplt.tight_layout()\nplt.show()\n\n\n\n\n\nP(condition|Hospital)\n\n\n\n\n\n\n\n\n\n\nNotePie Challenges\n\n\n\n\nnot good for many categories\nnot good for comparisons (areas)"
+  },
+  {
+    "objectID": "lectures/00_VisualizationBars.html#joint-distribution",
+    "href": "lectures/00_VisualizationBars.html#joint-distribution",
+    "title": "Data Visualization",
+    "section": "Joint Distribution",
+    "text": "Joint Distribution\nConditional Distributions are confusing. Let’s try to visualize all proportions at once\n\n\nCode\nct = pd.crosstab(df[\"hospital\"], df[\"condition\"], normalize=\"all\")\nplt.figure(figsize=FIGSIZE)\nsns.heatmap(ct, annot=True, fmt=\".3f\", cmap=\"RdYlGn\")\nplt.show()\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nImportantQuestion\n\n\n\nWhat is the problem with this visualization?\n\n\n\nColour-encoding of numbers has to be done carefully.\nConsider colour blindness, meaning of divergent colours?\narea has no meaning\n\n\n\nCode\nplt.figure(figsize=FIGSIZE)\nsns.heatmap(ct, annot=True, fmt=\".3f\", cmap=\"Blues\")\nplt.show()\n\n\n\n\n\nBetter choice of colours\n\n\n\n\nAnother useful encoding can be by area size (Mosaic plot)\n\n\nCode\nfrom statsmodels.graphics.mosaicplot import mosaic\n\n#plt.figure(figsize=FIGSIZE)\nmosaic(df, index=[\"hospital\", \"condition\"], gap=0.01, title=\"Mosaic Plot\")\nplt.show()\n\n\n\n\n\nArea-encoding can also be useful\n\n\n\n\n\n\n\n\n\n\nTipJoint and Margins\n\n\n\n\n\nSometimes it is useful to show the joint distributions with the margins\n\n\nCode\njdm = pd.crosstab(df[\"hospital\"], df[\"condition\"], normalize=\"all\", margins=True)\nprint('Joint Distribution with Margins: \\n', jdm)\n\n\nJoint Distribution with Margins: \n condition     Other       Y95       All\nhospital                               \nA          0.581677  0.063484  0.645161\nB          0.285935  0.036645  0.322581\nC          0.028323  0.003935  0.032258\nAll        0.895935  0.104065  1.000000\n\n\nBased on the margins we can also calculate the expected proportion of in a given cell.\nFor example:\n\\[\n\\begin{array}{ll}\nPr(\\mbox{Hospital=A and Condition=Y95}) = \\\\\nPr(\\mbox{Hospital=A}) * Pr(\\mbox{Condition=Y95}) = \\\\\n0.645 * 0.104 = 0.06708\\\\\n\\end{array}\n\\]"
+  },
+  {
+    "objectID": "lectures/00_VisualizationBars.html#final-suggestion",
+    "href": "lectures/00_VisualizationBars.html#final-suggestion",
+    "title": "Data Visualization",
+    "section": "Final Suggestion",
+    "text": "Final Suggestion\n\n\nCode\n# this will only calculate column margins, since all rows (index) will be normalized to 1\ntab = pd.crosstab(df[\"hospital\"], df[\"condition\"], margins=True, normalize=\"index\")\ntab.plot.bar(stacked=True)\nplt.legend(bbox_to_anchor=(1.05, 1), title=\"Conditions\")\nplt.title('Figure for Minister')\nplt.tight_layout()\n\n\n\n\n\nBarplots enable better comparisons\n\n\n\n\n\n\n\n\n\n\nImportantConclusions\n\n\n\nData Analysis shows that the hopsital-associated infection (“Y95”) are very similar across hospitals and similar to the overall average rate. In hospital “C” there is a slightly higher level. It remains to be seen if this is “statistical significant”."
+  },
+  {
+    "objectID": "lectures/00_VisualizationBars.html#breaking-news",
+    "href": "lectures/00_VisualizationBars.html#breaking-news",
+    "title": "Data Visualization",
+    "section": "Breaking News",
+    "text": "Breaking News\nA newspaper heard about our study and got access to the same data. The following article was published the next day:\n\n\n\n\n\n\nWarningShocking Revelation\n\n\n\nA confidential goverment report found that hospital “B” has much higher rate of infections than the national average. The health minister did not respond to our questions.\n\n\nCode\ntab_sub = 100*tab.drop(columns=[\"A\",\"C\"], index=\"Other\")\nax = tab_sub.T.plot.bar(legend=None, color=\"grey\")\nax.set_ylim([10,11.5])\nax.set_yticks([10, 10.5, 11])\n\nax.set_ylabel(\"Infection Rate\")\nax.patches[0].set_color(\"darkorange\")\nplt.title('Scandal at Hospital B: worse than National Average!!')\n\nplt.tight_layout()\nplt.show()\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nImportantQuestion\n\n\n\nHow would you comment on this article?"
+  },
+  {
+    "objectID": "lectures/00_VisualizationBars.html#summary",
+    "href": "lectures/00_VisualizationBars.html#summary",
+    "title": "Data Visualization",
+    "section": "Summary",
+    "text": "Summary\n\nVisualization is important\nVisualization can mislead\nConditioning can be confusing\nMarginal Models set expectations\nAvoid Pie charts\nNeed statistical model"
+  },
+  {
+    "objectID": "lectures/00_VisualizationBars.html#python-firsts",
+    "href": "lectures/00_VisualizationBars.html#python-firsts",
+    "title": "Data Visualization",
+    "section": "Python Firsts",
+    "text": "Python Firsts\n\n\nCode\nprint(f\"df.shape {df.shape}\")\nprint(f\"df.descibe \\n{df.describe()}\")\n\n\ndf.shape (15500, 2)\ndf.descibe \n       hospital condition\ncount     15500     15500\nunique        3         2\ntop           A     Other\nfreq      10000     13887\n\n\n… this is important for data management but not for the minster."
+  },
+  {
+    "objectID": "lectures/00_VisualizationBars.html#prevalence---a-base-line",
+    "href": "lectures/00_VisualizationBars.html#prevalence---a-base-line",
+    "title": "Data Visualization",
+    "section": "Prevalence - a base line",
+    "text": "Prevalence - a base line\nFirst we would probably want to have a baseline of\n\n\nCode\ncondition_table = df[\"condition\"].value_counts(dropna=True)\nprint(condition_table)\n\n\ncondition\nOther    13887\nY95       1613\nName: count, dtype: int64\n\n\nIt might be easier to report this as proportions\n\n\nCode\ncondition_table = df[\"condition\"].value_counts(dropna=True, normalize=True)\nprint(condition_table)\n\n\ncondition\nOther    0.895935\nY95      0.104065\nName: proportion, dtype: float64\n\n\nNotice: This is called the marginal distribution, because we ignore the variable hospital.\nJargon: summed over (=marginalized) over all hospitals"
+  },
+  {
+    "objectID": "lectures/00_VisualizationBars.html#prior-distribution---a-baseline",
+    "href": "lectures/00_VisualizationBars.html#prior-distribution---a-baseline",
+    "title": "Data Visualization",
+    "section": "Prior Distribution - a baseline",
+    "text": "Prior Distribution - a baseline\nFirst we would probably want to have a baseline of proportions (regardless of hospital)\n\n\nCode\ncondition_table = df[\"condition\"].value_counts(dropna=True)\nprint(condition_table)\n\n\ncondition\nOther    13887\nY95       1613\nName: count, dtype: int64\n\n\nJargon:\nBecause we ignore the variable hospital this amounts to summing over all hospitals (= marginalization)\n\\[\nN(\\mbox{Condition}) = \\sum_{\\mbox{Hospital}} N(\\mbox{Hospital, Condition})\n\\]\nRather than numbers, it might be easier to report this as proportions\n\n\nCode\ncondition_table = df[\"condition\"].value_counts(dropna=True, normalize=True)\nprint(condition_table)\n\n\ncondition\nOther    0.895935\nY95      0.104065\nName: proportion, dtype: float64\n\n\nSo the prior probability for condition=“Y95” is about 10%."
+  },
+  {
+    "objectID": "lectures/00_VisualizationBars.html#suggestion",
+    "href": "lectures/00_VisualizationBars.html#suggestion",
+    "title": "Data Visualization",
+    "section": "Suggestion",
+    "text": "Suggestion\n\n\nCode\ntab.T.plot.bar(stacked=True)\nplt.legend(bbox_to_anchor=(1.05, 1), title=\"Conditions\")\nplt.title('Figure for Minister')\nplt.tight_layout()\nplt.show()\n\n\n\n\n\nBarplots for clearer comparisons and communication\n\n\n\n\n\n\n\n\n\n\nNoteConclusions\n\n\n\nData analysis shows that the rates of hospital-associated infection (ICD code “Y95”) are very similar across hospitals and similar to the overall average rate. In hospital “C” there is a slightly higher level."
+  },
+  {
+    "objectID": "lectures/00_VisualizationBars.html#appendix-joint-distributions",
+    "href": "lectures/00_VisualizationBars.html#appendix-joint-distributions",
+    "title": "Data Visualization",
+    "section": "Appendix: Joint Distributions",
+    "text": "Appendix: Joint Distributions\nLet’s try to visualize all proportions at once\n\n\nCode\nct = pd.crosstab(df[\"hospital\"], df[\"condition\"], normalize=\"all\")\nplt.figure(figsize=FIGSIZE)\nsns.heatmap(ct, annot=True, fmt=\".3f\", cmap=\"RdYlGn\")\nplt.show()\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nImportantQuestion\n\n\n\nWhat is the problem with this visualization?\n\n\n\nColour-encoding of numbers has to be done carefully.\nConsider colour blindness, meaning of divergent colours?\narea has no meaning\n\n\n\nCode\nplt.figure(figsize=FIGSIZE)\nsns.heatmap(ct, annot=True, fmt=\".3f\", cmap=\"Blues\")\nplt.show()\n\n\n\n\n\nBetter choice of colours\n\n\n\n\nAnother useful encoding can be by area size (Mosaic plot)\n\n\nCode\nfrom statsmodels.graphics.mosaicplot import mosaic\n\n#plt.figure(figsize=FIGSIZE)\nmosaic(df, index=[\"hospital\", \"condition\"], gap=0.01, title=\"Mosaic Plot\")\nplt.show()\n\n\n\n\n\nArea-encoding can also be useful\n\n\n\n\n\n\n\n\n\n\nTipJoint and Margins\n\n\n\n\n\nSometimes it is useful to show the joint distributions with the margins\n\n\nCode\njdm = pd.crosstab(df[\"hospital\"], df[\"condition\"], normalize=\"all\", margins=True)\nprint('Joint Distribution with Margins: \\n', jdm)\n\n\nJoint Distribution with Margins: \n condition     Other       Y95       All\nhospital                               \nA          0.581677  0.063484  0.645161\nB          0.285935  0.036645  0.322581\nC          0.028323  0.003935  0.032258\nAll        0.895935  0.104065  1.000000\n\n\nBased on the margins and a model (independence of variables!) we can also calculate the expected proportion of in a given cell.\nFor example:\n\\[\n\\begin{array}{ll}\nPr(\\mbox{Hospital=A, Condition=Y95}) = \\\\\nPr(\\mbox{Hospital=A}) * Pr(\\mbox{Condition=Y95}) = \\\\\n0.645 * 0.104 = 0.06708 &gt; 0.645161 \\\\\n\\end{array}\n\\]"
+  },
+  {
+    "objectID": "lectures/00_VisualizationBars.html#prior-distributions---baselines",
+    "href": "lectures/00_VisualizationBars.html#prior-distributions---baselines",
+    "title": "Data Visualization",
+    "section": "Prior Distributions - baselines",
+    "text": "Prior Distributions - baselines\nFirst we would want to have a baseline for conditions (regardless of hospital)\n\n\nCode\ncondition_table = df[\"condition\"].value_counts(dropna=True)\nprint(condition_table)\n\n\ncondition\nOther    13887\nY95       1613\nName: count, dtype: int64\n\n\nJargon:\nBecause we ignore the variable hospital this amounts to summing each condition over all hospitals (= marginalization)\n\\[\nN(\\mbox{Condition}) = \\sum_{\\mbox{Hospital}} N(\\mbox{Hospital, Condition})\n\\]\nRather than numbers, it might be easier to report this as proportions\n\n\nCode\ncondition_marginal = df[\"condition\"].value_counts(dropna=True, normalize=True)\nprint(condition_marginal)\n\n\ncondition\nOther    0.895935\nY95      0.104065\nName: proportion, dtype: float64\n\n\nSo the prior probability for condition=“Y95” is about 10%. In the disease context this is also called “prevelance”.\nAnd similarly for Hospitals:\n\\[\nN(\\mbox{Hospital}) = \\sum_{\\mbox{Condition}} N(\\mbox{Hospital, Condition})\n\\]\n\n\nCode\nhospital_table = df[\"hospital\"].value_counts(dropna=True, normalize=True)\nprint(hospital_table)\n\n\nhospital\nA    0.645161\nB    0.322581\nC    0.032258\nName: proportion, dtype: float64\n\n\n\n\n\n\n\n\nImportantQuestion\n\n\n\nHow to visualize proportions that sum to 100% ?\n\n\n\n\nCode\nfig, ax = plt.subplots(1, 2, figsize=FIGSIZE)\ncondition_table.plot.pie(autopct=\"%1.1f%%\", ax=ax[0])\nhospital_table.plot.pie(autopct=\"%1.1f%%\", ax=ax[1])\nax[0].set_title('Conditions - Marginals')\nax[1].set_title('Hospitals - Marginals')\nplt.show()\n\n\n\n\n\nVisualizations are better than tables"
+  },
+  {
+    "objectID": "lectures/00_VisualizationBars.html#first-steps-pythonpandas",
+    "href": "lectures/00_VisualizationBars.html#first-steps-pythonpandas",
+    "title": "Data Visualization",
+    "section": "First Steps (Python/Pandas)",
+    "text": "First Steps (Python/Pandas)\n\n\nCode\nprint(f\"df.shape: {df.shape}\")\nprint(f\"df.dtypes: {df.dtypes}\")\nprint(f\"df.describe(): \\n{df.describe()}\")\n\n\ndf.shape: (15500, 2)\ndf.dtypes: hospital     object\ncondition    object\ndtype: object\ndf.describe(): \n       hospital condition\ncount     15500     15500\nunique        3         2\ntop           A     Other\nfreq      10000     13887\n\n\n… this is important for data management but not for the minster."
+  },
+  {
+    "objectID": "lectures/00_VisualizationBars.html#conditionals-and-priors",
+    "href": "lectures/00_VisualizationBars.html#conditionals-and-priors",
+    "title": "Data Visualization",
+    "section": "Conditionals and Priors",
+    "text": "Conditionals and Priors\n\n\nCode\nmarg_summary = df[\"hospital\"].value_counts()\n\nfig, ax = plt.subplots(1, 2, figsize=FIGSIZE)\ncount_summary.plot.pie(autopct=\"%1.1f%%\", ax=ax[0])\nmarg_summary.plot.pie(autopct=\"%1.1f%%\", ax=ax[1])\nax[0].set_title('Conditional Distribution \\n (cond=\"Y95\")')\nax[1].set_title('Prior Distribution \\n (cond=\"All)')\nplt.show()\n\n\n\n\n\nPrior distributions affect our expectations\n\n\n\n\n\n\n\n\n\n\nNoteConditional Challenges\n\n\n\n\nPrior (marginal) distributions define our expectations: more patients \\(\\to\\) more diseases\nP(Hospital|Condition) \\(\\ne\\) Pr(Condition|Hospital)\n\n\n\n\n\nCode\n# this will only calculate row margins, since each column (hospital) is normalized to 1\ntab = pd.crosstab(df[\"condition\"], df[\"hospital\"], \n    normalize=\"columns\", margins=True)\nfig, axes = plt.subplots( 2, 2, figsize=(8, 8))\naxes = axes.flatten()\n\nfor ax, col in zip(axes, tab.columns):\n    tab[col].plot.pie(\n        ax=ax,\n        legend=False,\n        explode=[0.1, 0.0],\n        ylabel=\"\"\n    )\n    ax.set_title(col)\n\nplt.tight_layout()\nplt.show()\n\n\n\n\n\nP(condition|Hospital)\n\n\n\n\n\n\n\n\n\n\nNotePie Challenges\n\n\n\n\nnot good for many categories\nnot good for comparisons (areas)"
   }
 ]
