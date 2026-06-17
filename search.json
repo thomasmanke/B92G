@@ -4,7 +4,7 @@
     "href": "tutorials/index.html",
     "title": "Tutorials",
     "section": "",
-    "text": "Order By\n      Default\n      \n        Title\n      \n      \n        Date - Oldest\n      \n      \n        Date - Newest\n      \n      \n        Author\n      \n    \n  \n    \n      \n      \n    \n\n\n\n\n\n\n\n\n\n\nControlled Vocabulary and Ontologies\n\n\n\ncontrolled vocabulary\n\nontologies\n\nICD\n\nLOINC\n\nSnomed\n\nECL\n\n\n\nPlaying with FHIR\n\n\n\nThomas Manke\n\n\nJun 2, 2026\n\n\n\n\n\n\n\n\n\n\n\nData Visualization Tasks\n\n\n\nbarplot\n\n\n\nImprove a plot\n\n\n\nThomas Manke\n\n\nJun 8, 2026\n\n\n\n\n\n\nNo matching items"
+    "text": "Order By\n      Default\n      \n        Title\n      \n      \n        Date - Oldest\n      \n      \n        Date - Newest\n      \n      \n        Author\n      \n    \n  \n    \n      \n      \n    \n\n\n\n\n\n\n\n\n\n\nControlled Vocabulary and Ontologies\n\n\n\ncontrolled vocabulary\n\nontologies\n\nICD\n\nLOINC\n\nSnomed\n\nECL\n\n\n\nPlaying with FHIR\n\n\n\nThomas Manke\n\n\nJun 2, 2026\n\n\n\n\n\n\n\n\n\n\n\nData Visualization Tasks\n\n\n\nbarplot\n\n\n\nImprove a plot\n\n\n\nThomas Manke\n\n\nJun 14, 2026\n\n\n\n\n\n\n\n\n\n\n\nData Transformations\n\n\n\none-hot encoding\n\nnormalization\n\ndata representation\n\n\n\nTransforming Numerical and Categorical Variables\n\n\n\nThomas Manke\n\n\nJun 17, 2026\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "tutorials/00_ControlledVocabulary.html",
@@ -236,5 +236,61 @@
     "title": "Data Visualization",
     "section": "Conditionals and Priors",
     "text": "Conditionals and Priors\n\n\nCode\nmarg_summary = df[\"hospital\"].value_counts()\n\nfig, ax = plt.subplots(1, 2, figsize=FIGSIZE)\ncount_summary.plot.pie(autopct=\"%1.1f%%\", ax=ax[0])\nmarg_summary.plot.pie(autopct=\"%1.1f%%\", ax=ax[1])\nax[0].set_title('Conditional Distribution \\n (cond=\"Y95\")')\nax[1].set_title('Prior Distribution \\n (cond=\"All)')\nplt.show()\n\n\n\n\n\nPrior distributions affect our expectations\n\n\n\n\n\n\n\n\n\n\nNoteConditional Challenges\n\n\n\n\nPrior (marginal) distributions define our expectations: more patients \\(\\to\\) more diseases\nP(Hospital|Condition) \\(\\ne\\) Pr(Condition|Hospital)\n\n\n\n\n\nCode\n# this will only calculate row margins, since each column (hospital) is normalized to 1\ntab = pd.crosstab(df[\"condition\"], df[\"hospital\"], \n    normalize=\"columns\", margins=True)\nfig, axes = plt.subplots( 2, 2, figsize=(8, 8))\naxes = axes.flatten()\n\nfor ax, col in zip(axes, tab.columns):\n    tab[col].plot.pie(\n        ax=ax,\n        legend=False,\n        explode=[0.1, 0.0],\n        ylabel=\"\"\n    )\n    ax.set_title(col)\n\nplt.tight_layout()\nplt.show()\n\n\n\n\n\nP(condition|Hospital)\n\n\n\n\n\n\n\n\n\n\nNotePie Challenges\n\n\n\n\nnot good for many categories\nnot good for comparisons (areas)"
+  },
+  {
+    "objectID": "tutorials/01_DataViz.html#task-3-bar2other",
+    "href": "tutorials/01_DataViz.html#task-3-bar2other",
+    "title": "Data Visualization Tasks",
+    "section": "Task 3: Bar2Other",
+    "text": "Task 3: Bar2Other\nConvert the barplot below to a boxplot, violinplot and stripplot to visualize the distribution of weight against gender. Interpret the results.\nOptionally, give a different colour code to Male and Female.\n\n\nCode\nsns.barplot(data=df, x=\"Gender\", y=\"Weight\")\nplt.title(\"Weight by Gender\")\nplt.show()"
+  },
+  {
+    "objectID": "tutorials/01_DataViz.html#task-4-risk-factors-upsets",
+    "href": "tutorials/01_DataViz.html#task-4-risk-factors-upsets",
+    "title": "Data Visualization Tasks",
+    "section": "Task 4: Risk Factors & UpSets",
+    "text": "Task 4: Risk Factors & UpSets\nSeveral variables in the obesity dataset describe patient-level risk factors or behaviours. They can be encoded as Boolean variables and they define sets of individuals based on the Boolean status (True / False).\n\n\nCode\nfrom venn import venn\n\nrisk_vars = [\"family_history_with_overweight\", \"FAVC\", \"SMOKE\", \"SCC\"]\nrisk_bool = df[risk_vars].eq(\"yes\") # convert to Boolean\nrisk_bool.head(3)\n\n# construct sets of elements (= individuals)\nelements = risk_bool.index # all indicies of risk_bool\nvenn_sets = {\n    col: set(elements[risk_bool[col]])\n    for col in risk_bool.columns\n}\n\nplt.figure(figsize=FIGSIZE)\nvenn(venn_sets)\nplt.title(\"Venn Diagram\")\nplt.show()\n\n\n&lt;Figure size 1050x600 with 0 Axes&gt;\n\n\n\n\n\n\n\n\n\nBased on this Venn Diagram\n\nDetermine the total elements (individuals) in each set\nHow many individuals smoke and monitor their caloric intake (SCC=True)\nExplain why a Venn diagram becomes hard to read when several sets are compared\nPrepare an UpSet plot for the same analysis and sort by intersect size (cardinality)\n\nYou can use this package and data preparation\n\n\nCode\n# if needed\n# !pip install upsetplot\n\nfrom upsetplot import UpSet, from_indicators\n\nwarnings.filterwarnings(\n    \"ignore\",\n    category=FutureWarning,\n    module=\"upsetplot\"\n)\n\n# define multi-index of Booleans\nupset_data = from_indicators(risk_bool.columns, risk_bool)\n# count multi-index\nupset_counts = upset_data.index.value_counts()"
+  },
+  {
+    "objectID": "tutorials/01_DataViz.html#task-1-heatmaps-colors",
+    "href": "tutorials/01_DataViz.html#task-1-heatmaps-colors",
+    "title": "Data Visualization Tasks",
+    "section": "Task 1: Heatmaps & Colors",
+    "text": "Task 1: Heatmaps & Colors\n\n\nCode\nvar1=\"NObeyesdad\"\nvar2=\"Gender\"\nct = pd.crosstab(df[var1], df[var2])\nplt.figure(figsize=FIGSIZE)\nsns.heatmap(ct, annot=True, fmt=\"d\", cmap=\"RdYlGn\")\nplt.show()\n\n\n\n\n\n\n\n\n\n\nExplain the problems with this plot\nimplement improvements to visualize the counts.\nnormalize the counts to visualize the joint distribution over the two variables\nreplace var1 with “SCC” (Monitoring Caloric Intake) and prepare a “Mosaic plot” to visualize the counts"
+  },
+  {
+    "objectID": "tutorials/02_DataTrafo.html",
+    "href": "tutorials/02_DataTrafo.html",
+    "title": "Data Transformations",
+    "section": "",
+    "text": "Code\nimport numpy as np\nimport matplotlib.pyplot as plt\nimport pandas as pd\nimport seaborn as sns\nimport warnings\nwarnings.filterwarnings('ignore')\n\nFIGSIZE=(7,4)"
+  },
+  {
+    "objectID": "tutorials/02_DataTrafo.html#software-first",
+    "href": "tutorials/02_DataTrafo.html#software-first",
+    "title": "Data Transformations",
+    "section": "",
+    "text": "Code\nimport numpy as np\nimport matplotlib.pyplot as plt\nimport pandas as pd\nimport seaborn as sns\nimport warnings\nwarnings.filterwarnings('ignore')\n\nFIGSIZE=(7,4)"
+  },
+  {
+    "objectID": "tutorials/02_DataTrafo.html#breast-cancer-data",
+    "href": "tutorials/02_DataTrafo.html#breast-cancer-data",
+    "title": "Data Transformations",
+    "section": "Breast Cancer Data",
+    "text": "Breast Cancer Data\n\n\nCode\nfrom sklearn.datasets import load_breast_cancer\n\ndf = load_breast_cancer(as_frame=True).frame\nprint('df.shape: ', df.shape)\n\n\ndf.shape:  (569, 31)\n\n\n\n\n\n\n\n\nImportantTask\n\n\n\nIdentify all numerical variables in the breast cancer dataset and conduct appropriate data transformations.\nCompare their distributions before and after transformations.\nTry\n\nZ-Normalization and Min-Max Scaling\nsquare-root transformation and log-transformations\noptional: Box-Cox transformation (sklearn)"
+  },
+  {
+    "objectID": "tutorials/02_DataTrafo.html#obesity-data",
+    "href": "tutorials/02_DataTrafo.html#obesity-data",
+    "title": "Data Transformations",
+    "section": "Obesity Data",
+    "text": "Obesity Data\n\n\nCode\nfrom ucimlrepo import fetch_ucirepo \n  \ndataset = fetch_ucirepo(id=544) \ndf = dataset.data.original \nprint('df.shape: ', df.shape)\n\n\ndf.shape:  (2111, 17)\n\n\n\n\n\n\n\n\nImportantTask 2\n\n\n\nIdentify all categorical variables in the Obesity dataset.\nUse a joint One-Hot encoding of all variables and calculate the co-occurence of all category levels using the matrix formula from the lecture."
+  },
+  {
+    "objectID": "tutorials/02_DataTrafo.html#imports",
+    "href": "tutorials/02_DataTrafo.html#imports",
+    "title": "Data Transformations",
+    "section": "",
+    "text": "Code\nimport numpy as np\nimport matplotlib.pyplot as plt\nimport pandas as pd\nimport seaborn as sns\nimport warnings\nwarnings.filterwarnings('ignore')\n\nFIGSIZE=(7,4)"
   }
 ]

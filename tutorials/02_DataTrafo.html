@@ -7,9 +7,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Thomas Manke">
-<meta name="dcterms.date" content="2026-06-01">
+<meta name="dcterms.date" content="2026-06-17">
+<meta name="description" content="Transforming Numerical and Categorical Variables">
 
-<title>Tutorials – Analysis of Medical Data</title>
+<title>Data Transformations – Analysis of Medical Data</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -67,8 +68,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<script src="../site_libs/quarto-listing/list.min.js"></script>
-<script src="../site_libs/quarto-listing/quarto-listing.js"></script>
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
@@ -111,65 +110,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
-<script>
 
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-tutorials .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
-
-    const options = {
-      valueNames: ['listing-title','listing-author','listing-date','listing-image','listing-description','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
-      
-      searchColumns: ["listing-title","listing-author","listing-date","listing-image","listing-description","listing-categories"],
-    };
-
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-tutorials'] = new List('listing-tutorials', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script>
-
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
 
 </head>
 
@@ -338,7 +279,7 @@ window.Quarto = {
   </script>
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+  <header id="quarto-header" class="headroom fixed-top">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
@@ -358,7 +299,7 @@ window.Quarto = {
 <span class="menu-text">Lectures</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="../tutorials/index.html" aria-current="page"> <i class="bi bi-bricks" role="img">
+    <a class="nav-link" href="../tutorials/index.html"> <i class="bi bi-bricks" role="img">
 </i> 
 <span class="menu-text">Tutorials</span></a>
   </li>  
@@ -383,181 +324,152 @@ window.Quarto = {
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
-  <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-page-left">
-      <div class="quarto-title-block"><div><h1 class="title">Tutorials</h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
-                      </div>
-  </div>
-    
-  
-  <div class="quarto-title-meta column-page-left">
-
-      <div>
-      <div class="quarto-title-meta-heading">Author</div>
-      <div class="quarto-title-meta-contents">
-               <p>Thomas Manke </p>
-            </div>
-    </div>
-      
-      <div>
-      <div class="quarto-title-meta-heading">Published</div>
-      <div class="quarto-title-meta-contents">
-        <p class="date">June 1, 2026</p>
-      </div>
-    </div>
-    
-      
-    </div>
-    
-  
-  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
-    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(3)</span></div><div class="category" data-category="YmFycGxvdA==">barplot <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Y29udHJvbGxlZCUyMHZvY2FidWxhcnk=">controlled vocabulary <span class="quarto-category-count">(1)</span></div><div class="category" data-category="ZGF0YSUyMHJlcHJlc2VudGF0aW9u">data representation <span class="quarto-category-count">(1)</span></div><div class="category" data-category="RUNM">ECL <span class="quarto-category-count">(1)</span></div><div class="category" data-category="SUNE">ICD <span class="quarto-category-count">(1)</span></div><div class="category" data-category="TE9JTkM=">LOINC <span class="quarto-category-count">(1)</span></div><div class="category" data-category="bm9ybWFsaXphdGlvbg==">normalization <span class="quarto-category-count">(1)</span></div><div class="category" data-category="b25lLWhvdCUyMGVuY29kaW5n">one-hot encoding <span class="quarto-category-count">(1)</span></div><div class="category" data-category="b250b2xvZ2llcw==">ontologies <span class="quarto-category-count">(1)</span></div><div class="category" data-category="U25vbWVk">Snomed <span class="quarto-category-count">(1)</span></div></div></div>
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#imports" id="toc-imports" class="nav-link active" data-scroll-target="#imports">Imports</a></li>
+  <li><a href="#breast-cancer-data" id="toc-breast-cancer-data" class="nav-link" data-scroll-target="#breast-cancer-data">Breast Cancer Data</a></li>
+  <li><a href="#obesity-data" id="toc-obesity-data" class="nav-link" data-scroll-target="#obesity-data">Obesity Data</a></li>
+  </ul>
+</nav>
+    </div>
 <!-- main -->
-<main class="content quarto-banner-title-block column-page-left" id="quarto-document-content">
+<main class="content column-page-left" id="quarto-document-content">
 
 
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title">Data Transformations</h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
+  <div class="quarto-categories">
+    <div class="quarto-category">one-hot encoding</div>
+    <div class="quarto-category">normalization</div>
+    <div class="quarto-category">data representation</div>
+  </div>
+  </div>
+
+<div>
+  <div class="description">
+    Transforming Numerical and Categorical Variables
+  </div>
+</div>
 
 
+<div class="quarto-title-meta column-page-left">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Thomas Manke </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">June 17, 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
 
 
+</header>
 
+
+<section id="imports" class="level2">
+<h2 class="anchored" data-anchor-id="imports">Imports</h2>
+<div id="load_packages" class="cell" data-execution_count="1">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="im">import</span> warnings</span>
+<span id="cb1-6"><a href="#cb1-6"></a>warnings.filterwarnings(<span class="st">'ignore'</span>)</span>
+<span id="cb1-7"><a href="#cb1-7"></a></span>
+<span id="cb1-8"><a href="#cb1-8"></a>FIGSIZE<span class="op">=</span>(<span class="dv">7</span>,<span class="dv">4</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+</section>
+<section id="breast-cancer-data" class="level2">
+<h2 class="anchored" data-anchor-id="breast-cancer-data">Breast Cancer Data</h2>
+<div id="load_breast_cancer" class="cell" data-execution_count="2">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> load_breast_cancer</span>
+<span id="cb2-2"><a href="#cb2-2"></a></span>
+<span id="cb2-3"><a href="#cb2-3"></a>df <span class="op">=</span> load_breast_cancer(as_frame<span class="op">=</span><span class="va">True</span>).frame</span>
+<span id="cb2-4"><a href="#cb2-4"></a><span class="bu">print</span>(<span class="st">'df.shape: '</span>, df.shape)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>df.shape:  (569, 31)</code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>Task
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Identify all numerical variables in the breast cancer dataset and conduct appropriate data transformations.</p>
+<p>Compare their distributions before and after transformations.</p>
+<p>Try</p>
+<ul>
+<li>Z-Normalization and Min-Max Scaling</li>
+<li>square-root transformation and log-transformations</li>
+<li>optional: Box-Cox transformation (sklearn)</li>
+</ul>
+</div>
+</div>
+</section>
+<section id="obesity-data" class="level2">
+<h2 class="anchored" data-anchor-id="obesity-data">Obesity Data</h2>
+<div id="load_obesity" class="cell" data-execution_count="3">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1"></a><span class="im">from</span> ucimlrepo <span class="im">import</span> fetch_ucirepo </span>
+<span id="cb4-2"><a href="#cb4-2"></a>  </span>
+<span id="cb4-3"><a href="#cb4-3"></a>dataset <span class="op">=</span> fetch_ucirepo(<span class="bu">id</span><span class="op">=</span><span class="dv">544</span>) </span>
+<span id="cb4-4"><a href="#cb4-4"></a>df <span class="op">=</span> dataset.data.original </span>
+<span id="cb4-5"><a href="#cb4-5"></a><span class="bu">print</span>(<span class="st">'df.shape: '</span>, df.shape)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>df.shape:  (2111, 17)</code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>Task 2
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Identify all categorical variables in the Obesity dataset.</p>
+<p>Use a joint One-Hot encoding of all variables and calculate the co-occurence of all category levels using the matrix formula from the lecture.</p>
+</div>
+</div>
 
 
 <!-- -->
 
+</section>
 
-<div class="quarto-listing quarto-listing-container-grid" id="listing-tutorials">
-<div class="listing-actions-group">
-   <div class="input-group input-group-sm quarto-listing-sort">
-    <span class="input-group-text"><i class="bi bi-sort-down"></i></span>
-    <select id="listing-tutorials-sort" class="form-select" aria-label="Order By" onchange="window['quarto-listings']['listing-tutorials'].sort(this.options[this.selectedIndex].value, { order: this.options[this.selectedIndex].getAttribute('data-direction')})">
-      <option value="" disabled="" selected="" hidden="">Order By</option>
-      <option value="index" data-direction="asc">Default</option>
-      <option value="listing-title" data-direction="asc">
-        Title
-      </option>
-      <option value="listing-date-sort" data-direction="asc">
-        Date - Oldest
-      </option>
-      <option value="listing-date-sort" data-direction="desc">
-        Date - Newest
-      </option>
-      <option value="listing-author" data-direction="asc">
-        Author
-      </option>
-    </select>
-  </div>
-    <div class="input-group input-group-sm quarto-listing-filter">
-      <span class="input-group-text"><i class="bi bi-search"></i></span>
-      <input type="text" class="search form-control" placeholder="Filter">
-    </div>
-</div>
-<div class="list grid quarto-listing-cols-3">
-<div class="g-col-1" data-index="0" data-categories="Y29udHJvbGxlZCUyMHZvY2FidWxhcnklMkNvbnRvbG9naWVzJTJDSUNEJTJDTE9JTkMlMkNTbm9tZWQlMkNFQ0w=" data-listing-date-sort="1780430469000" data-listing-file-modified-sort="1780430469181" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="962">
-<a href="../tutorials/00_ControlledVocabulary.html" class="quarto-grid-link">
-<div class="quarto-grid-item card h-100 card-left">
-<p class="card-img-top">
-<img loading="lazy" src="../tutorials/figures/fhir.png" class="thumbnail-image card-img" style="height: 150px;">
-</p>
-<div class="card-body post-contents">
-<h5 class="no-anchor card-title listing-title">
-Controlled Vocabulary and Ontologies
-</h5>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('Y29udHJvbGxlZCUyMHZvY2FidWxhcnk='); return false;">controlled vocabulary</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('b250b2xvZ2llcw=='); return false;">ontologies</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('SUNE'); return false;">ICD</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('TE9JTkM='); return false;">LOINC</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('U25vbWVk'); return false;">Snomed</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('RUNM'); return false;">ECL</div>
-
-</div>
-<div class="card-text listing-description delink">
-<p>Playing with FHIR</p>
-</div>
-<div class="card-attribution card-text-small justify">
-<div class="listing-author">
-Thomas Manke
-</div>
-<div class="listing-date">
-Jun 2, 2026
-</div>
-</div>
-</div>
-</div></a>
-</div>
-<div class="g-col-1" data-index="1" data-categories="YmFycGxvdA==" data-listing-date-sort="1781433349000" data-listing-file-modified-sort="1781433349745" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="526">
-<a href="../tutorials/01_DataViz.html" class="quarto-grid-link">
-<div class="quarto-grid-item card h-100 card-left">
-<p class="card-img-top"><img src="01_DataViz_files/figure-html/venn-output-2.png" style="height: 150px;"  class="thumbnail-image card-img"/></p>
-<div class="card-body post-contents">
-<h5 class="no-anchor card-title listing-title">
-Data Visualization Tasks
-</h5>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('YmFycGxvdA=='); return false;">barplot</div>
-
-</div>
-<div class="card-text listing-description delink">
-<p>Improve a plot</p>
-</div>
-<div class="card-attribution card-text-small justify">
-<div class="listing-author">
-Thomas Manke
-</div>
-<div class="listing-date">
-Jun 14, 2026
-</div>
-</div>
-</div>
-</div></a>
-</div>
-<div class="g-col-1" data-index="2" data-categories="b25lLWhvdCUyMGVuY29kaW5nJTJDbm9ybWFsaXphdGlvbiUyQ2RhdGElMjByZXByZXNlbnRhdGlvbg==" data-listing-date-sort="1781682067000" data-listing-file-modified-sort="1781682067071" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="252">
-<a href="../tutorials/02_DataTrafo.html" class="quarto-grid-link">
-<div class="quarto-grid-item card h-100 card-left">
-<div class="listing-item-img-placeholder card-img-top" style="height: 150px;">&nbsp;</div>
-<div class="card-body post-contents">
-<h5 class="no-anchor card-title listing-title">
-Data Transformations
-</h5>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('b25lLWhvdCUyMGVuY29kaW5n'); return false;">one-hot encoding</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('bm9ybWFsaXphdGlvbg=='); return false;">normalization</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('ZGF0YSUyMHJlcHJlc2VudGF0aW9u'); return false;">data representation</div>
-
-</div>
-<div class="card-text listing-description delink">
-<p>Transforming Numerical and Categorical Variables</p>
-</div>
-<div class="card-attribution card-text-small justify">
-<div class="listing-author">
-Thomas Manke
-</div>
-<div class="listing-date">
-Jun 17, 2026
-</div>
-</div>
-</div>
-</div></a>
-</div>
-</div>
-<div class="listing-no-matching d-none">No matching items</div>
-</div></main> <!-- /main -->
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     // Ensure there is a toggle, if there isn't float one in the top right
@@ -1022,20 +934,144 @@ Jun 17, 2026
     }
   });
   </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" data-shortcodes="false"><pre class="sourceCode numberSource markdown number-lines code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1"></a><span class="co">---</span></span>
-<span id="cb1-2"><a href="#cb1-2"></a><span class="an">title:</span><span class="co"> "Tutorials"</span></span>
-<span id="cb1-3"><a href="#cb1-3"></a><span class="an">listing:</span></span>
-<span id="cb1-4"><a href="#cb1-4"></a><span class="co">  - id: tutorials</span></span>
-<span id="cb1-5"><a href="#cb1-5"></a><span class="co">    contents: "*.qmd"</span></span>
-<span id="cb1-6"><a href="#cb1-6"></a><span class="co">    type: grid</span></span>
-<span id="cb1-7"><a href="#cb1-7"></a><span class="co">    sort: "name asc"</span></span>
-<span id="cb1-8"><a href="#cb1-8"></a><span class="co">    categories: true</span></span>
-<span id="cb1-9"><a href="#cb1-9"></a><span class="co">    sort-ui: true</span></span>
-<span id="cb1-10"><a href="#cb1-10"></a><span class="co">    filter-ui: true</span></span>
-<span id="cb1-11"><a href="#cb1-11"></a><span class="co">#page-layout: full</span></span>
-<span id="cb1-12"><a href="#cb1-12"></a><span class="an">title-block-banner:</span><span class="co"> true</span></span>
-<span id="cb1-13"><a href="#cb1-13"></a><span class="co">#toc: true</span></span>
-<span id="cb1-14"><a href="#cb1-14"></a><span class="co">---</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6" data-shortcodes="false"><pre class="sourceCode numberSource markdown number-lines code-with-copy"><code class="sourceCode markdown"><span id="cb6-1"><a href="#cb6-1"></a><span class="co">---</span></span>
+<span id="cb6-2"><a href="#cb6-2"></a><span class="an">title:</span><span class="co"> "Data Transformations"</span></span>
+<span id="cb6-3"><a href="#cb6-3"></a><span class="an">date:</span><span class="co">  last-modified</span></span>
+<span id="cb6-4"><a href="#cb6-4"></a><span class="an">categories:</span></span>
+<span id="cb6-5"><a href="#cb6-5"></a><span class="co">  - one-hot encoding</span></span>
+<span id="cb6-6"><a href="#cb6-6"></a><span class="co">  - normalization</span></span>
+<span id="cb6-7"><a href="#cb6-7"></a><span class="co">  - data representation</span></span>
+<span id="cb6-8"><a href="#cb6-8"></a><span class="an">description:</span><span class="co"> Transforming Numerical and Categorical Variables</span></span>
+<span id="cb6-9"><a href="#cb6-9"></a><span class="an">jupyter:</span><span class="co"> b92g</span></span>
+<span id="cb6-10"><a href="#cb6-10"></a><span class="co">---</span></span>
+<span id="cb6-11"><a href="#cb6-11"></a></span>
+<span id="cb6-12"><a href="#cb6-12"></a><span class="fu">## Imports</span></span>
+<span id="cb6-15"><a href="#cb6-15"></a><span class="in">```{python}</span></span>
+<span id="cb6-16"><a href="#cb6-16"></a><span class="co">#| label: load_packages</span></span>
+<span id="cb6-17"><a href="#cb6-17"></a><span class="co">#| warning: false</span></span>
+<span id="cb6-18"><a href="#cb6-18"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb6-19"><a href="#cb6-19"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb6-20"><a href="#cb6-20"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb6-21"><a href="#cb6-21"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb6-22"><a href="#cb6-22"></a><span class="im">import</span> warnings</span>
+<span id="cb6-23"><a href="#cb6-23"></a>warnings.filterwarnings(<span class="st">'ignore'</span>)</span>
+<span id="cb6-24"><a href="#cb6-24"></a></span>
+<span id="cb6-25"><a href="#cb6-25"></a>FIGSIZE<span class="op">=</span>(<span class="dv">7</span>,<span class="dv">4</span>)</span>
+<span id="cb6-26"><a href="#cb6-26"></a><span class="in">```</span></span>
+<span id="cb6-27"><a href="#cb6-27"></a></span>
+<span id="cb6-28"><a href="#cb6-28"></a><span class="fu">## Breast Cancer Data</span></span>
+<span id="cb6-29"><a href="#cb6-29"></a></span>
+<span id="cb6-32"><a href="#cb6-32"></a><span class="in">```{python}</span></span>
+<span id="cb6-33"><a href="#cb6-33"></a><span class="co">#| label: load_breast_cancer</span></span>
+<span id="cb6-34"><a href="#cb6-34"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> load_breast_cancer</span>
+<span id="cb6-35"><a href="#cb6-35"></a></span>
+<span id="cb6-36"><a href="#cb6-36"></a>df <span class="op">=</span> load_breast_cancer(as_frame<span class="op">=</span><span class="va">True</span>).frame</span>
+<span id="cb6-37"><a href="#cb6-37"></a><span class="bu">print</span>(<span class="st">'df.shape: '</span>, df.shape)</span>
+<span id="cb6-38"><a href="#cb6-38"></a><span class="in">```</span></span>
+<span id="cb6-39"><a href="#cb6-39"></a></span>
+<span id="cb6-40"><a href="#cb6-40"></a></span>
+<span id="cb6-41"><a href="#cb6-41"></a>::: {.callout-important}</span>
+<span id="cb6-42"><a href="#cb6-42"></a><span class="fu">### Task</span></span>
+<span id="cb6-43"><a href="#cb6-43"></a></span>
+<span id="cb6-44"><a href="#cb6-44"></a>Identify all numerical variables in the breast cancer dataset and</span>
+<span id="cb6-45"><a href="#cb6-45"></a>conduct appropriate data transformations.</span>
+<span id="cb6-46"><a href="#cb6-46"></a></span>
+<span id="cb6-47"><a href="#cb6-47"></a>Compare their distributions before and after transformations.</span>
+<span id="cb6-48"><a href="#cb6-48"></a></span>
+<span id="cb6-49"><a href="#cb6-49"></a>Try </span>
+<span id="cb6-50"><a href="#cb6-50"></a></span>
+<span id="cb6-51"><a href="#cb6-51"></a><span class="ss">- </span>Z-Normalization and Min-Max Scaling</span>
+<span id="cb6-52"><a href="#cb6-52"></a><span class="ss">- </span>square-root transformation and log-transformations</span>
+<span id="cb6-53"><a href="#cb6-53"></a><span class="ss">- </span>optional: Box-Cox transformation (sklearn)</span>
+<span id="cb6-54"><a href="#cb6-54"></a>:::</span>
+<span id="cb6-55"><a href="#cb6-55"></a></span>
+<span id="cb6-56"><a href="#cb6-56"></a></span>
+<span id="cb6-57"><a href="#cb6-57"></a></span>
+<span id="cb6-58"><a href="#cb6-58"></a><span class="fu">## Obesity Data</span></span>
+<span id="cb6-59"><a href="#cb6-59"></a></span>
+<span id="cb6-62"><a href="#cb6-62"></a><span class="in">```{python}</span></span>
+<span id="cb6-63"><a href="#cb6-63"></a><span class="co">#| label: load_obesity</span></span>
+<span id="cb6-64"><a href="#cb6-64"></a><span class="im">from</span> ucimlrepo <span class="im">import</span> fetch_ucirepo </span>
+<span id="cb6-65"><a href="#cb6-65"></a>  </span>
+<span id="cb6-66"><a href="#cb6-66"></a>dataset <span class="op">=</span> fetch_ucirepo(<span class="bu">id</span><span class="op">=</span><span class="dv">544</span>) </span>
+<span id="cb6-67"><a href="#cb6-67"></a>df <span class="op">=</span> dataset.data.original </span>
+<span id="cb6-68"><a href="#cb6-68"></a><span class="bu">print</span>(<span class="st">'df.shape: '</span>, df.shape)</span>
+<span id="cb6-69"><a href="#cb6-69"></a><span class="in">```</span></span>
+<span id="cb6-70"><a href="#cb6-70"></a></span>
+<span id="cb6-71"><a href="#cb6-71"></a>::: {.callout-important}</span>
+<span id="cb6-72"><a href="#cb6-72"></a><span class="fu">### Task 2</span></span>
+<span id="cb6-73"><a href="#cb6-73"></a></span>
+<span id="cb6-74"><a href="#cb6-74"></a>Identify all categorical variables in the Obesity dataset.</span>
+<span id="cb6-75"><a href="#cb6-75"></a></span>
+<span id="cb6-76"><a href="#cb6-76"></a>Use a joint One-Hot encoding of all variables and calculate the co-occurence of all category levels using the matrix formula from the lecture.</span>
+<span id="cb6-77"><a href="#cb6-77"></a>:::</span>
+<span id="cb6-78"><a href="#cb6-78"></a></span>
+<span id="cb6-79"><a href="#cb6-79"></a></span>
+<span id="cb6-82"><a href="#cb6-82"></a><span class="in">```{python}</span></span>
+<span id="cb6-83"><a href="#cb6-83"></a><span class="co">#| label: oh_solution</span></span>
+<span id="cb6-84"><a href="#cb6-84"></a><span class="co">#| echo: false</span></span>
+<span id="cb6-85"><a href="#cb6-85"></a><span class="co">#| eval: false</span></span>
+<span id="cb6-86"><a href="#cb6-86"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> OneHotEncoder</span>
+<span id="cb6-87"><a href="#cb6-87"></a></span>
+<span id="cb6-88"><a href="#cb6-88"></a><span class="bu">print</span>(<span class="st">'df.dtypes: </span><span class="ch">\n</span><span class="st">'</span>, df.dtypes)</span>
+<span id="cb6-89"><a href="#cb6-89"></a>cat_cols <span class="op">=</span> df.select_dtypes(exclude<span class="op">=</span><span class="st">'number'</span>).columns</span>
+<span id="cb6-90"><a href="#cb6-90"></a></span>
+<span id="cb6-91"><a href="#cb6-91"></a></span>
+<span id="cb6-92"><a href="#cb6-92"></a>encoder <span class="op">=</span> OneHotEncoder(sparse_output<span class="op">=</span><span class="va">False</span>, drop<span class="op">=</span><span class="st">"first"</span>) </span>
+<span id="cb6-93"><a href="#cb6-93"></a>X_oh <span class="op">=</span> encoder.fit_transform(df[cat_cols]) </span>
+<span id="cb6-94"><a href="#cb6-94"></a></span>
+<span id="cb6-95"><a href="#cb6-95"></a><span class="co"># back to pandas dataframe for visualization</span></span>
+<span id="cb6-96"><a href="#cb6-96"></a>X_oh_df <span class="op">=</span> pd.DataFrame(</span>
+<span id="cb6-97"><a href="#cb6-97"></a>    X_oh,</span>
+<span id="cb6-98"><a href="#cb6-98"></a>    columns<span class="op">=</span>encoder.get_feature_names_out(cat_cols),</span>
+<span id="cb6-99"><a href="#cb6-99"></a>    index<span class="op">=</span>df.index</span>
+<span id="cb6-100"><a href="#cb6-100"></a>)</span>
+<span id="cb6-101"><a href="#cb6-101"></a></span>
+<span id="cb6-102"><a href="#cb6-102"></a>sns.heatmap(X_oh_df.iloc[:<span class="dv">10</span>], cmap<span class="op">=</span><span class="st">"Greys"</span>, cbar<span class="op">=</span><span class="va">False</span>, annot<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb6-103"><a href="#cb6-103"></a>plt.title(<span class="ss">f'One-hot encoded. Shape: </span><span class="sc">{</span>X_encoded_df<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">.'</span>)</span>
+<span id="cb6-104"><a href="#cb6-104"></a>plt.show() </span>
+<span id="cb6-105"><a href="#cb6-105"></a><span class="in">```</span></span>
+<span id="cb6-106"><a href="#cb6-106"></a></span>
+<span id="cb6-109"><a href="#cb6-109"></a><span class="in">```{python}</span></span>
+<span id="cb6-110"><a href="#cb6-110"></a><span class="co">#| label: CT_solution</span></span>
+<span id="cb6-111"><a href="#cb6-111"></a><span class="co">#| echo: false</span></span>
+<span id="cb6-112"><a href="#cb6-112"></a><span class="co">#| eval: false</span></span>
+<span id="cb6-113"><a href="#cb6-113"></a></span>
+<span id="cb6-114"><a href="#cb6-114"></a><span class="co"># This calculates the full cross-tabulation</span></span>
+<span id="cb6-115"><a href="#cb6-115"></a>X_oh <span class="op">=</span> X_oh.astype(<span class="bu">int</span>) </span>
+<span id="cb6-116"><a href="#cb6-116"></a></span>
+<span id="cb6-117"><a href="#cb6-117"></a>Z <span class="op">=</span> (X_oh <span class="op">-</span> X_oh.mean()) <span class="op">/</span> X_oh.std()</span>
+<span id="cb6-118"><a href="#cb6-118"></a></span>
+<span id="cb6-119"><a href="#cb6-119"></a>CT <span class="op">=</span> X_oh.T <span class="op">@</span> X_oh <span class="co"># = intersections = observed</span></span>
+<span id="cb6-120"><a href="#cb6-120"></a></span>
+<span id="cb6-121"><a href="#cb6-121"></a>counts <span class="op">=</span> X_oh.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb6-122"><a href="#cb6-122"></a></span>
+<span id="cb6-123"><a href="#cb6-123"></a>union <span class="op">=</span> (</span>
+<span id="cb6-124"><a href="#cb6-124"></a>    counts[:,<span class="va">None</span>]</span>
+<span id="cb6-125"><a href="#cb6-125"></a>    <span class="op">+</span> counts[<span class="va">None</span>,:]</span>
+<span id="cb6-126"><a href="#cb6-126"></a>    <span class="op">-</span> CT</span>
+<span id="cb6-127"><a href="#cb6-127"></a>)</span>
+<span id="cb6-128"><a href="#cb6-128"></a></span>
+<span id="cb6-129"><a href="#cb6-129"></a>expected <span class="op">=</span> np.outer(counts, counts) <span class="op">/</span> <span class="bu">len</span>(X_oh)</span>
+<span id="cb6-130"><a href="#cb6-130"></a>pearson <span class="op">=</span> (CT <span class="op">-</span> expected) <span class="op">/</span> np.sqrt(expected)</span>
+<span id="cb6-131"><a href="#cb6-131"></a>jaccard <span class="op">=</span> CT <span class="op">/</span> union</span>
+<span id="cb6-132"><a href="#cb6-132"></a></span>
+<span id="cb6-133"><a href="#cb6-133"></a>A <span class="op">=</span> jaccard</span>
+<span id="cb6-134"><a href="#cb6-134"></a></span>
+<span id="cb6-135"><a href="#cb6-135"></a></span>
+<span id="cb6-136"><a href="#cb6-136"></a><span class="co">#A = Z.T @ Z / (len(Z) - 1)</span></span>
+<span id="cb6-137"><a href="#cb6-137"></a></span>
+<span id="cb6-138"><a href="#cb6-138"></a>CT_df <span class="op">=</span> pd.DataFrame(</span>
+<span id="cb6-139"><a href="#cb6-139"></a>    A,</span>
+<span id="cb6-140"><a href="#cb6-140"></a>    columns<span class="op">=</span>encoder.get_feature_names_out(cat_cols),</span>
+<span id="cb6-141"><a href="#cb6-141"></a>    index<span class="op">=</span>encoder.get_feature_names_out(cat_cols)</span>
+<span id="cb6-142"><a href="#cb6-142"></a>)</span>
+<span id="cb6-143"><a href="#cb6-143"></a></span>
+<span id="cb6-144"><a href="#cb6-144"></a>sns.heatmap(CT_df, cmap<span class="op">=</span><span class="st">"Blues"</span>, cbar<span class="op">=</span><span class="va">True</span>, annot<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb6-145"><a href="#cb6-145"></a>plt.title(<span class="ss">f'CT from hot-encoded'</span>)</span>
+<span id="cb6-146"><a href="#cb6-146"></a>plt.show() </span>
+<span id="cb6-147"><a href="#cb6-147"></a><span class="in">```</span></span>
+</code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer">

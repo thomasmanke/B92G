@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Thomas Manke">
-<meta name="dcterms.date" content="2026-06-08">
+<meta name="dcterms.date" content="2026-06-14">
 <meta name="description" content="Improve a plot">
 
 <title>Data Visualization Tasks – Analysis of Medical Data</title>
@@ -363,9 +363,10 @@ window.Quarto = {
   <ul>
   <li><a href="#imports" id="toc-imports" class="nav-link active" data-scroll-target="#imports">Imports</a></li>
   <li><a href="#data-and-definitons" id="toc-data-and-definitons" class="nav-link" data-scroll-target="#data-and-definitons">Data and Definitons</a></li>
-  <li><a href="#task-1" id="toc-task-1" class="nav-link" data-scroll-target="#task-1">Task 1</a></li>
+  <li><a href="#task-1-heatmaps-colors" id="toc-task-1-heatmaps-colors" class="nav-link" data-scroll-target="#task-1-heatmaps-colors">Task 1: Heatmaps &amp; Colors</a></li>
   <li><a href="#task-2-pie2bar" id="toc-task-2-pie2bar" class="nav-link" data-scroll-target="#task-2-pie2bar">Task 2: Pie2Bar</a></li>
-  <li><a href="#task-3-risk-factors-upsets" id="toc-task-3-risk-factors-upsets" class="nav-link" data-scroll-target="#task-3-risk-factors-upsets">Task 3: Risk Factors &amp; UpSets</a></li>
+  <li><a href="#task-3-bar2other" id="toc-task-3-bar2other" class="nav-link" data-scroll-target="#task-3-bar2other">Task 3: Bar2Other</a></li>
+  <li><a href="#task-4-risk-factors-upsets" id="toc-task-4-risk-factors-upsets" class="nav-link" data-scroll-target="#task-4-risk-factors-upsets">Task 4: Risk Factors &amp; UpSets</a></li>
   </ul>
 </nav>
     </div>
@@ -400,7 +401,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">June 8, 2026</p>
+      <p class="date">June 14, 2026</p>
     </div>
   </div>
   
@@ -450,8 +451,8 @@ categorical variables: Index(['Gender', 'family_history_with_overweight', 'FAVC'
 </div>
 </div>
 </section>
-<section id="task-1" class="level2">
-<h2 class="anchored" data-anchor-id="task-1">Task 1</h2>
+<section id="task-1-heatmaps-colors" class="level2">
+<h2 class="anchored" data-anchor-id="task-1-heatmaps-colors">Task 1: Heatmaps &amp; Colors</h2>
 <div id="cell-joint_dist" class="cell" data-execution_count="3">
 <details open="" class="code-fold">
 <summary>Code</summary>
@@ -512,29 +513,76 @@ Pr(\mbox{Obesity Category}| \mbox{Gender})
 <li>Replace the pie chart with a stacked barplot to compare the distribution of obesity category by Gender</li>
 </ul>
 </section>
-<section id="task-3-risk-factors-upsets" class="level2">
-<h2 class="anchored" data-anchor-id="task-3-risk-factors-upsets">Task 3: Risk Factors &amp; UpSets</h2>
-<p>Several variables in the obesity dataset describe patient-level risk factors or behaviours. They can be encoded as Boolean variables and they define sets of individuals based on the Boolean status (True / False).</p>
-<div id="venn" class="cell preview-image" data-execution_count="7">
+<section id="task-3-bar2other" class="level2">
+<h2 class="anchored" data-anchor-id="task-3-bar2other">Task 3: Bar2Other</h2>
+<p>Convert the <code>barplot</code> below to a <code>boxplot</code>, <code>violinplot</code> and <code>stripplot</code> to visualize the distribution of weight against gender. Interpret the results.</p>
+<p>Optionally, give a different colour code to Male and Female.</p>
+<div id="cell-barplot_weight_gender" class="cell" data-execution_count="7">
 <details open="" class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1"></a><span class="im">from</span> venn <span class="im">import</span> venn</span>
-<span id="cb6-2"><a href="#cb6-2"></a></span>
-<span id="cb6-3"><a href="#cb6-3"></a>risk_vars <span class="op">=</span> [<span class="st">"family_history_with_overweight"</span>, <span class="st">"FAVC"</span>, <span class="st">"SMOKE"</span>, <span class="st">"SCC"</span>]</span>
-<span id="cb6-4"><a href="#cb6-4"></a>risk_bool <span class="op">=</span> df[risk_vars].eq(<span class="st">"yes"</span>) <span class="co"># convert to Boolean</span></span>
-<span id="cb6-5"><a href="#cb6-5"></a>risk_bool.head(<span class="dv">3</span>)</span>
-<span id="cb6-6"><a href="#cb6-6"></a></span>
-<span id="cb6-7"><a href="#cb6-7"></a><span class="co"># construct sets of elements (= individuals)</span></span>
-<span id="cb6-8"><a href="#cb6-8"></a>elements <span class="op">=</span> risk_bool.index <span class="co"># all indicies of risk_bool</span></span>
-<span id="cb6-9"><a href="#cb6-9"></a>venn_sets <span class="op">=</span> {</span>
-<span id="cb6-10"><a href="#cb6-10"></a>    col: <span class="bu">set</span>(elements[risk_bool[col]])</span>
-<span id="cb6-11"><a href="#cb6-11"></a>    <span class="cf">for</span> col <span class="kw">in</span> risk_bool.columns</span>
-<span id="cb6-12"><a href="#cb6-12"></a>}</span>
-<span id="cb6-13"><a href="#cb6-13"></a></span>
-<span id="cb6-14"><a href="#cb6-14"></a>plt.figure(figsize<span class="op">=</span>FIGSIZE)</span>
-<span id="cb6-15"><a href="#cb6-15"></a>venn(venn_sets)</span>
-<span id="cb6-16"><a href="#cb6-16"></a>plt.title(<span class="st">"Venn Diagram"</span>)</span>
-<span id="cb6-17"><a href="#cb6-17"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1"></a>sns.barplot(data<span class="op">=</span>df, x<span class="op">=</span><span class="st">"Gender"</span>, y<span class="op">=</span><span class="st">"Weight"</span>)</span>
+<span id="cb6-2"><a href="#cb6-2"></a>plt.title(<span class="st">"Weight by Gender"</span>)</span>
+<span id="cb6-3"><a href="#cb6-3"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="01_DataViz_files/figure-html/barplot_weight_gender-output-1.png" id="barplot_weight_gender" width="913" height="702" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="cell-boxplot_weight_gender" class="cell" data-execution_count="8">
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="01_DataViz_files/figure-html/boxplot_weight_gender-output-1.png" id="boxplot_weight_gender" width="926" height="702" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="cell-violinplot_weight_gender" class="cell" data-execution_count="9">
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="01_DataViz_files/figure-html/violinplot_weight_gender-output-1.png" id="violinplot_weight_gender" width="926" height="702" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="cell-stripplot_weight_gender" class="cell" data-execution_count="10">
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="01_DataViz_files/figure-html/stripplot_weight_gender-output-1.png" id="stripplot_weight_gender" width="926" height="702" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="task-4-risk-factors-upsets" class="level2">
+<h2 class="anchored" data-anchor-id="task-4-risk-factors-upsets">Task 4: Risk Factors &amp; UpSets</h2>
+<p>Several variables in the obesity dataset describe patient-level risk factors or behaviours. They can be encoded as Boolean variables and they define sets of individuals based on the Boolean status (True / False).</p>
+<div id="venn" class="cell preview-image" data-execution_count="11">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1"></a><span class="im">from</span> venn <span class="im">import</span> venn</span>
+<span id="cb7-2"><a href="#cb7-2"></a></span>
+<span id="cb7-3"><a href="#cb7-3"></a>risk_vars <span class="op">=</span> [<span class="st">"family_history_with_overweight"</span>, <span class="st">"FAVC"</span>, <span class="st">"SMOKE"</span>, <span class="st">"SCC"</span>]</span>
+<span id="cb7-4"><a href="#cb7-4"></a>risk_bool <span class="op">=</span> df[risk_vars].eq(<span class="st">"yes"</span>) <span class="co"># convert to Boolean</span></span>
+<span id="cb7-5"><a href="#cb7-5"></a>risk_bool.head(<span class="dv">3</span>)</span>
+<span id="cb7-6"><a href="#cb7-6"></a></span>
+<span id="cb7-7"><a href="#cb7-7"></a><span class="co"># construct sets of elements (= individuals)</span></span>
+<span id="cb7-8"><a href="#cb7-8"></a>elements <span class="op">=</span> risk_bool.index <span class="co"># all indicies of risk_bool</span></span>
+<span id="cb7-9"><a href="#cb7-9"></a>venn_sets <span class="op">=</span> {</span>
+<span id="cb7-10"><a href="#cb7-10"></a>    col: <span class="bu">set</span>(elements[risk_bool[col]])</span>
+<span id="cb7-11"><a href="#cb7-11"></a>    <span class="cf">for</span> col <span class="kw">in</span> risk_bool.columns</span>
+<span id="cb7-12"><a href="#cb7-12"></a>}</span>
+<span id="cb7-13"><a href="#cb7-13"></a></span>
+<span id="cb7-14"><a href="#cb7-14"></a>plt.figure(figsize<span class="op">=</span>FIGSIZE)</span>
+<span id="cb7-15"><a href="#cb7-15"></a>venn(venn_sets)</span>
+<span id="cb7-16"><a href="#cb7-16"></a>plt.title(<span class="st">"Venn Diagram"</span>)</span>
+<span id="cb7-17"><a href="#cb7-17"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div id="venn-1" class="cell-output cell-output-display">
 <pre><code>&lt;Figure size 1050x600 with 0 Axes&gt;</code></pre>
@@ -555,24 +603,24 @@ Pr(\mbox{Obesity Category}| \mbox{Gender})
 <li>Prepare an UpSet plot for the same analysis and sort by intersect size (cardinality)</li>
 </ul>
 <p>You can use this package and data preparation</p>
-<div id="upset_prepare" class="cell" data-execution_count="8">
+<div id="upset_prepare" class="cell" data-execution_count="12">
 <details open="" class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1"></a><span class="co"># if needed</span></span>
-<span id="cb8-2"><a href="#cb8-2"></a><span class="co"># !pip install upsetplot</span></span>
-<span id="cb8-3"><a href="#cb8-3"></a></span>
-<span id="cb8-4"><a href="#cb8-4"></a><span class="im">from</span> upsetplot <span class="im">import</span> UpSet, from_indicators</span>
-<span id="cb8-5"><a href="#cb8-5"></a></span>
-<span id="cb8-6"><a href="#cb8-6"></a>warnings.filterwarnings(</span>
-<span id="cb8-7"><a href="#cb8-7"></a>    <span class="st">"ignore"</span>,</span>
-<span id="cb8-8"><a href="#cb8-8"></a>    category<span class="op">=</span><span class="pp">FutureWarning</span>,</span>
-<span id="cb8-9"><a href="#cb8-9"></a>    module<span class="op">=</span><span class="st">"upsetplot"</span></span>
-<span id="cb8-10"><a href="#cb8-10"></a>)</span>
-<span id="cb8-11"><a href="#cb8-11"></a></span>
-<span id="cb8-12"><a href="#cb8-12"></a><span class="co"># define multi-index of Booleans</span></span>
-<span id="cb8-13"><a href="#cb8-13"></a>upset_data <span class="op">=</span> from_indicators(risk_bool.columns, risk_bool)</span>
-<span id="cb8-14"><a href="#cb8-14"></a><span class="co"># count multi-index</span></span>
-<span id="cb8-15"><a href="#cb8-15"></a>upset_counts <span class="op">=</span> upset_data.index.value_counts()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1"></a><span class="co"># if needed</span></span>
+<span id="cb9-2"><a href="#cb9-2"></a><span class="co"># !pip install upsetplot</span></span>
+<span id="cb9-3"><a href="#cb9-3"></a></span>
+<span id="cb9-4"><a href="#cb9-4"></a><span class="im">from</span> upsetplot <span class="im">import</span> UpSet, from_indicators</span>
+<span id="cb9-5"><a href="#cb9-5"></a></span>
+<span id="cb9-6"><a href="#cb9-6"></a>warnings.filterwarnings(</span>
+<span id="cb9-7"><a href="#cb9-7"></a>    <span class="st">"ignore"</span>,</span>
+<span id="cb9-8"><a href="#cb9-8"></a>    category<span class="op">=</span><span class="pp">FutureWarning</span>,</span>
+<span id="cb9-9"><a href="#cb9-9"></a>    module<span class="op">=</span><span class="st">"upsetplot"</span></span>
+<span id="cb9-10"><a href="#cb9-10"></a>)</span>
+<span id="cb9-11"><a href="#cb9-11"></a></span>
+<span id="cb9-12"><a href="#cb9-12"></a><span class="co"># define multi-index of Booleans</span></span>
+<span id="cb9-13"><a href="#cb9-13"></a>upset_data <span class="op">=</span> from_indicators(risk_bool.columns, risk_bool)</span>
+<span id="cb9-14"><a href="#cb9-14"></a><span class="co"># count multi-index</span></span>
+<span id="cb9-15"><a href="#cb9-15"></a>upset_counts <span class="op">=</span> upset_data.index.value_counts()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 
@@ -1046,201 +1094,245 @@ Pr(\mbox{Obesity Category}| \mbox{Gender})
     }
   });
   </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9" data-shortcodes="false"><pre class="sourceCode numberSource markdown number-lines code-with-copy"><code class="sourceCode markdown"><span id="cb9-1"><a href="#cb9-1"></a><span class="co">---</span></span>
-<span id="cb9-2"><a href="#cb9-2"></a><span class="an">title:</span><span class="co"> "Data Visualization Tasks"</span></span>
-<span id="cb9-3"><a href="#cb9-3"></a><span class="an">date:</span><span class="co">  last-modified</span></span>
-<span id="cb9-4"><a href="#cb9-4"></a><span class="an">categories:</span></span>
-<span id="cb9-5"><a href="#cb9-5"></a><span class="co">    - barplot</span></span>
-<span id="cb9-6"><a href="#cb9-6"></a><span class="an">jupyter:</span><span class="co"> b92g</span></span>
-<span id="cb9-7"><a href="#cb9-7"></a><span class="an">description:</span><span class="co"> Improve a plot</span></span>
-<span id="cb9-8"><a href="#cb9-8"></a><span class="co">---</span></span>
-<span id="cb9-9"><a href="#cb9-9"></a></span>
-<span id="cb9-10"><a href="#cb9-10"></a><span class="fu">## Imports</span></span>
-<span id="cb9-13"><a href="#cb9-13"></a><span class="in">```{python}</span></span>
-<span id="cb9-14"><a href="#cb9-14"></a><span class="co">#| label: load_packages</span></span>
-<span id="cb9-15"><a href="#cb9-15"></a><span class="co">#| warning: false</span></span>
-<span id="cb9-16"><a href="#cb9-16"></a><span class="im">import</span> requests</span>
-<span id="cb9-17"><a href="#cb9-17"></a><span class="im">import</span> warnings</span>
-<span id="cb9-18"><a href="#cb9-18"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb9-19"><a href="#cb9-19"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb9-20"><a href="#cb9-20"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb9-21"><a href="#cb9-21"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
-<span id="cb9-22"><a href="#cb9-22"></a></span>
-<span id="cb9-23"><a href="#cb9-23"></a>FIGSIZE <span class="op">=</span> (<span class="dv">7</span>, <span class="dv">4</span>)</span>
-<span id="cb9-24"><a href="#cb9-24"></a><span class="in">```</span></span>
-<span id="cb9-25"><a href="#cb9-25"></a></span>
-<span id="cb9-26"><a href="#cb9-26"></a><span class="fu">## Data and Definitons</span></span>
-<span id="cb9-29"><a href="#cb9-29"></a><span class="in">```{python}</span></span>
-<span id="cb9-30"><a href="#cb9-30"></a><span class="co">#| label: load_data</span></span>
-<span id="cb9-31"><a href="#cb9-31"></a><span class="im">from</span> ucimlrepo <span class="im">import</span> fetch_ucirepo </span>
-<span id="cb9-32"><a href="#cb9-32"></a>  </span>
-<span id="cb9-33"><a href="#cb9-33"></a>dataset <span class="op">=</span> fetch_ucirepo(<span class="bu">id</span><span class="op">=</span><span class="dv">544</span>) </span>
-<span id="cb9-34"><a href="#cb9-34"></a><span class="bu">print</span>(<span class="st">'keys: '</span>, dataset.keys())  <span class="co"># data, metadata, variables</span></span>
-<span id="cb9-35"><a href="#cb9-35"></a>df <span class="op">=</span> dataset.data.original </span>
-<span id="cb9-36"><a href="#cb9-36"></a>cat_cols <span class="op">=</span> df.select_dtypes(exclude<span class="op">=</span><span class="st">'number'</span>).columns</span>
-<span id="cb9-37"><a href="#cb9-37"></a></span>
-<span id="cb9-38"><a href="#cb9-38"></a><span class="bu">print</span>(<span class="st">'categorical variables:'</span>, cat_cols)</span>
-<span id="cb9-39"><a href="#cb9-39"></a><span class="in">```</span></span>
-<span id="cb9-40"><a href="#cb9-40"></a></span>
-<span id="cb9-41"><a href="#cb9-41"></a></span>
-<span id="cb9-42"><a href="#cb9-42"></a><span class="fu">## Task 1</span></span>
-<span id="cb9-45"><a href="#cb9-45"></a><span class="in">```{python}</span></span>
-<span id="cb9-46"><a href="#cb9-46"></a><span class="co">#| label: joint_dist</span></span>
-<span id="cb9-47"><a href="#cb9-47"></a>var1<span class="op">=</span><span class="st">"NObeyesdad"</span></span>
-<span id="cb9-48"><a href="#cb9-48"></a>var2<span class="op">=</span><span class="st">"Gender"</span></span>
-<span id="cb9-49"><a href="#cb9-49"></a>ct <span class="op">=</span> pd.crosstab(df[var1], df[var2])</span>
-<span id="cb9-50"><a href="#cb9-50"></a>plt.figure(figsize<span class="op">=</span>FIGSIZE)</span>
-<span id="cb9-51"><a href="#cb9-51"></a>sns.heatmap(ct, annot<span class="op">=</span><span class="va">True</span>, fmt<span class="op">=</span><span class="st">"d"</span>, cmap<span class="op">=</span><span class="st">"RdYlGn"</span>)</span>
-<span id="cb9-52"><a href="#cb9-52"></a>plt.show()</span>
-<span id="cb9-53"><a href="#cb9-53"></a><span class="in">```</span></span>
-<span id="cb9-54"><a href="#cb9-54"></a></span>
-<span id="cb9-55"><a href="#cb9-55"></a><span class="ss">- </span>Explain the problems with this plot</span>
-<span id="cb9-56"><a href="#cb9-56"></a><span class="ss">- </span>implement improvements to visualize the counts.</span>
-<span id="cb9-57"><a href="#cb9-57"></a><span class="ss">- </span>normalize the counts to visualize the joint distribution over the two variables</span>
-<span id="cb9-58"><a href="#cb9-58"></a><span class="ss">- </span>replace var1 with "SCC" (Monitoring Caloric Intake) and prepare a "Mosaic plot" to visualize the counts</span>
-<span id="cb9-59"><a href="#cb9-59"></a></span>
-<span id="cb9-62"><a href="#cb9-62"></a><span class="in">```{python}</span></span>
-<span id="cb9-63"><a href="#cb9-63"></a><span class="co">#| label: joint_solutions</span></span>
-<span id="cb9-64"><a href="#cb9-64"></a><span class="co">#| echo: false</span></span>
-<span id="cb9-65"><a href="#cb9-65"></a><span class="co">#| eval: false</span></span>
-<span id="cb9-66"><a href="#cb9-66"></a>var1<span class="op">=</span><span class="st">"SCC"</span> <span class="co"># "NObeyesdad"</span></span>
-<span id="cb9-67"><a href="#cb9-67"></a>var2<span class="op">=</span><span class="st">"Gender"</span></span>
-<span id="cb9-68"><a href="#cb9-68"></a>ct <span class="op">=</span> pd.crosstab(df[var1], df[var2], normalize<span class="op">=</span><span class="st">"all"</span>)</span>
-<span id="cb9-69"><a href="#cb9-69"></a>plt.figure(figsize<span class="op">=</span>FIGSIZE)</span>
-<span id="cb9-70"><a href="#cb9-70"></a>sns.heatmap(ct, annot<span class="op">=</span><span class="va">True</span>, fmt<span class="op">=</span><span class="st">".3f"</span>, cmap<span class="op">=</span><span class="st">"Blues"</span>)</span>
-<span id="cb9-71"><a href="#cb9-71"></a>plt.show()</span>
-<span id="cb9-72"><a href="#cb9-72"></a></span>
-<span id="cb9-73"><a href="#cb9-73"></a><span class="im">from</span> statsmodels.graphics.mosaicplot <span class="im">import</span> mosaic</span>
-<span id="cb9-74"><a href="#cb9-74"></a>var1<span class="op">=</span><span class="st">"SCC"</span></span>
-<span id="cb9-75"><a href="#cb9-75"></a>var2<span class="op">=</span><span class="st">"Gender"</span></span>
-<span id="cb9-76"><a href="#cb9-76"></a>plt.figure(figsize<span class="op">=</span>FIGSIZE)</span>
-<span id="cb9-77"><a href="#cb9-77"></a>mosaic(df, index<span class="op">=</span>[var1, var2], gap<span class="op">=</span><span class="fl">0.01</span>, title<span class="op">=</span><span class="st">"Mosaic Plot"</span>)</span>
-<span id="cb9-78"><a href="#cb9-78"></a>plt.show()</span>
-<span id="cb9-79"><a href="#cb9-79"></a><span class="in">```</span></span>
-<span id="cb9-80"><a href="#cb9-80"></a></span>
-<span id="cb9-81"><a href="#cb9-81"></a></span>
-<span id="cb9-82"><a href="#cb9-82"></a><span class="fu">## Task 2: Pie2Bar</span></span>
-<span id="cb9-83"><a href="#cb9-83"></a></span>
-<span id="cb9-84"><a href="#cb9-84"></a>Marginal and conditional distributions for categorical variables </span>
-<span id="cb9-85"><a href="#cb9-85"></a>are often visualized as Pie charts. </span>
-<span id="cb9-86"><a href="#cb9-86"></a></span>
-<span id="cb9-87"><a href="#cb9-87"></a>The following would visualize the proportions of obesity categories given a gender.</span>
-<span id="cb9-88"><a href="#cb9-88"></a>$$</span>
-<span id="cb9-89"><a href="#cb9-89"></a>Pr(\mbox{Obesity Category}| \mbox{Gender})</span>
-<span id="cb9-90"><a href="#cb9-90"></a>$$</span>
-<span id="cb9-91"><a href="#cb9-91"></a></span>
-<span id="cb9-94"><a href="#cb9-94"></a><span class="in">```{python}</span></span>
-<span id="cb9-95"><a href="#cb9-95"></a><span class="co">#| label: piecharts_gender</span></span>
-<span id="cb9-96"><a href="#cb9-96"></a><span class="co">#| fig-cap: "Conditional distributions of obesity by gender"</span></span>
-<span id="cb9-97"><a href="#cb9-97"></a>var1, var2 <span class="op">=</span> <span class="st">"Gender"</span>, <span class="st">"NObeyesdad"</span></span>
-<span id="cb9-98"><a href="#cb9-98"></a>tab <span class="op">=</span> pd.crosstab(df[var1], df[var2], normalize<span class="op">=</span><span class="st">"index"</span>)</span>
-<span id="cb9-99"><a href="#cb9-99"></a></span>
-<span id="cb9-100"><a href="#cb9-100"></a><span class="co"># notice transposition tab.T</span></span>
-<span id="cb9-101"><a href="#cb9-101"></a>axes <span class="op">=</span> tab.T.plot.pie(</span>
-<span id="cb9-102"><a href="#cb9-102"></a>    subplots<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb9-103"><a href="#cb9-103"></a>    figsize<span class="op">=</span>FIGSIZE,</span>
-<span id="cb9-104"><a href="#cb9-104"></a>    legend<span class="op">=</span><span class="va">False</span>,</span>
-<span id="cb9-105"><a href="#cb9-105"></a>)</span>
-<span id="cb9-106"><a href="#cb9-106"></a>plt.show()</span>
-<span id="cb9-107"><a href="#cb9-107"></a><span class="in">```</span></span>
-<span id="cb9-108"><a href="#cb9-108"></a></span>
-<span id="cb9-109"><a href="#cb9-109"></a>However this is not a very good visual encoding.</span>
-<span id="cb9-110"><a href="#cb9-110"></a></span>
-<span id="cb9-111"><a href="#cb9-111"></a><span class="ss">- </span>Explain why pie charts are difficult to interpret and compare visually.</span>
-<span id="cb9-112"><a href="#cb9-112"></a><span class="ss">- </span>Replace the pie chart with a stacked barplot to compare the distribution of obesity category by Gender</span>
-<span id="cb9-113"><a href="#cb9-113"></a></span>
-<span id="cb9-114"><a href="#cb9-114"></a></span>
-<span id="cb9-117"><a href="#cb9-117"></a><span class="in">```{python}</span></span>
-<span id="cb9-118"><a href="#cb9-118"></a><span class="co">#| label: marginal_barplot_solutions</span></span>
-<span id="cb9-119"><a href="#cb9-119"></a><span class="co">#| echo: false</span></span>
-<span id="cb9-120"><a href="#cb9-120"></a><span class="co">#| eval: false</span></span>
-<span id="cb9-121"><a href="#cb9-121"></a></span>
-<span id="cb9-122"><a href="#cb9-122"></a><span class="co"># do not transpose</span></span>
-<span id="cb9-123"><a href="#cb9-123"></a>tab.plot.bar( stacked<span class="op">=</span><span class="va">True</span>, figsize<span class="op">=</span>FIGSIZE )</span>
-<span id="cb9-124"><a href="#cb9-124"></a></span>
-<span id="cb9-125"><a href="#cb9-125"></a>plt.ylabel(<span class="st">"Proportion"</span>)</span>
-<span id="cb9-126"><a href="#cb9-126"></a>plt.title(<span class="st">"Conditional distributions of obesity by gender"</span>)</span>
-<span id="cb9-127"><a href="#cb9-127"></a>plt.legend(bbox_to_anchor<span class="op">=</span>(<span class="fl">1.02</span>, <span class="dv">1</span>))</span>
-<span id="cb9-128"><a href="#cb9-128"></a>plt.tight_layout()</span>
-<span id="cb9-129"><a href="#cb9-129"></a>plt.show()</span>
-<span id="cb9-130"><a href="#cb9-130"></a><span class="in">```</span></span>
-<span id="cb9-131"><a href="#cb9-131"></a></span>
-<span id="cb9-132"><a href="#cb9-132"></a></span>
-<span id="cb9-133"><a href="#cb9-133"></a><span class="fu">## Task 3: Risk Factors &amp; UpSets</span></span>
-<span id="cb9-134"><a href="#cb9-134"></a></span>
-<span id="cb9-135"><a href="#cb9-135"></a>Several variables in the obesity dataset describe patient-level risk factors or behaviours.</span>
-<span id="cb9-136"><a href="#cb9-136"></a>They can be encoded as Boolean variables and they define sets of individuals based on the Boolean status (True / False).</span>
-<span id="cb9-137"><a href="#cb9-137"></a></span>
-<span id="cb9-138"><a href="#cb9-138"></a></span>
-<span id="cb9-141"><a href="#cb9-141"></a><span class="in">```{python}</span></span>
-<span id="cb9-142"><a href="#cb9-142"></a><span class="co">#| label: venn</span></span>
-<span id="cb9-143"><a href="#cb9-143"></a><span class="co">#| classes: preview-image</span></span>
-<span id="cb9-144"><a href="#cb9-144"></a><span class="im">from</span> venn <span class="im">import</span> venn</span>
-<span id="cb9-145"><a href="#cb9-145"></a></span>
-<span id="cb9-146"><a href="#cb9-146"></a>risk_vars <span class="op">=</span> [<span class="st">"family_history_with_overweight"</span>, <span class="st">"FAVC"</span>, <span class="st">"SMOKE"</span>, <span class="st">"SCC"</span>]</span>
-<span id="cb9-147"><a href="#cb9-147"></a>risk_bool <span class="op">=</span> df[risk_vars].eq(<span class="st">"yes"</span>) <span class="co"># convert to Boolean</span></span>
-<span id="cb9-148"><a href="#cb9-148"></a>risk_bool.head(<span class="dv">3</span>)</span>
-<span id="cb9-149"><a href="#cb9-149"></a></span>
-<span id="cb9-150"><a href="#cb9-150"></a><span class="co"># construct sets of elements (= individuals)</span></span>
-<span id="cb9-151"><a href="#cb9-151"></a>elements <span class="op">=</span> risk_bool.index <span class="co"># all indicies of risk_bool</span></span>
-<span id="cb9-152"><a href="#cb9-152"></a>venn_sets <span class="op">=</span> {</span>
-<span id="cb9-153"><a href="#cb9-153"></a>    col: <span class="bu">set</span>(elements[risk_bool[col]])</span>
-<span id="cb9-154"><a href="#cb9-154"></a>    <span class="cf">for</span> col <span class="kw">in</span> risk_bool.columns</span>
-<span id="cb9-155"><a href="#cb9-155"></a>}</span>
-<span id="cb9-156"><a href="#cb9-156"></a></span>
-<span id="cb9-157"><a href="#cb9-157"></a>plt.figure(figsize<span class="op">=</span>FIGSIZE)</span>
-<span id="cb9-158"><a href="#cb9-158"></a>venn(venn_sets)</span>
-<span id="cb9-159"><a href="#cb9-159"></a>plt.title(<span class="st">"Venn Diagram"</span>)</span>
-<span id="cb9-160"><a href="#cb9-160"></a>plt.show()</span>
-<span id="cb9-161"><a href="#cb9-161"></a></span>
-<span id="cb9-162"><a href="#cb9-162"></a><span class="in">```</span></span>
-<span id="cb9-163"><a href="#cb9-163"></a></span>
-<span id="cb9-164"><a href="#cb9-164"></a>Based on this Venn Diagram</span>
-<span id="cb9-165"><a href="#cb9-165"></a></span>
-<span id="cb9-166"><a href="#cb9-166"></a><span class="ss">- </span>Determine the total elements (individuals) in each set</span>
-<span id="cb9-167"><a href="#cb9-167"></a><span class="ss">- </span>How many individuals smoke and monitor their caloric intake (SCC=True)</span>
-<span id="cb9-168"><a href="#cb9-168"></a><span class="ss">- </span>Explain why a Venn diagram becomes hard to read when several sets are compared</span>
-<span id="cb9-169"><a href="#cb9-169"></a><span class="ss">- </span>Prepare an UpSet plot for the same analysis and sort by intersect size (cardinality)</span>
-<span id="cb9-170"><a href="#cb9-170"></a></span>
-<span id="cb9-171"><a href="#cb9-171"></a>You can use this package and data preparation</span>
-<span id="cb9-174"><a href="#cb9-174"></a><span class="in">```{python}</span></span>
-<span id="cb9-175"><a href="#cb9-175"></a><span class="co">#| label: upset_prepare</span></span>
-<span id="cb9-176"><a href="#cb9-176"></a></span>
-<span id="cb9-177"><a href="#cb9-177"></a><span class="co"># if needed</span></span>
-<span id="cb9-178"><a href="#cb9-178"></a><span class="co"># !pip install upsetplot</span></span>
-<span id="cb9-179"><a href="#cb9-179"></a></span>
-<span id="cb9-180"><a href="#cb9-180"></a><span class="im">from</span> upsetplot <span class="im">import</span> UpSet, from_indicators</span>
-<span id="cb9-181"><a href="#cb9-181"></a></span>
-<span id="cb9-182"><a href="#cb9-182"></a>warnings.filterwarnings(</span>
-<span id="cb9-183"><a href="#cb9-183"></a>    <span class="st">"ignore"</span>,</span>
-<span id="cb9-184"><a href="#cb9-184"></a>    category<span class="op">=</span><span class="pp">FutureWarning</span>,</span>
-<span id="cb9-185"><a href="#cb9-185"></a>    module<span class="op">=</span><span class="st">"upsetplot"</span></span>
-<span id="cb9-186"><a href="#cb9-186"></a>)</span>
-<span id="cb9-187"><a href="#cb9-187"></a></span>
-<span id="cb9-188"><a href="#cb9-188"></a><span class="co"># define multi-index of Booleans</span></span>
-<span id="cb9-189"><a href="#cb9-189"></a>upset_data <span class="op">=</span> from_indicators(risk_bool.columns, risk_bool)</span>
-<span id="cb9-190"><a href="#cb9-190"></a><span class="co"># count multi-index</span></span>
-<span id="cb9-191"><a href="#cb9-191"></a>upset_counts <span class="op">=</span> upset_data.index.value_counts()</span>
-<span id="cb9-192"><a href="#cb9-192"></a></span>
-<span id="cb9-193"><a href="#cb9-193"></a><span class="in">```</span></span>
-<span id="cb9-194"><a href="#cb9-194"></a></span>
-<span id="cb9-195"><a href="#cb9-195"></a></span>
-<span id="cb9-198"><a href="#cb9-198"></a><span class="in">```{python}</span></span>
-<span id="cb9-199"><a href="#cb9-199"></a><span class="co">#| label: upset_plot</span></span>
-<span id="cb9-200"><a href="#cb9-200"></a><span class="co">#| echo: false</span></span>
-<span id="cb9-201"><a href="#cb9-201"></a><span class="co">#| eval: false</span></span>
-<span id="cb9-202"><a href="#cb9-202"></a></span>
-<span id="cb9-203"><a href="#cb9-203"></a><span class="co"># check venn_sets: venn_sets["SMOKE"] &amp; venn_sets["SCC"]</span></span>
-<span id="cb9-204"><a href="#cb9-204"></a>upset <span class="op">=</span> UpSet(</span>
-<span id="cb9-205"><a href="#cb9-205"></a>    upset_counts, <span class="co"># could also pass upset_data here</span></span>
-<span id="cb9-206"><a href="#cb9-206"></a>    sort_by<span class="op">=</span><span class="st">"cardinality"</span>,</span>
-<span id="cb9-207"><a href="#cb9-207"></a>    )</span>
-<span id="cb9-208"><a href="#cb9-208"></a></span>
-<span id="cb9-209"><a href="#cb9-209"></a>fig <span class="op">=</span> plt.figure()</span>
-<span id="cb9-210"><a href="#cb9-210"></a>upset.plot(fig<span class="op">=</span>fig)</span>
-<span id="cb9-211"><a href="#cb9-211"></a>plt.suptitle(<span class="st">"UpSet Plot"</span>)</span>
-<span id="cb9-212"><a href="#cb9-212"></a>plt.show()</span>
-<span id="cb9-213"><a href="#cb9-213"></a><span class="in">```</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10" data-shortcodes="false"><pre class="sourceCode numberSource markdown number-lines code-with-copy"><code class="sourceCode markdown"><span id="cb10-1"><a href="#cb10-1"></a><span class="co">---</span></span>
+<span id="cb10-2"><a href="#cb10-2"></a><span class="an">title:</span><span class="co"> "Data Visualization Tasks"</span></span>
+<span id="cb10-3"><a href="#cb10-3"></a><span class="an">date:</span><span class="co">  last-modified</span></span>
+<span id="cb10-4"><a href="#cb10-4"></a><span class="an">categories:</span></span>
+<span id="cb10-5"><a href="#cb10-5"></a><span class="co">    - barplot</span></span>
+<span id="cb10-6"><a href="#cb10-6"></a><span class="an">jupyter:</span><span class="co"> b92g</span></span>
+<span id="cb10-7"><a href="#cb10-7"></a><span class="an">description:</span><span class="co"> Improve a plot</span></span>
+<span id="cb10-8"><a href="#cb10-8"></a><span class="co">---</span></span>
+<span id="cb10-9"><a href="#cb10-9"></a></span>
+<span id="cb10-10"><a href="#cb10-10"></a><span class="fu">## Imports</span></span>
+<span id="cb10-13"><a href="#cb10-13"></a><span class="in">```{python}</span></span>
+<span id="cb10-14"><a href="#cb10-14"></a><span class="co">#| label: load_packages</span></span>
+<span id="cb10-15"><a href="#cb10-15"></a><span class="co">#| warning: false</span></span>
+<span id="cb10-16"><a href="#cb10-16"></a><span class="im">import</span> requests</span>
+<span id="cb10-17"><a href="#cb10-17"></a><span class="im">import</span> warnings</span>
+<span id="cb10-18"><a href="#cb10-18"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb10-19"><a href="#cb10-19"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb10-20"><a href="#cb10-20"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb10-21"><a href="#cb10-21"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb10-22"><a href="#cb10-22"></a></span>
+<span id="cb10-23"><a href="#cb10-23"></a>FIGSIZE <span class="op">=</span> (<span class="dv">7</span>, <span class="dv">4</span>)</span>
+<span id="cb10-24"><a href="#cb10-24"></a><span class="in">```</span></span>
+<span id="cb10-25"><a href="#cb10-25"></a></span>
+<span id="cb10-26"><a href="#cb10-26"></a><span class="fu">## Data and Definitons</span></span>
+<span id="cb10-29"><a href="#cb10-29"></a><span class="in">```{python}</span></span>
+<span id="cb10-30"><a href="#cb10-30"></a><span class="co">#| label: load_data</span></span>
+<span id="cb10-31"><a href="#cb10-31"></a><span class="im">from</span> ucimlrepo <span class="im">import</span> fetch_ucirepo </span>
+<span id="cb10-32"><a href="#cb10-32"></a>  </span>
+<span id="cb10-33"><a href="#cb10-33"></a>dataset <span class="op">=</span> fetch_ucirepo(<span class="bu">id</span><span class="op">=</span><span class="dv">544</span>) </span>
+<span id="cb10-34"><a href="#cb10-34"></a><span class="bu">print</span>(<span class="st">'keys: '</span>, dataset.keys())  <span class="co"># data, metadata, variables</span></span>
+<span id="cb10-35"><a href="#cb10-35"></a>df <span class="op">=</span> dataset.data.original </span>
+<span id="cb10-36"><a href="#cb10-36"></a>cat_cols <span class="op">=</span> df.select_dtypes(exclude<span class="op">=</span><span class="st">'number'</span>).columns</span>
+<span id="cb10-37"><a href="#cb10-37"></a></span>
+<span id="cb10-38"><a href="#cb10-38"></a><span class="bu">print</span>(<span class="st">'categorical variables:'</span>, cat_cols)</span>
+<span id="cb10-39"><a href="#cb10-39"></a><span class="in">```</span></span>
+<span id="cb10-40"><a href="#cb10-40"></a></span>
+<span id="cb10-41"><a href="#cb10-41"></a></span>
+<span id="cb10-42"><a href="#cb10-42"></a><span class="fu">## Task 1: Heatmaps &amp; Colors</span></span>
+<span id="cb10-45"><a href="#cb10-45"></a><span class="in">```{python}</span></span>
+<span id="cb10-46"><a href="#cb10-46"></a><span class="co">#| label: joint_dist</span></span>
+<span id="cb10-47"><a href="#cb10-47"></a>var1<span class="op">=</span><span class="st">"NObeyesdad"</span></span>
+<span id="cb10-48"><a href="#cb10-48"></a>var2<span class="op">=</span><span class="st">"Gender"</span></span>
+<span id="cb10-49"><a href="#cb10-49"></a>ct <span class="op">=</span> pd.crosstab(df[var1], df[var2])</span>
+<span id="cb10-50"><a href="#cb10-50"></a>plt.figure(figsize<span class="op">=</span>FIGSIZE)</span>
+<span id="cb10-51"><a href="#cb10-51"></a>sns.heatmap(ct, annot<span class="op">=</span><span class="va">True</span>, fmt<span class="op">=</span><span class="st">"d"</span>, cmap<span class="op">=</span><span class="st">"RdYlGn"</span>)</span>
+<span id="cb10-52"><a href="#cb10-52"></a>plt.show()</span>
+<span id="cb10-53"><a href="#cb10-53"></a><span class="in">```</span></span>
+<span id="cb10-54"><a href="#cb10-54"></a></span>
+<span id="cb10-55"><a href="#cb10-55"></a><span class="ss">- </span>Explain the problems with this plot</span>
+<span id="cb10-56"><a href="#cb10-56"></a><span class="ss">- </span>implement improvements to visualize the counts.</span>
+<span id="cb10-57"><a href="#cb10-57"></a><span class="ss">- </span>normalize the counts to visualize the joint distribution over the two variables</span>
+<span id="cb10-58"><a href="#cb10-58"></a><span class="ss">- </span>replace var1 with "SCC" (Monitoring Caloric Intake) and prepare a "Mosaic plot" to visualize the counts</span>
+<span id="cb10-59"><a href="#cb10-59"></a></span>
+<span id="cb10-62"><a href="#cb10-62"></a><span class="in">```{python}</span></span>
+<span id="cb10-63"><a href="#cb10-63"></a><span class="co">#| label: joint_solutions</span></span>
+<span id="cb10-64"><a href="#cb10-64"></a><span class="co">#| echo: false</span></span>
+<span id="cb10-65"><a href="#cb10-65"></a><span class="co">#| eval: false</span></span>
+<span id="cb10-66"><a href="#cb10-66"></a>var1<span class="op">=</span><span class="st">"SCC"</span> <span class="co"># "NObeyesdad"</span></span>
+<span id="cb10-67"><a href="#cb10-67"></a>var2<span class="op">=</span><span class="st">"Gender"</span></span>
+<span id="cb10-68"><a href="#cb10-68"></a>ct <span class="op">=</span> pd.crosstab(df[var1], df[var2], normalize<span class="op">=</span><span class="st">"all"</span>)</span>
+<span id="cb10-69"><a href="#cb10-69"></a>plt.figure(figsize<span class="op">=</span>FIGSIZE)</span>
+<span id="cb10-70"><a href="#cb10-70"></a>sns.heatmap(ct, annot<span class="op">=</span><span class="va">True</span>, fmt<span class="op">=</span><span class="st">".3f"</span>, cmap<span class="op">=</span><span class="st">"Blues"</span>)</span>
+<span id="cb10-71"><a href="#cb10-71"></a>plt.show()</span>
+<span id="cb10-72"><a href="#cb10-72"></a></span>
+<span id="cb10-73"><a href="#cb10-73"></a><span class="im">from</span> statsmodels.graphics.mosaicplot <span class="im">import</span> mosaic</span>
+<span id="cb10-74"><a href="#cb10-74"></a>var1<span class="op">=</span><span class="st">"SCC"</span></span>
+<span id="cb10-75"><a href="#cb10-75"></a>var2<span class="op">=</span><span class="st">"Gender"</span></span>
+<span id="cb10-76"><a href="#cb10-76"></a>plt.figure(figsize<span class="op">=</span>FIGSIZE)</span>
+<span id="cb10-77"><a href="#cb10-77"></a>mosaic(df, index<span class="op">=</span>[var1, var2], gap<span class="op">=</span><span class="fl">0.01</span>, title<span class="op">=</span><span class="st">"Mosaic Plot"</span>)</span>
+<span id="cb10-78"><a href="#cb10-78"></a>plt.show()</span>
+<span id="cb10-79"><a href="#cb10-79"></a><span class="in">```</span></span>
+<span id="cb10-80"><a href="#cb10-80"></a></span>
+<span id="cb10-81"><a href="#cb10-81"></a></span>
+<span id="cb10-82"><a href="#cb10-82"></a></span>
+<span id="cb10-83"><a href="#cb10-83"></a><span class="fu">## Task 2: Pie2Bar</span></span>
+<span id="cb10-84"><a href="#cb10-84"></a></span>
+<span id="cb10-85"><a href="#cb10-85"></a>Marginal and conditional distributions for categorical variables </span>
+<span id="cb10-86"><a href="#cb10-86"></a>are often visualized as Pie charts. </span>
+<span id="cb10-87"><a href="#cb10-87"></a></span>
+<span id="cb10-88"><a href="#cb10-88"></a>The following would visualize the proportions of obesity categories given a gender.</span>
+<span id="cb10-89"><a href="#cb10-89"></a>$$</span>
+<span id="cb10-90"><a href="#cb10-90"></a>Pr(\mbox{Obesity Category}| \mbox{Gender})</span>
+<span id="cb10-91"><a href="#cb10-91"></a>$$</span>
+<span id="cb10-92"><a href="#cb10-92"></a></span>
+<span id="cb10-95"><a href="#cb10-95"></a><span class="in">```{python}</span></span>
+<span id="cb10-96"><a href="#cb10-96"></a><span class="co">#| label: piecharts_gender</span></span>
+<span id="cb10-97"><a href="#cb10-97"></a><span class="co">#| fig-cap: "Conditional distributions of obesity by gender"</span></span>
+<span id="cb10-98"><a href="#cb10-98"></a>var1, var2 <span class="op">=</span> <span class="st">"Gender"</span>, <span class="st">"NObeyesdad"</span></span>
+<span id="cb10-99"><a href="#cb10-99"></a>tab <span class="op">=</span> pd.crosstab(df[var1], df[var2], normalize<span class="op">=</span><span class="st">"index"</span>)</span>
+<span id="cb10-100"><a href="#cb10-100"></a></span>
+<span id="cb10-101"><a href="#cb10-101"></a><span class="co"># notice transposition tab.T</span></span>
+<span id="cb10-102"><a href="#cb10-102"></a>axes <span class="op">=</span> tab.T.plot.pie(</span>
+<span id="cb10-103"><a href="#cb10-103"></a>    subplots<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb10-104"><a href="#cb10-104"></a>    figsize<span class="op">=</span>FIGSIZE,</span>
+<span id="cb10-105"><a href="#cb10-105"></a>    legend<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb10-106"><a href="#cb10-106"></a>)</span>
+<span id="cb10-107"><a href="#cb10-107"></a>plt.show()</span>
+<span id="cb10-108"><a href="#cb10-108"></a><span class="in">```</span></span>
+<span id="cb10-109"><a href="#cb10-109"></a></span>
+<span id="cb10-110"><a href="#cb10-110"></a>However this is not a very good visual encoding.</span>
+<span id="cb10-111"><a href="#cb10-111"></a></span>
+<span id="cb10-112"><a href="#cb10-112"></a><span class="ss">- </span>Explain why pie charts are difficult to interpret and compare visually.</span>
+<span id="cb10-113"><a href="#cb10-113"></a><span class="ss">- </span>Replace the pie chart with a stacked barplot to compare the distribution of obesity category by Gender</span>
+<span id="cb10-114"><a href="#cb10-114"></a></span>
+<span id="cb10-115"><a href="#cb10-115"></a></span>
+<span id="cb10-118"><a href="#cb10-118"></a><span class="in">```{python}</span></span>
+<span id="cb10-119"><a href="#cb10-119"></a><span class="co">#| label: marginal_barplot_solutions</span></span>
+<span id="cb10-120"><a href="#cb10-120"></a><span class="co">#| echo: false</span></span>
+<span id="cb10-121"><a href="#cb10-121"></a><span class="co">#| eval: false</span></span>
+<span id="cb10-122"><a href="#cb10-122"></a></span>
+<span id="cb10-123"><a href="#cb10-123"></a><span class="co"># do not transpose</span></span>
+<span id="cb10-124"><a href="#cb10-124"></a>tab.plot.bar( stacked<span class="op">=</span><span class="va">True</span>, figsize<span class="op">=</span>FIGSIZE )</span>
+<span id="cb10-125"><a href="#cb10-125"></a></span>
+<span id="cb10-126"><a href="#cb10-126"></a>plt.ylabel(<span class="st">"Proportion"</span>)</span>
+<span id="cb10-127"><a href="#cb10-127"></a>plt.title(<span class="st">"Conditional distributions of obesity by gender"</span>)</span>
+<span id="cb10-128"><a href="#cb10-128"></a>plt.legend(bbox_to_anchor<span class="op">=</span>(<span class="fl">1.02</span>, <span class="dv">1</span>))</span>
+<span id="cb10-129"><a href="#cb10-129"></a>plt.tight_layout()</span>
+<span id="cb10-130"><a href="#cb10-130"></a>plt.show()</span>
+<span id="cb10-131"><a href="#cb10-131"></a><span class="in">```</span></span>
+<span id="cb10-132"><a href="#cb10-132"></a></span>
+<span id="cb10-133"><a href="#cb10-133"></a><span class="fu">## Task 3: Bar2Other</span></span>
+<span id="cb10-134"><a href="#cb10-134"></a></span>
+<span id="cb10-135"><a href="#cb10-135"></a>Convert the <span class="in">`barplot`</span> below to a <span class="in">`boxplot`</span>, <span class="in">`violinplot`</span> and <span class="in">`stripplot`</span> to visualize the distribution of weight against gender. Interpret the results.</span>
+<span id="cb10-136"><a href="#cb10-136"></a></span>
+<span id="cb10-137"><a href="#cb10-137"></a>Optionally, give a different colour code to Male and Female.</span>
+<span id="cb10-138"><a href="#cb10-138"></a></span>
+<span id="cb10-141"><a href="#cb10-141"></a><span class="in">```{python}</span></span>
+<span id="cb10-142"><a href="#cb10-142"></a><span class="co">#| label: barplot_weight_gender</span></span>
+<span id="cb10-143"><a href="#cb10-143"></a></span>
+<span id="cb10-144"><a href="#cb10-144"></a>sns.barplot(data<span class="op">=</span>df, x<span class="op">=</span><span class="st">"Gender"</span>, y<span class="op">=</span><span class="st">"Weight"</span>)</span>
+<span id="cb10-145"><a href="#cb10-145"></a>plt.title(<span class="st">"Weight by Gender"</span>)</span>
+<span id="cb10-146"><a href="#cb10-146"></a>plt.show()</span>
+<span id="cb10-147"><a href="#cb10-147"></a><span class="in">```</span></span>
+<span id="cb10-148"><a href="#cb10-148"></a></span>
+<span id="cb10-149"><a href="#cb10-149"></a></span>
+<span id="cb10-152"><a href="#cb10-152"></a><span class="in">```{python}</span></span>
+<span id="cb10-153"><a href="#cb10-153"></a><span class="co">#| label: boxplot_weight_gender</span></span>
+<span id="cb10-154"><a href="#cb10-154"></a><span class="co">#| eval: true</span></span>
+<span id="cb10-155"><a href="#cb10-155"></a><span class="co">#| echo: false</span></span>
+<span id="cb10-156"><a href="#cb10-156"></a>sns.boxplot(data<span class="op">=</span>df, x<span class="op">=</span><span class="st">"Gender"</span>, y<span class="op">=</span><span class="st">"Weight"</span>, hue<span class="op">=</span><span class="st">"Gender"</span>, palette<span class="op">=</span><span class="st">"Set2"</span>)</span>
+<span id="cb10-157"><a href="#cb10-157"></a>plt.title(<span class="st">"Weight by Gender"</span>)</span>
+<span id="cb10-158"><a href="#cb10-158"></a>plt.show()</span>
+<span id="cb10-159"><a href="#cb10-159"></a><span class="in">```</span></span>
+<span id="cb10-160"><a href="#cb10-160"></a></span>
+<span id="cb10-163"><a href="#cb10-163"></a><span class="in">```{python}</span></span>
+<span id="cb10-164"><a href="#cb10-164"></a><span class="co">#| label: violinplot_weight_gender</span></span>
+<span id="cb10-165"><a href="#cb10-165"></a><span class="co">#| eval: true</span></span>
+<span id="cb10-166"><a href="#cb10-166"></a><span class="co">#| echo: false</span></span>
+<span id="cb10-167"><a href="#cb10-167"></a>sns.violinplot(data<span class="op">=</span>df, x<span class="op">=</span><span class="st">"Gender"</span>, y<span class="op">=</span><span class="st">"Weight"</span>, hue<span class="op">=</span><span class="st">"Gender"</span>, palette<span class="op">=</span><span class="st">"Set2"</span>)</span>
+<span id="cb10-168"><a href="#cb10-168"></a>plt.title(<span class="st">"Weight by Gender"</span>)</span>
+<span id="cb10-169"><a href="#cb10-169"></a>plt.show()</span>
+<span id="cb10-170"><a href="#cb10-170"></a><span class="in">```</span></span>
+<span id="cb10-171"><a href="#cb10-171"></a></span>
+<span id="cb10-172"><a href="#cb10-172"></a></span>
+<span id="cb10-175"><a href="#cb10-175"></a><span class="in">```{python}</span></span>
+<span id="cb10-176"><a href="#cb10-176"></a><span class="co">#| label: stripplot_weight_gender</span></span>
+<span id="cb10-177"><a href="#cb10-177"></a><span class="co">#| eval: true</span></span>
+<span id="cb10-178"><a href="#cb10-178"></a><span class="co">#| echo: false</span></span>
+<span id="cb10-179"><a href="#cb10-179"></a>sns.stripplot( data<span class="op">=</span>df, x<span class="op">=</span><span class="st">"Gender"</span>, y<span class="op">=</span><span class="st">"Weight"</span>, hue<span class="op">=</span><span class="st">"Gender"</span>, palette<span class="op">=</span><span class="st">"Set2"</span>)</span>
+<span id="cb10-180"><a href="#cb10-180"></a>plt.title(<span class="st">"Weight by Gender"</span>)</span>
+<span id="cb10-181"><a href="#cb10-181"></a>plt.show()</span>
+<span id="cb10-182"><a href="#cb10-182"></a><span class="in">```</span></span>
+<span id="cb10-183"><a href="#cb10-183"></a></span>
+<span id="cb10-184"><a href="#cb10-184"></a></span>
+<span id="cb10-185"><a href="#cb10-185"></a><span class="fu">## Task 4: Risk Factors &amp; UpSets</span></span>
+<span id="cb10-186"><a href="#cb10-186"></a></span>
+<span id="cb10-187"><a href="#cb10-187"></a>Several variables in the obesity dataset describe patient-level risk factors or behaviours.</span>
+<span id="cb10-188"><a href="#cb10-188"></a>They can be encoded as Boolean variables and they define sets of individuals based on the Boolean status (True / False).</span>
+<span id="cb10-189"><a href="#cb10-189"></a></span>
+<span id="cb10-190"><a href="#cb10-190"></a></span>
+<span id="cb10-193"><a href="#cb10-193"></a><span class="in">```{python}</span></span>
+<span id="cb10-194"><a href="#cb10-194"></a><span class="co">#| label: venn</span></span>
+<span id="cb10-195"><a href="#cb10-195"></a><span class="co">#| classes: preview-image</span></span>
+<span id="cb10-196"><a href="#cb10-196"></a><span class="im">from</span> venn <span class="im">import</span> venn</span>
+<span id="cb10-197"><a href="#cb10-197"></a></span>
+<span id="cb10-198"><a href="#cb10-198"></a>risk_vars <span class="op">=</span> [<span class="st">"family_history_with_overweight"</span>, <span class="st">"FAVC"</span>, <span class="st">"SMOKE"</span>, <span class="st">"SCC"</span>]</span>
+<span id="cb10-199"><a href="#cb10-199"></a>risk_bool <span class="op">=</span> df[risk_vars].eq(<span class="st">"yes"</span>) <span class="co"># convert to Boolean</span></span>
+<span id="cb10-200"><a href="#cb10-200"></a>risk_bool.head(<span class="dv">3</span>)</span>
+<span id="cb10-201"><a href="#cb10-201"></a></span>
+<span id="cb10-202"><a href="#cb10-202"></a><span class="co"># construct sets of elements (= individuals)</span></span>
+<span id="cb10-203"><a href="#cb10-203"></a>elements <span class="op">=</span> risk_bool.index <span class="co"># all indicies of risk_bool</span></span>
+<span id="cb10-204"><a href="#cb10-204"></a>venn_sets <span class="op">=</span> {</span>
+<span id="cb10-205"><a href="#cb10-205"></a>    col: <span class="bu">set</span>(elements[risk_bool[col]])</span>
+<span id="cb10-206"><a href="#cb10-206"></a>    <span class="cf">for</span> col <span class="kw">in</span> risk_bool.columns</span>
+<span id="cb10-207"><a href="#cb10-207"></a>}</span>
+<span id="cb10-208"><a href="#cb10-208"></a></span>
+<span id="cb10-209"><a href="#cb10-209"></a>plt.figure(figsize<span class="op">=</span>FIGSIZE)</span>
+<span id="cb10-210"><a href="#cb10-210"></a>venn(venn_sets)</span>
+<span id="cb10-211"><a href="#cb10-211"></a>plt.title(<span class="st">"Venn Diagram"</span>)</span>
+<span id="cb10-212"><a href="#cb10-212"></a>plt.show()</span>
+<span id="cb10-213"><a href="#cb10-213"></a></span>
+<span id="cb10-214"><a href="#cb10-214"></a><span class="in">```</span></span>
+<span id="cb10-215"><a href="#cb10-215"></a></span>
+<span id="cb10-216"><a href="#cb10-216"></a>Based on this Venn Diagram</span>
+<span id="cb10-217"><a href="#cb10-217"></a></span>
+<span id="cb10-218"><a href="#cb10-218"></a><span class="ss">- </span>Determine the total elements (individuals) in each set</span>
+<span id="cb10-219"><a href="#cb10-219"></a><span class="ss">- </span>How many individuals smoke and monitor their caloric intake (SCC=True)</span>
+<span id="cb10-220"><a href="#cb10-220"></a><span class="ss">- </span>Explain why a Venn diagram becomes hard to read when several sets are compared</span>
+<span id="cb10-221"><a href="#cb10-221"></a><span class="ss">- </span>Prepare an UpSet plot for the same analysis and sort by intersect size (cardinality)</span>
+<span id="cb10-222"><a href="#cb10-222"></a></span>
+<span id="cb10-223"><a href="#cb10-223"></a>You can use this package and data preparation</span>
+<span id="cb10-226"><a href="#cb10-226"></a><span class="in">```{python}</span></span>
+<span id="cb10-227"><a href="#cb10-227"></a><span class="co">#| label: upset_prepare</span></span>
+<span id="cb10-228"><a href="#cb10-228"></a></span>
+<span id="cb10-229"><a href="#cb10-229"></a><span class="co"># if needed</span></span>
+<span id="cb10-230"><a href="#cb10-230"></a><span class="co"># !pip install upsetplot</span></span>
+<span id="cb10-231"><a href="#cb10-231"></a></span>
+<span id="cb10-232"><a href="#cb10-232"></a><span class="im">from</span> upsetplot <span class="im">import</span> UpSet, from_indicators</span>
+<span id="cb10-233"><a href="#cb10-233"></a></span>
+<span id="cb10-234"><a href="#cb10-234"></a>warnings.filterwarnings(</span>
+<span id="cb10-235"><a href="#cb10-235"></a>    <span class="st">"ignore"</span>,</span>
+<span id="cb10-236"><a href="#cb10-236"></a>    category<span class="op">=</span><span class="pp">FutureWarning</span>,</span>
+<span id="cb10-237"><a href="#cb10-237"></a>    module<span class="op">=</span><span class="st">"upsetplot"</span></span>
+<span id="cb10-238"><a href="#cb10-238"></a>)</span>
+<span id="cb10-239"><a href="#cb10-239"></a></span>
+<span id="cb10-240"><a href="#cb10-240"></a><span class="co"># define multi-index of Booleans</span></span>
+<span id="cb10-241"><a href="#cb10-241"></a>upset_data <span class="op">=</span> from_indicators(risk_bool.columns, risk_bool)</span>
+<span id="cb10-242"><a href="#cb10-242"></a><span class="co"># count multi-index</span></span>
+<span id="cb10-243"><a href="#cb10-243"></a>upset_counts <span class="op">=</span> upset_data.index.value_counts()</span>
+<span id="cb10-244"><a href="#cb10-244"></a></span>
+<span id="cb10-245"><a href="#cb10-245"></a><span class="in">```</span></span>
+<span id="cb10-246"><a href="#cb10-246"></a></span>
+<span id="cb10-247"><a href="#cb10-247"></a></span>
+<span id="cb10-250"><a href="#cb10-250"></a><span class="in">```{python}</span></span>
+<span id="cb10-251"><a href="#cb10-251"></a><span class="co">#| label: upset_plot</span></span>
+<span id="cb10-252"><a href="#cb10-252"></a><span class="co">#| echo: false</span></span>
+<span id="cb10-253"><a href="#cb10-253"></a><span class="co">#| eval: false</span></span>
+<span id="cb10-254"><a href="#cb10-254"></a></span>
+<span id="cb10-255"><a href="#cb10-255"></a><span class="co"># check venn_sets: venn_sets["SMOKE"] &amp; venn_sets["SCC"]</span></span>
+<span id="cb10-256"><a href="#cb10-256"></a>upset <span class="op">=</span> UpSet(</span>
+<span id="cb10-257"><a href="#cb10-257"></a>    upset_counts, <span class="co"># could also pass upset_data here</span></span>
+<span id="cb10-258"><a href="#cb10-258"></a>    sort_by<span class="op">=</span><span class="st">"cardinality"</span>,</span>
+<span id="cb10-259"><a href="#cb10-259"></a>    )</span>
+<span id="cb10-260"><a href="#cb10-260"></a></span>
+<span id="cb10-261"><a href="#cb10-261"></a>fig <span class="op">=</span> plt.figure()</span>
+<span id="cb10-262"><a href="#cb10-262"></a>upset.plot(fig<span class="op">=</span>fig)</span>
+<span id="cb10-263"><a href="#cb10-263"></a>plt.suptitle(<span class="st">"UpSet Plot"</span>)</span>
+<span id="cb10-264"><a href="#cb10-264"></a>plt.show()</span>
+<span id="cb10-265"><a href="#cb10-265"></a><span class="in">```</span></span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
