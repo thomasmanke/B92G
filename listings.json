@@ -10,7 +10,9 @@
   {
     "listing": "/lectures/index.html",
     "items": [
-      "/lectures/00_VisualizationBars.html"
+      "/lectures/00_VisualizationBars.html",
+      "/lectures/01_BeyondBarplots.html",
+      "/lectures/02_VisualizationErrors.html"
     ]
   }
 ]
