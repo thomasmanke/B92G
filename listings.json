@@ -12,7 +12,8 @@
     "items": [
       "/lectures/00_VisualizationBars.html",
       "/lectures/01_BeyondBarplots.html",
-      "/lectures/02_VisualizationErrors.html"
+      "/lectures/02_VisualizationErrors.html",
+      "/lectures/03_EncodingNumericalVariables.html"
     ]
   }
 ]

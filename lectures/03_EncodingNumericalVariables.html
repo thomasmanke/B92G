@@ -1,2 +1,2256 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"></html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.27">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Thomas Manke">
+<meta name="dcterms.date" content="2026-06-23">
+<meta name="description" content="Making Numbers more Meaningful">
+
+<title>Transforming Numerical Variables – Analysis of Medical Data</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-8b4baf804e461d9b72633f0de59a0cac.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-f1aadacce99040138bbb613f9330654f.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-8b4baf804e461d9b72633f0de59a0cac.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-1abac204f8572279f73a3a6fba0370a3.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-6f36548bdacd96f03b119c706dbfb928.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-1abac204f8572279f73a3a6fba0370a3.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Analysis of Medical Data</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../lectures/index.html"> <i class="bi bi-book" role="img">
+</i> 
+<span class="menu-text">Lectures</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../tutorials/index.html"> <i class="bi bi-bricks" role="img">
+</i> 
+<span class="menu-text">Tutorials</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../general/Chalkboard.html"> <i class="bi bi-clipboard-fill" role="img">
+</i> 
+<span class="menu-text">Chalkboard</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/thomasmanke/"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#imports-adn-definitions" id="toc-imports-adn-definitions" class="nav-link active" data-scroll-target="#imports-adn-definitions">Imports adn Definitions</a></li>
+  <li><a href="#obesity-data-reminder" id="toc-obesity-data-reminder" class="nav-link" data-scroll-target="#obesity-data-reminder">Obesity Data (Reminder)</a></li>
+  <li><a href="#encoding-variable-names" id="toc-encoding-variable-names" class="nav-link" data-scroll-target="#encoding-variable-names">Encoding Variable Names</a></li>
+  <li><a href="#data-exploration" id="toc-data-exploration" class="nav-link" data-scroll-target="#data-exploration">Data Exploration</a>
+  <ul class="collapse">
+  <li><a href="#numeric-summaries" id="toc-numeric-summaries" class="nav-link" data-scroll-target="#numeric-summaries">Numeric summaries</a></li>
+  <li><a href="#data-visualization" id="toc-data-visualization" class="nav-link" data-scroll-target="#data-visualization">Data Visualization</a></li>
+  </ul></li>
+  <li><a href="#variable-transformations" id="toc-variable-transformations" class="nav-link" data-scroll-target="#variable-transformations">Variable Transformations</a>
+  <ul class="collapse">
+  <li><a href="#scaling-numerical-variables" id="toc-scaling-numerical-variables" class="nav-link" data-scroll-target="#scaling-numerical-variables">Scaling (numerical variables)</a></li>
+  <li><a href="#inverse-scaling" id="toc-inverse-scaling" class="nav-link" data-scroll-target="#inverse-scaling">Inverse Scaling</a></li>
+  <li><a href="#other-transformations" id="toc-other-transformations" class="nav-link" data-scroll-target="#other-transformations">Other Transformations</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content column-page-left" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title">Transforming Numerical Variables</h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
+  <div class="quarto-categories">
+    <div class="quarto-category">transformation</div>
+    <div class="quarto-category">normalization</div>
+    <div class="quarto-category">encoding</div>
+    <div class="quarto-category">scaling</div>
+    <div class="quarto-category">Poisson</div>
+    <div class="quarto-category">Obesity</div>
+    <div class="quarto-category">Diabetes</div>
+  </div>
+  </div>
+
+<div>
+  <div class="description">
+    Making Numbers more Meaningful
+  </div>
+</div>
+
+
+<div class="quarto-title-meta column-page-left">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Thomas Manke </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">June 23, 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="imports-adn-definitions" class="level2">
+<h2 class="anchored" data-anchor-id="imports-adn-definitions">Imports adn Definitions</h2>
+<div id="load_packages" class="cell" data-execution_count="1">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb1-6"><a href="#cb1-6"></a><span class="im">import</span> warnings</span>
+<span id="cb1-7"><a href="#cb1-7"></a>warnings.filterwarnings(<span class="st">'ignore'</span>)</span>
+<span id="cb1-8"><a href="#cb1-8"></a></span>
+<span id="cb1-9"><a href="#cb1-9"></a>FIGSIZE<span class="op">=</span>(<span class="dv">7</span>,<span class="dv">4</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+</section>
+<section id="obesity-data-reminder" class="level2">
+<h2 class="anchored" data-anchor-id="obesity-data-reminder">Obesity Data (Reminder)</h2>
+<p>The dataset “Estimation of Obesity Levels Based on Eating Habits and Physical Condition” is a collection of data that aims to predict obesity levels based on various factors related to eating habits and physical condition. The dataset includes features such as age, gender. Notice that it has been synthetically augmented using the SMOTE technique to address class imbalance.</p>
+<p>References:</p>
+<ul>
+<li>https://www.sciencedirect.com/science/article/pii/S2352340919306985</li>
+<li>https://www.kaggle.com/datasets/aravindpcoder/obesity-or-cvd-risk-classifyregressorcluster</li>
+<li>SMOTE (oversampling of minority): https://www.jair.org/index.php/jair/article/view/10302/24590</li>
+</ul>
+<div id="load_data" class="cell" data-execution_count="2">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1"></a><span class="im">from</span> ucimlrepo <span class="im">import</span> fetch_ucirepo </span>
+<span id="cb2-2"><a href="#cb2-2"></a><span class="im">from</span> ucimlrepo <span class="im">import</span> fetch_ucirepo </span>
+<span id="cb2-3"><a href="#cb2-3"></a>  </span>
+<span id="cb2-4"><a href="#cb2-4"></a><span class="co"># fetch dataset from UCI repo</span></span>
+<span id="cb2-5"><a href="#cb2-5"></a>dataset <span class="op">=</span> fetch_ucirepo(<span class="bu">id</span><span class="op">=</span><span class="dv">544</span>) </span>
+<span id="cb2-6"><a href="#cb2-6"></a></span>
+<span id="cb2-7"><a href="#cb2-7"></a><span class="bu">print</span>(<span class="st">'type: '</span>, <span class="bu">type</span>(dataset))   <span class="co"># dictionary (UCI-specific)</span></span>
+<span id="cb2-8"><a href="#cb2-8"></a><span class="bu">print</span>(<span class="st">'keys: '</span>, dataset.keys())  <span class="co"># data, metadata, variables</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>type:  &lt;class 'ucimlrepo.dotdict.dotdict'&gt;
+keys:  dict_keys(['data', 'metadata', 'variables'])</code></pre>
+</div>
+</div>
+<div id="structural_info" class="cell" data-execution_count="4">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1"></a>df <span class="op">=</span> dataset.data.original </span>
+<span id="cb4-2"><a href="#cb4-2"></a></span>
+<span id="cb4-3"><a href="#cb4-3"></a><span class="bu">print</span>(<span class="st">'metadata:  '</span>, dataset.metadata) </span>
+<span id="cb4-4"><a href="#cb4-4"></a><span class="bu">print</span>(<span class="st">'data(shape):      '</span>, df.shape)</span>
+<span id="cb4-5"><a href="#cb4-5"></a></span>
+<span id="cb4-6"><a href="#cb4-6"></a><span class="co"># variable information: df.info(), df.columns, df.dtypes</span></span>
+<span id="cb4-7"><a href="#cb4-7"></a><span class="bu">print</span>(<span class="st">'variables: '</span>, dataset.variables) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>metadata:   {'uci_id': 544, 'name': 'Estimation of Obesity Levels Based On Eating Habits and Physical Condition ', 'repository_url': 'https://archive.ics.uci.edu/dataset/544/estimation+of+obesity+levels+based+on+eating+habits+and+physical+condition', 'data_url': 'https://archive.ics.uci.edu/static/public/544/data.csv', 'abstract': 'This dataset include data for the estimation of obesity levels in individuals from the countries of Mexico, Peru and Colombia, based on their eating habits and physical condition. ', 'area': 'Health and Medicine', 'tasks': ['Classification', 'Regression', 'Clustering'], 'characteristics': ['Multivariate'], 'num_instances': 2111, 'num_features': 16, 'feature_types': ['Integer'], 'demographics': ['Gender', 'Age'], 'target_col': ['NObeyesdad'], 'index_col': None, 'has_missing_values': 'no', 'missing_values_symbol': None, 'year_of_dataset_creation': 2019, 'last_updated': 'Tue Sep 10 2024', 'dataset_doi': '10.24432/C5H31Z', 'creators': [], 'intro_paper': {'ID': 358, 'type': 'NATIVE', 'title': 'Dataset for estimation of obesity levels based on eating habits and physical condition in individuals from Colombia, Peru and Mexico', 'authors': 'Fabio Mendoza Palechor, Alexis De la Hoz Manotas', 'venue': 'Data in Brief', 'year': 2019, 'journal': None, 'DOI': '10.1016/j.dib.2019.104344', 'URL': 'https://www.semanticscholar.org/paper/35b40bacd2ffa9370885b7a3004d88995fd1d011', 'sha': None, 'corpus': None, 'arxiv': None, 'mag': None, 'acl': None, 'pmid': None, 'pmcid': None}, 'additional_info': {'summary': 'This dataset include data for the estimation of obesity levels in individuals from the countries of Mexico, Peru and Colombia, based on their eating habits and physical condition. The data contains 17 attributes and 2111 records, the records are labeled with the class variable NObesity (Obesity Level), that allows classification of the data using the values of Insufficient Weight, Normal Weight, Overweight Level I, Overweight Level II, Obesity Type I, Obesity Type II and Obesity Type III. 77% of the data was generated synthetically using the Weka tool and the SMOTE filter, 23% of the data was collected directly from users through a web platform.', 'purpose': None, 'funded_by': None, 'instances_represent': None, 'recommended_data_splits': None, 'sensitive_data': None, 'preprocessing_description': None, 'variable_info': 'Read the article (https://doi.org/10.1016/j.dib.2019.104344) to see the description of the attributes.', 'citation': None}}
+data(shape):       (2111, 17)
+variables:                                name     role         type demographic  \
+0                           Gender  Feature  Categorical      Gender   
+1                              Age  Feature   Continuous         Age   
+2                           Height  Feature   Continuous        None   
+3                           Weight  Feature   Continuous        None   
+4   family_history_with_overweight  Feature       Binary        None   
+5                             FAVC  Feature       Binary        None   
+6                             FCVC  Feature      Integer        None   
+7                              NCP  Feature   Continuous        None   
+8                             CAEC  Feature  Categorical        None   
+9                            SMOKE  Feature       Binary        None   
+10                            CH2O  Feature   Continuous        None   
+11                             SCC  Feature       Binary        None   
+12                             FAF  Feature   Continuous        None   
+13                             TUE  Feature      Integer        None   
+14                            CALC  Feature  Categorical        None   
+15                          MTRANS  Feature  Categorical        None   
+16                      NObeyesdad   Target  Categorical        None   
+
+                                          description units missing_values  
+0                                                None  None             no  
+1                                                None  None             no  
+2                                                None  None             no  
+3                                                None  None             no  
+4   Has a family member suffered or suffers from o...  None             no  
+5            Do you eat high caloric food frequently?  None             no  
+6        Do you usually eat vegetables in your meals?  None             no  
+7              How many main meals do you have daily?  None             no  
+8                  Do you eat any food between meals?  None             no  
+9                                       Do you smoke?  None             no  
+10                 How much water do you drink daily?  None             no  
+11         Do you monitor the calories you eat daily?  None             no  
+12           How often do you have physical activity?  None             no  
+13  How much time do you use technological devices...  None             no  
+14                    How often do you drink alcohol?  None             no  
+15           Which transportation do you usually use?  None             no  
+16                                      Obesity level  None             no  </code></pre>
+</div>
+</div>
+</section>
+<section id="encoding-variable-names" class="level2">
+<h2 class="anchored" data-anchor-id="encoding-variable-names">Encoding Variable Names</h2>
+<p>Ideally we would want to have some <code>coding standards</code> for variable names (i.e.&nbsp;ICD-10, Snomed CT, …). Below I simply want to avoid long variable names and incomprehensible abbreviations.</p>
+<div id="3ba4a8cc" class="cell" data-execution_count="5">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1"></a>var_dict <span class="op">=</span>  {</span>
+<span id="cb6-2"><a href="#cb6-2"></a>    <span class="st">"family_history_with_overweight"</span>: <span class="st">"FamilyHistory"</span>,</span>
+<span id="cb6-3"><a href="#cb6-3"></a>    <span class="co"># Frequent consumption of high caloric food (yes/no)</span></span>
+<span id="cb6-4"><a href="#cb6-4"></a>    <span class="st">"FAVC"</span>: <span class="st">"HighCalories"</span>, </span>
+<span id="cb6-5"><a href="#cb6-5"></a>    <span class="st">"FCVC"</span>: <span class="st">"Vegetables"</span>,</span>
+<span id="cb6-6"><a href="#cb6-6"></a>    <span class="st">"NCP"</span>: <span class="st">"NumberMeals"</span>,</span>
+<span id="cb6-7"><a href="#cb6-7"></a>    <span class="st">"CAEC"</span>: <span class="st">"Snacking"</span>,</span>
+<span id="cb6-8"><a href="#cb6-8"></a>    <span class="st">"SMOKE"</span>: <span class="st">"Smoking"</span>,</span>
+<span id="cb6-9"><a href="#cb6-9"></a>    <span class="st">"CH2O"</span>: <span class="st">"Water"</span>,</span>
+<span id="cb6-10"><a href="#cb6-10"></a>    <span class="st">"SCC"</span>: <span class="st">"MonitorCalories"</span>,</span>
+<span id="cb6-11"><a href="#cb6-11"></a>    <span class="st">"FAF"</span>: <span class="st">"PhysActivity"</span>,</span>
+<span id="cb6-12"><a href="#cb6-12"></a>    <span class="st">"TUE"</span>: <span class="st">"TechUse"</span>,</span>
+<span id="cb6-13"><a href="#cb6-13"></a>    <span class="st">"CALC"</span>: <span class="st">"Alcohol"</span>,</span>
+<span id="cb6-14"><a href="#cb6-14"></a>    <span class="st">"MTRANS"</span>: <span class="st">"Transport"</span>,</span>
+<span id="cb6-15"><a href="#cb6-15"></a>    <span class="st">"NObeyesdad"</span>: <span class="st">"Obesity"</span></span>
+<span id="cb6-16"><a href="#cb6-16"></a>}</span>
+<span id="cb6-17"><a href="#cb6-17"></a></span>
+<span id="cb6-18"><a href="#cb6-18"></a>df.rename(columns<span class="op">=</span>var_dict, inplace<span class="op">=</span><span class="va">True</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+</section>
+<section id="data-exploration" class="level2">
+<h2 class="anchored" data-anchor-id="data-exploration">Data Exploration</h2>
+<section id="numeric-summaries" class="level3">
+<h3 class="anchored" data-anchor-id="numeric-summaries">Numeric summaries</h3>
+<div id="data_exploration" class="cell" data-execution_count="6">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1"></a><span class="bu">print</span>(<span class="ss">f'Missing Values: </span><span class="sc">{</span>df<span class="sc">.</span>isna()<span class="sc">.</span><span class="bu">sum</span>()<span class="sc">.</span><span class="bu">sum</span>()<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb7-2"><a href="#cb7-2"></a><span class="bu">print</span>(<span class="ss">f'Data Types: </span><span class="ch">\n</span><span class="sc">{</span>df<span class="sc">.</span>dtypes<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb7-3"><a href="#cb7-3"></a><span class="bu">print</span>(<span class="ss">f'Data Descriptions: </span><span class="ch">\n</span><span class="sc">{</span>df<span class="sc">.</span>describe()<span class="sc">}</span><span class="ss">'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Missing Values: 0
+Data Types: 
+Gender              object
+Age                float64
+Height             float64
+Weight             float64
+FamilyHistory       object
+HighCalories        object
+Vegetables         float64
+NumberMeals        float64
+Snacking            object
+Smoking             object
+Water              float64
+MonitorCalories     object
+PhysActivity       float64
+TechUse            float64
+Alcohol             object
+Transport           object
+Obesity             object
+dtype: object
+Data Descriptions: 
+               Age       Height       Weight   Vegetables  NumberMeals  \
+count  2111.000000  2111.000000  2111.000000  2111.000000  2111.000000   
+mean     24.312600     1.701677    86.586058     2.419043     2.685628   
+std       6.345968     0.093305    26.191172     0.533927     0.778039   
+min      14.000000     1.450000    39.000000     1.000000     1.000000   
+25%      19.947192     1.630000    65.473343     2.000000     2.658738   
+50%      22.777890     1.700499    83.000000     2.385502     3.000000   
+75%      26.000000     1.768464   107.430682     3.000000     3.000000   
+max      61.000000     1.980000   173.000000     3.000000     4.000000   
+
+             Water  PhysActivity      TechUse  
+count  2111.000000   2111.000000  2111.000000  
+mean      2.008011      1.010298     0.657866  
+std       0.612953      0.850592     0.608927  
+min       1.000000      0.000000     0.000000  
+25%       1.584812      0.124505     0.000000  
+50%       2.000000      1.000000     0.625350  
+75%       2.477420      1.666678     1.000000  
+max       3.000000      3.000000     2.000000  </code></pre>
+</div>
+</div>
+<p>Large descriptive tables are not very useful!</p>
+<p>Different data types require different exploration techniques. We can separate the numeric and categorical variables to explore them separately.</p>
+<div id="separate_num_cat" class="cell" data-execution_count="7">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1"></a>num_cols <span class="op">=</span> df.select_dtypes(include<span class="op">=</span><span class="st">'number'</span>).columns</span>
+<span id="cb9-2"><a href="#cb9-2"></a>cat_cols <span class="op">=</span> df.select_dtypes(exclude<span class="op">=</span><span class="st">'number'</span>).columns</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+</section>
+<section id="data-visualization" class="level3">
+<h3 class="anchored" data-anchor-id="data-visualization">Data Visualization</h3>
+<div id="first_violins" class="cell" data-execution_count="8">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1"></a>num_long <span class="op">=</span> df[num_cols].melt(var_name<span class="op">=</span><span class="st">"variable"</span>, value_name<span class="op">=</span><span class="st">"value"</span>)</span>
+<span id="cb10-2"><a href="#cb10-2"></a>cat_long <span class="op">=</span> df[cat_cols].melt(var_name<span class="op">=</span><span class="st">"variable"</span>, value_name<span class="op">=</span><span class="st">"level"</span>).value_counts().unstack(fill_value<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb10-3"><a href="#cb10-3"></a></span>
+<span id="cb10-4"><a href="#cb10-4"></a>plt.figure(figsize<span class="op">=</span>FIGSIZE)</span>
+<span id="cb10-5"><a href="#cb10-5"></a>cat_long.plot(kind<span class="op">=</span><span class="st">"bar"</span>, stacked<span class="op">=</span><span class="va">True</span>, figsize<span class="op">=</span>FIGSIZE, legend<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb10-6"><a href="#cb10-6"></a>plt.ylabel(<span class="st">"Counts"</span>)</span>
+<span id="cb10-7"><a href="#cb10-7"></a>plt.xticks(rotation<span class="op">=</span><span class="dv">90</span>)</span>
+<span id="cb10-8"><a href="#cb10-8"></a>plt.title(<span class="st">"Stacked Bars: Categorical Variables"</span>)</span>
+<span id="cb10-9"><a href="#cb10-9"></a>plt.tight_layout()</span>
+<span id="cb10-10"><a href="#cb10-10"></a>plt.show()</span>
+<span id="cb10-11"><a href="#cb10-11"></a></span>
+<span id="cb10-12"><a href="#cb10-12"></a>plt.figure(figsize<span class="op">=</span>FIGSIZE)</span>
+<span id="cb10-13"><a href="#cb10-13"></a>sns.violinplot(data<span class="op">=</span>num_long, x<span class="op">=</span><span class="st">"variable"</span>, y<span class="op">=</span><span class="st">"value"</span>)</span>
+<span id="cb10-14"><a href="#cb10-14"></a>plt.xticks(rotation<span class="op">=</span><span class="dv">90</span>)</span>
+<span id="cb10-15"><a href="#cb10-15"></a>plt.title(<span class="st">"First Violins: Numeric Variables"</span>)</span>
+<span id="cb10-16"><a href="#cb10-16"></a>plt.tight_layout()</span>
+<span id="cb10-17"><a href="#cb10-17"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div id="first_violins-1" class="cell-output cell-output-display">
+<pre><code>&lt;Figure size 1050x600 with 0 Axes&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="03_EncodingNumericalVariables_files/figure-html/first_violins-output-2.png" id="first_violins-2" width="1035" height="585" class="figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="03_EncodingNumericalVariables_files/figure-html/first_violins-output-3.png" id="first_violins-3" width="1035" height="585" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>Question
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>In general variables are not comparable and have different units.</p>
+<ul>
+<li>Why is this a problem?</li>
+<li>What should be done before we proceed?</li>
+</ul>
+</div>
+</div>
+</section>
+</section>
+<section id="variable-transformations" class="level2">
+<h2 class="anchored" data-anchor-id="variable-transformations">Variable Transformations</h2>
+<section id="scaling-numerical-variables" class="level3">
+<h3 class="anchored" data-anchor-id="scaling-numerical-variables">Scaling (numerical variables)</h3>
+<p>The most common normalizations techniques are Standardization/Normalization</p>
+<p><span class="math display">\[
+X \to Z = \frac{X - \mu}{\sigma}
+\]</span></p>
+<div id="standard_scaling" class="cell" data-execution_count="9">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
+<span id="cb12-2"><a href="#cb12-2"></a></span>
+<span id="cb12-3"><a href="#cb12-3"></a><span class="co"># numeric: standardization</span></span>
+<span id="cb12-4"><a href="#cb12-4"></a>scaler <span class="op">=</span> StandardScaler()</span>
+<span id="cb12-5"><a href="#cb12-5"></a>Z <span class="op">=</span> scaler.fit_transform(df[num_cols]) <span class="co"># Z: numpy array !</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<p>and Min-Max scaling: <span class="math display">\[
+X \to Z = \frac{X - X_{min}}{X_{max} - X_{min}}
+\]</span></p>
+<div id="minmax_scaling" class="cell" data-execution_count="10">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1"></a><span class="co"># alternative scaling only shown for illustration </span></span>
+<span id="cb13-2"><a href="#cb13-2"></a><span class="co"># not executed</span></span>
+<span id="cb13-3"><a href="#cb13-3"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> MinMaxScaler</span>
+<span id="cb13-4"><a href="#cb13-4"></a></span>
+<span id="cb13-5"><a href="#cb13-5"></a>scaler <span class="op">=</span> MinMaxScaler(feature_range<span class="op">=</span>(<span class="dv">0</span>, <span class="dv">1</span>))</span>
+<span id="cb13-6"><a href="#cb13-6"></a>Z <span class="op">=</span> scaler.fit_transform(df[num_cols])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+</section>
+<section id="inverse-scaling" class="level3">
+<h3 class="anchored" data-anchor-id="inverse-scaling">Inverse Scaling</h3>
+<p>Scale transformations are <strong>invertible</strong></p>
+<p><span class="math display">\[
+X = Z \sigma + \mu
+\]</span></p>
+<p>or</p>
+<p><span class="math display">\[
+X = Z (X_{max} - X_{min}) + X_{min}
+\]</span></p>
+<div id="inverse_transform" class="cell" data-execution_count="11">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1"></a>Z_inv <span class="op">=</span> scaler.inverse_transform(Z)</span>
+<span id="cb14-2"><a href="#cb14-2"></a></span>
+<span id="cb14-3"><a href="#cb14-3"></a><span class="cf">if</span> np.testing.assert_allclose(df[num_cols], Z_inv) <span class="kw">is</span> <span class="va">None</span>:</span>
+<span id="cb14-4"><a href="#cb14-4"></a>    <span class="bu">print</span>(<span class="st">"Scaling is invertible"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Scaling is invertible</code></pre>
+</div>
+</div>
+<div id="cell-normalized_variables" class="cell" data-execution_count="12">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1"></a>num_norm <span class="op">=</span> ( </span>
+<span id="cb16-2"><a href="#cb16-2"></a>  pd.DataFrame(Z, columns<span class="op">=</span>num_cols)</span>
+<span id="cb16-3"><a href="#cb16-3"></a>  .melt(var_name<span class="op">=</span><span class="st">"variable"</span>, value_name<span class="op">=</span><span class="st">"value"</span>)</span>
+<span id="cb16-4"><a href="#cb16-4"></a>)</span>
+<span id="cb16-5"><a href="#cb16-5"></a></span>
+<span id="cb16-6"><a href="#cb16-6"></a>plt.figure(figsize<span class="op">=</span>FIGSIZE)</span>
+<span id="cb16-7"><a href="#cb16-7"></a>sns.violinplot(data<span class="op">=</span>num_norm, x<span class="op">=</span><span class="st">"variable"</span>, y<span class="op">=</span><span class="st">"value"</span>)</span>
+<span id="cb16-8"><a href="#cb16-8"></a>plt.xticks(rotation<span class="op">=</span><span class="dv">90</span>)</span>
+<span id="cb16-9"><a href="#cb16-9"></a>plt.ylabel(<span class="st">"Z-score"</span>)</span>
+<span id="cb16-10"><a href="#cb16-10"></a>plt.title(<span class="st">"Scaled Violins: Standardized Variables"</span>)</span>
+<span id="cb16-11"><a href="#cb16-11"></a>plt.tight_layout()</span>
+<span id="cb16-12"><a href="#cb16-12"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="03_EncodingNumericalVariables_files/figure-html/normalized_variables-output-1.png" id="normalized_variables" width="1035" height="585" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Notice
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>Z- or MinMax scaling does <strong>not</strong> change shape of distribtuion</li>
+<li>it only shifts the mean and changes the scale</li>
+<li>Z is dimensionless</li>
+<li>Standardization centers data around mean=0 and scales to unit variance (std=1)</li>
+<li>Useful for algorithms that depend on distances between samples (e.g.&nbsp;clustering)</li>
+</ul>
+</div>
+</div>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>Question
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>What could be the reason that not all distributions are unimodal?</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Dealing with “Unnormality”
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Often variables do not show Gaussian (Normal) Distributions:</p>
+<ul>
+<li>outliers? measurement errors?</li>
+<li>non-Gaussian processes: (multiplicative) growth (e.g population size, income distribution, …)</li>
+<li>integers: discrete values (e.g.&nbsp;count data, age in years)</li>
+<li>multimodality: other variables (i.e not just random noise)?</li>
+</ul>
+</div>
+</div>
+</div>
+<div id="cell-normalized_variables_multimodal" class="cell" data-execution_count="13">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1"></a>df_norm <span class="op">=</span> pd.DataFrame(Z, columns<span class="op">=</span>num_cols)</span>
+<span id="cb17-2"><a href="#cb17-2"></a>df_norm[<span class="st">"Obesity"</span>] <span class="op">=</span> df[<span class="st">"Obesity"</span>]</span>
+<span id="cb17-3"><a href="#cb17-3"></a></span>
+<span id="cb17-4"><a href="#cb17-4"></a>plt.figure(figsize<span class="op">=</span>FIGSIZE)</span>
+<span id="cb17-5"><a href="#cb17-5"></a>sns.violinplot(data<span class="op">=</span>df_norm, x<span class="op">=</span><span class="st">"Obesity"</span>, y<span class="op">=</span><span class="st">"Weight"</span>, hue<span class="op">=</span><span class="st">"Obesity"</span>)</span>
+<span id="cb17-6"><a href="#cb17-6"></a>plt.xticks(rotation<span class="op">=</span><span class="dv">90</span>)</span>
+<span id="cb17-7"><a href="#cb17-7"></a>plt.ylabel(<span class="st">"Normalized Weight (Z-score)"</span>)</span>
+<span id="cb17-8"><a href="#cb17-8"></a>plt.title(<span class="st">"Multimodality and Other Factors"</span>)</span>
+<span id="cb17-9"><a href="#cb17-9"></a>plt.tight_layout()</span>
+<span id="cb17-10"><a href="#cb17-10"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display">
+<div id="normalized_variables_multimodal" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="03_EncodingNumericalVariables_files/figure-html/normalized_variables_multimodal-output-1.png" width="1035" height="586" class="figure-img"></p>
+<figcaption>Multimodality in Weight is clearly due to other factors</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="other-transformations" class="level3">
+<h3 class="anchored" data-anchor-id="other-transformations">Other Transformations</h3>
+<section id="sqrt-transformation" class="level4">
+<h4 class="anchored" data-anchor-id="sqrt-transformation">Sqrt-Transformation</h4>
+<p>Count data often follows a <a href="https://en.wikipedia.org/wiki/Poisson_distribution" target="_blank" rel="noopener">Poisson distribution</a> with some parameter <span class="math inline">\(\lambda\)</span></p>
+<p><span class="math display">\[
+P(X=k) = \frac{\lambda^k e^{-\lambda}} {k!}
+\]</span></p>
+<p>For this distribution the variance increases with the mean <span class="math display">\[
+Var(X) = E[X] = \lambda
+\]</span> This is undesirable as large expected counts tend to have larger variance</p>
+<p>For a general variable transformation <span class="math inline">\(x \to z=f(x)\)</span> we have</p>
+<p><span class="math display">\[
+Var(Z) = |f'(x)|^2 Var(X)
+\]</span></p>
+<p>It turns out that square-root transformations can <strong>stabilize</strong> the variance</p>
+<p><span class="math display">\[
+z = 2 \sqrt{x} \to Var(Z) = 1
+\]</span></p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Variance Stabilization Illustration
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div id="cell-variance_stabilzation_illustration" class="cell" data-execution_count="14">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1"></a>rng <span class="op">=</span> np.random.default_rng(<span class="dv">42</span>)</span>
+<span id="cb18-2"><a href="#cb18-2"></a></span>
+<span id="cb18-3"><a href="#cb18-3"></a><span class="co"># generate Poisson data with 3 means (lambdas)</span></span>
+<span id="cb18-4"><a href="#cb18-4"></a>N <span class="op">=</span> <span class="dv">1000</span> <span class="co"># number of observations</span></span>
+<span id="cb18-5"><a href="#cb18-5"></a>lambdas <span class="op">=</span> [<span class="dv">10</span>, <span class="dv">50</span>, <span class="dv">100</span>]</span>
+<span id="cb18-6"><a href="#cb18-6"></a></span>
+<span id="cb18-7"><a href="#cb18-7"></a><span class="co"># define groups g with mean mu</span></span>
+<span id="cb18-8"><a href="#cb18-8"></a>df <span class="op">=</span> pd.DataFrame({<span class="st">"g"</span>: np.repeat(lambdas, N)})</span>
+<span id="cb18-9"><a href="#cb18-9"></a></span>
+<span id="cb18-10"><a href="#cb18-10"></a><span class="co"># x-values drawn from Poisson</span></span>
+<span id="cb18-11"><a href="#cb18-11"></a>df[<span class="st">"x"</span>] <span class="op">=</span> np.concatenate([</span>
+<span id="cb18-12"><a href="#cb18-12"></a>    rng.poisson(lam<span class="op">=</span>l, size<span class="op">=</span>N) <span class="cf">for</span> l <span class="kw">in</span> lambdas</span>
+<span id="cb18-13"><a href="#cb18-13"></a>])</span>
+<span id="cb18-14"><a href="#cb18-14"></a></span>
+<span id="cb18-15"><a href="#cb18-15"></a><span class="co"># y-values from transformation</span></span>
+<span id="cb18-16"><a href="#cb18-16"></a>df[<span class="st">"y"</span>] <span class="op">=</span> <span class="dv">2</span> <span class="op">*</span> np.sqrt(df[<span class="st">"x"</span>])</span>
+<span id="cb18-17"><a href="#cb18-17"></a>df[<span class="st">"g"</span>] <span class="op">=</span> df[<span class="st">"g"</span>].astype(<span class="bu">str</span>)</span>
+<span id="cb18-18"><a href="#cb18-18"></a></span>
+<span id="cb18-19"><a href="#cb18-19"></a><span class="kw">def</span> marginal_scatter(data, ylabel):</span>
+<span id="cb18-20"><a href="#cb18-20"></a>    g <span class="op">=</span> sns.JointGrid(</span>
+<span id="cb18-21"><a href="#cb18-21"></a>        data<span class="op">=</span>data,</span>
+<span id="cb18-22"><a href="#cb18-22"></a>        x<span class="op">=</span><span class="st">"x"</span>,</span>
+<span id="cb18-23"><a href="#cb18-23"></a>        y<span class="op">=</span><span class="st">"y"</span>,</span>
+<span id="cb18-24"><a href="#cb18-24"></a>        height<span class="op">=</span><span class="dv">6</span>,</span>
+<span id="cb18-25"><a href="#cb18-25"></a>        ratio<span class="op">=</span><span class="dv">5</span>,</span>
+<span id="cb18-26"><a href="#cb18-26"></a>        space<span class="op">=</span><span class="fl">0.05</span></span>
+<span id="cb18-27"><a href="#cb18-27"></a>    )</span>
+<span id="cb18-28"><a href="#cb18-28"></a></span>
+<span id="cb18-29"><a href="#cb18-29"></a>    sns.scatterplot(</span>
+<span id="cb18-30"><a href="#cb18-30"></a>        data<span class="op">=</span>data,</span>
+<span id="cb18-31"><a href="#cb18-31"></a>        x<span class="op">=</span><span class="st">"x"</span>,</span>
+<span id="cb18-32"><a href="#cb18-32"></a>        y<span class="op">=</span><span class="st">"y"</span>,</span>
+<span id="cb18-33"><a href="#cb18-33"></a>        hue<span class="op">=</span><span class="st">"g"</span>,</span>
+<span id="cb18-34"><a href="#cb18-34"></a>        ax<span class="op">=</span>g.ax_joint</span>
+<span id="cb18-35"><a href="#cb18-35"></a>    )</span>
+<span id="cb18-36"><a href="#cb18-36"></a></span>
+<span id="cb18-37"><a href="#cb18-37"></a>    sns.histplot(</span>
+<span id="cb18-38"><a href="#cb18-38"></a>        data<span class="op">=</span>data,</span>
+<span id="cb18-39"><a href="#cb18-39"></a>        x<span class="op">=</span><span class="st">"x"</span>,</span>
+<span id="cb18-40"><a href="#cb18-40"></a>        hue<span class="op">=</span><span class="st">"g"</span>,</span>
+<span id="cb18-41"><a href="#cb18-41"></a>        bins<span class="op">=</span><span class="dv">100</span>,</span>
+<span id="cb18-42"><a href="#cb18-42"></a>        ax<span class="op">=</span>g.ax_marg_x,</span>
+<span id="cb18-43"><a href="#cb18-43"></a>        legend<span class="op">=</span><span class="va">False</span></span>
+<span id="cb18-44"><a href="#cb18-44"></a>    )</span>
+<span id="cb18-45"><a href="#cb18-45"></a></span>
+<span id="cb18-46"><a href="#cb18-46"></a>    sns.histplot(</span>
+<span id="cb18-47"><a href="#cb18-47"></a>        data<span class="op">=</span>data,</span>
+<span id="cb18-48"><a href="#cb18-48"></a>        y<span class="op">=</span><span class="st">"y"</span>,</span>
+<span id="cb18-49"><a href="#cb18-49"></a>        hue<span class="op">=</span><span class="st">"g"</span>,</span>
+<span id="cb18-50"><a href="#cb18-50"></a>        bins<span class="op">=</span><span class="dv">100</span>,</span>
+<span id="cb18-51"><a href="#cb18-51"></a>        ax<span class="op">=</span>g.ax_marg_y,</span>
+<span id="cb18-52"><a href="#cb18-52"></a>        legend<span class="op">=</span><span class="va">False</span></span>
+<span id="cb18-53"><a href="#cb18-53"></a>    )</span>
+<span id="cb18-54"><a href="#cb18-54"></a></span>
+<span id="cb18-55"><a href="#cb18-55"></a>    g.figure.suptitle(<span class="st">"Variance Stabilization"</span>, fontsize<span class="op">=</span><span class="dv">16</span>)</span>
+<span id="cb18-56"><a href="#cb18-56"></a>    g.ax_joint.set_xlim(<span class="dv">0</span>, <span class="dv">125</span>)</span>
+<span id="cb18-57"><a href="#cb18-57"></a>    g.ax_joint.set_xlabel(<span class="st">"X"</span>)</span>
+<span id="cb18-58"><a href="#cb18-58"></a>    g.ax_joint.set_ylabel(ylabel)</span>
+<span id="cb18-59"><a href="#cb18-59"></a>    g.ax_joint.legend(title<span class="op">=</span><span class="vs">r"</span><span class="dv">$</span><span class="er">\</span><span class="vs">lambda</span><span class="dv">$</span><span class="vs">"</span>, loc<span class="op">=</span><span class="st">"best"</span>)</span>
+<span id="cb18-60"><a href="#cb18-60"></a></span>
+<span id="cb18-61"><a href="#cb18-61"></a>    <span class="cf">return</span> g</span>
+<span id="cb18-62"><a href="#cb18-62"></a></span>
+<span id="cb18-63"><a href="#cb18-63"></a>g1 <span class="op">=</span> marginal_scatter(df, <span class="vs">r"</span><span class="dv">$</span><span class="vs">Z = 2</span><span class="op">*</span><span class="dv">\s</span><span class="vs">qrt{X}</span><span class="dv">$</span><span class="vs">"</span>)</span>
+<span id="cb18-64"><a href="#cb18-64"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="03_EncodingNumericalVariables_files/figure-html/variance_stabilzation_illustration-output-1.png" id="variance_stabilzation_illustration" width="903" height="890" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p><strong>Real World Example</strong>: Number of Medications</p>
+<p>This is from a <a href="https://archive.ics.uci.edu/dataset/296/diabetes+130-us+hospitals+for+years+1999-2008" target="_blank" rel="noopener">large dataset for diabetes patients</a></p>
+<div id="sqrt_transform" class="cell" data-execution_count="15">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1"></a><span class="co"># large dataset of patients diagnosed with diabetes (130 US hopsitals)</span></span>
+<span id="cb19-2"><a href="#cb19-2"></a><span class="co"># paper: https://onlinelibrary.wiley.com/doi/10.1155/2014/781670</span></span>
+<span id="cb19-3"><a href="#cb19-3"></a>dataset <span class="op">=</span> fetch_ucirepo(<span class="bu">id</span><span class="op">=</span><span class="dv">296</span>) </span>
+<span id="cb19-4"><a href="#cb19-4"></a></span>
+<span id="cb19-5"><a href="#cb19-5"></a><span class="co"># of interest here are the number of medications</span></span>
+<span id="cb19-6"><a href="#cb19-6"></a>VAR<span class="op">=</span><span class="st">"num_medications"</span></span>
+<span id="cb19-7"><a href="#cb19-7"></a>VAR_TRANS<span class="op">=</span><span class="st">"num_medications_sqrt"</span></span>
+<span id="cb19-8"><a href="#cb19-8"></a>X <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb19-9"><a href="#cb19-9"></a>    VAR: dataset.data.features[VAR],</span>
+<span id="cb19-10"><a href="#cb19-10"></a>    VAR_TRANS: <span class="dv">2</span><span class="op">*</span>np.sqrt(dataset.data.features[VAR]) <span class="co"># sqrt-transform</span></span>
+<span id="cb19-11"><a href="#cb19-11"></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<div id="cell-sqrt_trafo_compare" class="cell" data-execution_count="16">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1"></a>fig, ax <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>FIGSIZE)</span>
+<span id="cb20-2"><a href="#cb20-2"></a></span>
+<span id="cb20-3"><a href="#cb20-3"></a>sns.violinplot(data<span class="op">=</span>X, y<span class="op">=</span>VAR, ax<span class="op">=</span>ax[<span class="dv">0</span>])</span>
+<span id="cb20-4"><a href="#cb20-4"></a>ax[<span class="dv">0</span>].set_title(<span class="st">"Original: skewed distribution"</span>)</span>
+<span id="cb20-5"><a href="#cb20-5"></a></span>
+<span id="cb20-6"><a href="#cb20-6"></a>sns.violinplot(data<span class="op">=</span>X, y<span class="op">=</span>VAR_TRANS, ax<span class="op">=</span>ax[<span class="dv">1</span>])</span>
+<span id="cb20-7"><a href="#cb20-7"></a>ax[<span class="dv">1</span>].set_title(<span class="st">"Square-root transformed"</span>)</span>
+<span id="cb20-8"><a href="#cb20-8"></a></span>
+<span id="cb20-9"><a href="#cb20-9"></a>plt.tight_layout()</span>
+<span id="cb20-10"><a href="#cb20-10"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="03_EncodingNumericalVariables_files/figure-html/sqrt_trafo_compare-output-1.png" id="sqrt_trafo_compare" width="1035" height="585" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="log-transformation" class="level4">
+<h4 class="anchored" data-anchor-id="log-transformation">Log-Transformation</h4>
+<p>Other common transformations include log transformation which can also be applied to skewed data.</p>
+<p>This can be expected when data derives from multiplicative growth processes (population, wealth, cancer etc.). This frequently gives rise to log-normal distribution with large skew.</p>
+<p><strong>Example</strong>: Mean Area (for breast cancer samples)</p>
+<div id="cell-log_transform" class="cell" data-execution_count="17">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> load_breast_cancer</span>
+<span id="cb21-2"><a href="#cb21-2"></a></span>
+<span id="cb21-3"><a href="#cb21-3"></a>df <span class="op">=</span> load_breast_cancer(as_frame<span class="op">=</span><span class="va">True</span>).frame</span>
+<span id="cb21-4"><a href="#cb21-4"></a></span>
+<span id="cb21-5"><a href="#cb21-5"></a>VAR<span class="op">=</span><span class="st">"mean area"</span></span>
+<span id="cb21-6"><a href="#cb21-6"></a>VAR_TRANS <span class="op">=</span> <span class="st">"mean area (log1p)"</span></span>
+<span id="cb21-7"><a href="#cb21-7"></a></span>
+<span id="cb21-8"><a href="#cb21-8"></a>X <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb21-9"><a href="#cb21-9"></a>    VAR: df[VAR],</span>
+<span id="cb21-10"><a href="#cb21-10"></a>    VAR_TRANS: np.log1p(df[VAR])</span>
+<span id="cb21-11"><a href="#cb21-11"></a>})</span>
+<span id="cb21-12"><a href="#cb21-12"></a></span>
+<span id="cb21-13"><a href="#cb21-13"></a></span>
+<span id="cb21-14"><a href="#cb21-14"></a>fig, ax <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>FIGSIZE)</span>
+<span id="cb21-15"><a href="#cb21-15"></a>sns.violinplot(data<span class="op">=</span>X, y<span class="op">=</span>VAR, ax<span class="op">=</span>ax[<span class="dv">0</span>])</span>
+<span id="cb21-16"><a href="#cb21-16"></a>ax[<span class="dv">0</span>].set_title(<span class="st">"Original: skewed distribution"</span>)</span>
+<span id="cb21-17"><a href="#cb21-17"></a></span>
+<span id="cb21-18"><a href="#cb21-18"></a>sns.violinplot(data<span class="op">=</span>X, y<span class="op">=</span>VAR_TRANS, ax<span class="op">=</span>ax[<span class="dv">1</span>])</span>
+<span id="cb21-19"><a href="#cb21-19"></a>ax[<span class="dv">1</span>].set_title(<span class="st">"Log transformed"</span>)</span>
+<span id="cb21-20"><a href="#cb21-20"></a></span>
+<span id="cb21-21"><a href="#cb21-21"></a>plt.tight_layout()</span>
+<span id="cb21-22"><a href="#cb21-22"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="03_EncodingNumericalVariables_files/figure-html/log_transform-output-1.png" id="log_transform" width="1035" height="585" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="appendix-box-cox-transformation" class="level4">
+<h4 class="anchored" data-anchor-id="appendix-box-cox-transformation">Appendix: Box-Cox Transformation</h4>
+<p>a generalization of Log-transformation is the Box-Cox transformation (for strictly positive data)</p>
+<p><span class="math display">\[
+y = x(\lambda) = \begin{cases}
+\frac{x^\lambda - 1}{\lambda} &amp; \text{if } \lambda \neq 0 \\
+\log(x) &amp; \text{if } \lambda = 0
+\end{cases}
+\]</span></p>
+<p>Frequently Box-Cox transformed are also standardized <span class="math inline">\(x \to y \to z\)</span></p>
+<section id="filter-select-numeric-data-with-positive-values" class="level5">
+<h5 class="anchored" data-anchor-id="filter-select-numeric-data-with-positive-values">Filter: Select numeric data with positive values</h5>
+<div id="data_prep" class="cell" data-execution_count="18">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1"></a><span class="co"># pick some numerical columns (mean values)</span></span>
+<span id="cb22-2"><a href="#cb22-2"></a>df <span class="op">=</span> df.<span class="bu">filter</span>(regex<span class="op">=</span><span class="vs">r"</span><span class="dv">^</span><span class="vs">mean"</span>) </span>
+<span id="cb22-3"><a href="#cb22-3"></a></span>
+<span id="cb22-4"><a href="#cb22-4"></a><span class="co"># ensure all columns are positive (or drop)</span></span>
+<span id="cb22-5"><a href="#cb22-5"></a>pos_cols <span class="op">=</span> df.columns[df.gt(<span class="dv">0</span>).<span class="bu">all</span>() <span class="op">&amp;</span> df.notna().<span class="bu">all</span>()] </span>
+<span id="cb22-6"><a href="#cb22-6"></a>X <span class="op">=</span> df[pos_cols]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+</section>
+<section id="box-cox-sklearn-determine-optimal-lambda" class="level5">
+<h5 class="anchored" data-anchor-id="box-cox-sklearn-determine-optimal-lambda">Box-Cox (sklearn): Determine optimal <span class="math inline">\(\lambda\)</span></h5>
+<div id="sklearn_boxcox" class="cell" data-execution_count="20">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> PowerTransformer</span>
+<span id="cb23-2"><a href="#cb23-2"></a></span>
+<span id="cb23-3"><a href="#cb23-3"></a><span class="co"># Box-Cox transform (default: ,standardize=True)</span></span>
+<span id="cb23-4"><a href="#cb23-4"></a>pt <span class="op">=</span> PowerTransformer(method<span class="op">=</span><span class="st">"box-cox"</span>)</span>
+<span id="cb23-5"><a href="#cb23-5"></a>X_bc <span class="op">=</span> pt.fit_transform(X)</span>
+<span id="cb23-6"><a href="#cb23-6"></a></span>
+<span id="cb23-7"><a href="#cb23-7"></a><span class="co"># get optimal lambdas</span></span>
+<span id="cb23-8"><a href="#cb23-8"></a>lambda_df <span class="op">=</span> pd.DataFrame({<span class="st">"var"</span>: X.columns, <span class="st">"lambda"</span>: pt.lambdas_})</span>
+<span id="cb23-9"><a href="#cb23-9"></a><span class="bu">print</span>(<span class="ss">f'Best BC-parameters:</span><span class="ch">\n</span><span class="ss"> </span><span class="sc">{</span>lambda_df<span class="sc">}</span><span class="ss">'</span>) </span>
+<span id="cb23-10"><a href="#cb23-10"></a></span>
+<span id="cb23-11"><a href="#cb23-11"></a><span class="co"># sanity check: inverse transformation</span></span>
+<span id="cb23-12"><a href="#cb23-12"></a>X_orig <span class="op">=</span> pt.inverse_transform(X_bc)</span>
+<span id="cb23-13"><a href="#cb23-13"></a><span class="cf">if</span> np.testing.assert_allclose(X, X_orig) <span class="kw">is</span> <span class="va">None</span>:</span>
+<span id="cb23-14"><a href="#cb23-14"></a>    <span class="bu">print</span>(<span class="st">"Transformation is invertible"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Best BC-parameters:
+                       var    lambda
+0             mean radius -0.462994
+1            mean texture  0.021525
+2          mean perimeter -0.463569
+3               mean area -0.211072
+4         mean smoothness  0.135633
+5        mean compactness  0.026828
+6           mean symmetry -0.316203
+7  mean fractal dimension -2.460281
+Transformation is invertible</code></pre>
+</div>
+</div>
+</section>
+<section id="box-cox-visualization" class="level5">
+<h5 class="anchored" data-anchor-id="box-cox-visualization">Box-Cox (Visualization)</h5>
+<div id="visualize_boxcox" class="cell" data-execution_count="21">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1"></a><span class="co"># melt dfs for visualization</span></span>
+<span id="cb25-2"><a href="#cb25-2"></a></span>
+<span id="cb25-3"><a href="#cb25-3"></a>num_orig <span class="op">=</span> X.melt(var_name<span class="op">=</span><span class="st">"variable"</span>, value_name<span class="op">=</span><span class="st">"value"</span>)</span>
+<span id="cb25-4"><a href="#cb25-4"></a>num_bc <span class="op">=</span> ( </span>
+<span id="cb25-5"><a href="#cb25-5"></a>  pd.DataFrame(X_bc, columns<span class="op">=</span>X.columns)</span>
+<span id="cb25-6"><a href="#cb25-6"></a>  .melt(var_name<span class="op">=</span><span class="st">"variable"</span>, value_name<span class="op">=</span><span class="st">"value"</span>)</span>
+<span id="cb25-7"><a href="#cb25-7"></a>)</span>
+<span id="cb25-8"><a href="#cb25-8"></a></span>
+<span id="cb25-9"><a href="#cb25-9"></a>plt.figure(figsize<span class="op">=</span>FIGSIZE)</span>
+<span id="cb25-10"><a href="#cb25-10"></a>sns.violinplot(data<span class="op">=</span>num_orig, x<span class="op">=</span><span class="st">"variable"</span>, y<span class="op">=</span><span class="st">"value"</span>)</span>
+<span id="cb25-11"><a href="#cb25-11"></a>plt.xticks(rotation<span class="op">=</span><span class="dv">90</span>)</span>
+<span id="cb25-12"><a href="#cb25-12"></a>plt.title(<span class="st">"Original Variables"</span>)</span>
+<span id="cb25-13"><a href="#cb25-13"></a>plt.tight_layout()</span>
+<span id="cb25-14"><a href="#cb25-14"></a>plt.show()</span>
+<span id="cb25-15"><a href="#cb25-15"></a></span>
+<span id="cb25-16"><a href="#cb25-16"></a>plt.figure(figsize<span class="op">=</span>FIGSIZE)</span>
+<span id="cb25-17"><a href="#cb25-17"></a>sns.violinplot(data<span class="op">=</span>num_bc, x<span class="op">=</span><span class="st">"variable"</span>, y<span class="op">=</span><span class="st">"value"</span>)</span>
+<span id="cb25-18"><a href="#cb25-18"></a>plt.xticks(rotation<span class="op">=</span><span class="dv">90</span>)</span>
+<span id="cb25-19"><a href="#cb25-19"></a>plt.title(<span class="st">"Box-Cox Transformed"</span>)</span>
+<span id="cb25-20"><a href="#cb25-20"></a>plt.tight_layout()</span>
+<span id="cb25-21"><a href="#cb25-21"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="03_EncodingNumericalVariables_files/figure-html/visualize_boxcox-output-1.png" id="visualize_boxcox-1" width="1035" height="585" class="figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="03_EncodingNumericalVariables_files/figure-html/visualize_boxcox-output-2.png" id="visualize_boxcox-2" width="1035" height="585" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>transformations are <strong>data engineering</strong> <span class="math inline">\(\to\)</span> design choices</li>
+<li>no formal rules: subject expertise &amp; iterations!</li>
+<li>guiding principles: scaling, variance stabilization, symmetric residuals</li>
+<li>make variable more comparable, adjust for units, help reveal pattern</li>
+<li>make some assumptions: additive or multiplicative</li>
+<li>success is based on interpretability</li>
+<li>general transformations <span class="math inline">\(x \to z\)</span> may change shape of distribution</li>
+</ul>
+</div>
+</div>
+
+
+<!-- -->
+
+</section>
+</section>
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb26" data-shortcodes="false"><pre class="sourceCode numberSource markdown number-lines code-with-copy"><code class="sourceCode markdown"><span id="cb26-1"><a href="#cb26-1"></a><span class="co">---</span></span>
+<span id="cb26-2"><a href="#cb26-2"></a><span class="an">title:</span><span class="co"> "Transforming Numerical Variables"</span></span>
+<span id="cb26-3"><a href="#cb26-3"></a><span class="an">date:</span><span class="co">  last-modified</span></span>
+<span id="cb26-4"><a href="#cb26-4"></a><span class="an">categories:</span></span>
+<span id="cb26-5"><a href="#cb26-5"></a><span class="co">  - transformation</span></span>
+<span id="cb26-6"><a href="#cb26-6"></a><span class="co">  - normalization</span></span>
+<span id="cb26-7"><a href="#cb26-7"></a><span class="co">  - encoding</span></span>
+<span id="cb26-8"><a href="#cb26-8"></a><span class="co">  - scaling</span></span>
+<span id="cb26-9"><a href="#cb26-9"></a><span class="co">  - Poisson</span></span>
+<span id="cb26-10"><a href="#cb26-10"></a><span class="co">  - Obesity</span></span>
+<span id="cb26-11"><a href="#cb26-11"></a><span class="co">  - Diabetes</span></span>
+<span id="cb26-12"><a href="#cb26-12"></a><span class="an">jupyter:</span><span class="co"> b92g</span></span>
+<span id="cb26-13"><a href="#cb26-13"></a><span class="an">description:</span><span class="co"> Making Numbers more Meaningful</span></span>
+<span id="cb26-14"><a href="#cb26-14"></a><span class="an">draft:</span><span class="co"> false</span></span>
+<span id="cb26-15"><a href="#cb26-15"></a><span class="co">---</span></span>
+<span id="cb26-16"><a href="#cb26-16"></a></span>
+<span id="cb26-17"><a href="#cb26-17"></a><span class="fu">## Imports adn Definitions</span></span>
+<span id="cb26-20"><a href="#cb26-20"></a><span class="in">```{python}</span></span>
+<span id="cb26-21"><a href="#cb26-21"></a><span class="co">#| label: load_packages</span></span>
+<span id="cb26-22"><a href="#cb26-22"></a><span class="co">#| warning: false</span></span>
+<span id="cb26-23"><a href="#cb26-23"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
+<span id="cb26-24"><a href="#cb26-24"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb26-25"><a href="#cb26-25"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb26-26"><a href="#cb26-26"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb26-27"><a href="#cb26-27"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb26-28"><a href="#cb26-28"></a><span class="im">import</span> warnings</span>
+<span id="cb26-29"><a href="#cb26-29"></a>warnings.filterwarnings(<span class="st">'ignore'</span>)</span>
+<span id="cb26-30"><a href="#cb26-30"></a></span>
+<span id="cb26-31"><a href="#cb26-31"></a>FIGSIZE<span class="op">=</span>(<span class="dv">7</span>,<span class="dv">4</span>)</span>
+<span id="cb26-32"><a href="#cb26-32"></a><span class="in">```</span></span>
+<span id="cb26-33"><a href="#cb26-33"></a></span>
+<span id="cb26-34"><a href="#cb26-34"></a><span class="fu">## Obesity Data (Reminder)</span></span>
+<span id="cb26-35"><a href="#cb26-35"></a>The dataset "Estimation of Obesity Levels Based on Eating Habits and Physical Condition" is a collection of data that aims to predict obesity levels based on various factors related to eating habits and physical condition. The dataset includes features such as age, gender. Notice that it has been synthetically augmented using the SMOTE technique to address class imbalance.</span>
+<span id="cb26-36"><a href="#cb26-36"></a></span>
+<span id="cb26-37"><a href="#cb26-37"></a>References: </span>
+<span id="cb26-38"><a href="#cb26-38"></a></span>
+<span id="cb26-39"><a href="#cb26-39"></a><span class="ss">- </span>https://www.sciencedirect.com/science/article/pii/S2352340919306985</span>
+<span id="cb26-40"><a href="#cb26-40"></a><span class="ss">- </span>https://www.kaggle.com/datasets/aravindpcoder/obesity-or-cvd-risk-classifyregressorcluster</span>
+<span id="cb26-41"><a href="#cb26-41"></a><span class="ss">- </span>SMOTE (oversampling of minority): https://www.jair.org/index.php/jair/article/view/10302/24590</span>
+<span id="cb26-42"><a href="#cb26-42"></a></span>
+<span id="cb26-45"><a href="#cb26-45"></a><span class="in">```{python}</span></span>
+<span id="cb26-46"><a href="#cb26-46"></a><span class="co">#| label: load_data</span></span>
+<span id="cb26-47"><a href="#cb26-47"></a><span class="im">from</span> ucimlrepo <span class="im">import</span> fetch_ucirepo </span>
+<span id="cb26-48"><a href="#cb26-48"></a><span class="im">from</span> ucimlrepo <span class="im">import</span> fetch_ucirepo </span>
+<span id="cb26-49"><a href="#cb26-49"></a>  </span>
+<span id="cb26-50"><a href="#cb26-50"></a><span class="co"># fetch dataset from UCI repo</span></span>
+<span id="cb26-51"><a href="#cb26-51"></a>dataset <span class="op">=</span> fetch_ucirepo(<span class="bu">id</span><span class="op">=</span><span class="dv">544</span>) </span>
+<span id="cb26-52"><a href="#cb26-52"></a></span>
+<span id="cb26-53"><a href="#cb26-53"></a><span class="bu">print</span>(<span class="st">'type: '</span>, <span class="bu">type</span>(dataset))   <span class="co"># dictionary (UCI-specific)</span></span>
+<span id="cb26-54"><a href="#cb26-54"></a><span class="bu">print</span>(<span class="st">'keys: '</span>, dataset.keys())  <span class="co"># data, metadata, variables</span></span>
+<span id="cb26-55"><a href="#cb26-55"></a><span class="in">```</span></span>
+<span id="cb26-56"><a href="#cb26-56"></a></span>
+<span id="cb26-57"><a href="#cb26-57"></a></span>
+<span id="cb26-60"><a href="#cb26-60"></a><span class="in">```{python}</span></span>
+<span id="cb26-61"><a href="#cb26-61"></a><span class="co">#| label: target_feature_split_later</span></span>
+<span id="cb26-62"><a href="#cb26-62"></a><span class="co">#| echo: false</span></span>
+<span id="cb26-63"><a href="#cb26-63"></a><span class="co">#| eval: false</span></span>
+<span id="cb26-64"><a href="#cb26-64"></a>X <span class="op">=</span> dataset.data.features </span>
+<span id="cb26-65"><a href="#cb26-65"></a>y <span class="op">=</span> dataset.data.targets </span>
+<span id="cb26-66"><a href="#cb26-66"></a><span class="bu">print</span>(X.shape, y.shape)</span>
+<span id="cb26-67"><a href="#cb26-67"></a><span class="in">```</span></span>
+<span id="cb26-68"><a href="#cb26-68"></a></span>
+<span id="cb26-69"><a href="#cb26-69"></a></span>
+<span id="cb26-72"><a href="#cb26-72"></a><span class="in">```{python}</span></span>
+<span id="cb26-73"><a href="#cb26-73"></a><span class="co">#| label: structural_info</span></span>
+<span id="cb26-74"><a href="#cb26-74"></a></span>
+<span id="cb26-75"><a href="#cb26-75"></a>df <span class="op">=</span> dataset.data.original </span>
+<span id="cb26-76"><a href="#cb26-76"></a></span>
+<span id="cb26-77"><a href="#cb26-77"></a><span class="bu">print</span>(<span class="st">'metadata:  '</span>, dataset.metadata) </span>
+<span id="cb26-78"><a href="#cb26-78"></a><span class="bu">print</span>(<span class="st">'data(shape):      '</span>, df.shape)</span>
+<span id="cb26-79"><a href="#cb26-79"></a></span>
+<span id="cb26-80"><a href="#cb26-80"></a><span class="co"># variable information: df.info(), df.columns, df.dtypes</span></span>
+<span id="cb26-81"><a href="#cb26-81"></a><span class="bu">print</span>(<span class="st">'variables: '</span>, dataset.variables) </span>
+<span id="cb26-82"><a href="#cb26-82"></a><span class="in">```</span></span>
+<span id="cb26-83"><a href="#cb26-83"></a></span>
+<span id="cb26-84"><a href="#cb26-84"></a></span>
+<span id="cb26-85"><a href="#cb26-85"></a><span class="fu">## Encoding Variable Names</span></span>
+<span id="cb26-86"><a href="#cb26-86"></a></span>
+<span id="cb26-87"><a href="#cb26-87"></a>Ideally we would want to have some <span class="in">`coding standards`</span> for variable names (i.e. ICD-10, Snomed CT, ...). Below I simply want to avoid long variable names and incomprehensible abbreviations.</span>
+<span id="cb26-88"><a href="#cb26-88"></a></span>
+<span id="cb26-91"><a href="#cb26-91"></a><span class="in">```{python}</span></span>
+<span id="cb26-92"><a href="#cb26-92"></a>var_dict <span class="op">=</span>  {</span>
+<span id="cb26-93"><a href="#cb26-93"></a>    <span class="st">"family_history_with_overweight"</span>: <span class="st">"FamilyHistory"</span>,</span>
+<span id="cb26-94"><a href="#cb26-94"></a>    <span class="co"># Frequent consumption of high caloric food (yes/no)</span></span>
+<span id="cb26-95"><a href="#cb26-95"></a>    <span class="st">"FAVC"</span>: <span class="st">"HighCalories"</span>, </span>
+<span id="cb26-96"><a href="#cb26-96"></a>    <span class="st">"FCVC"</span>: <span class="st">"Vegetables"</span>,</span>
+<span id="cb26-97"><a href="#cb26-97"></a>    <span class="st">"NCP"</span>: <span class="st">"NumberMeals"</span>,</span>
+<span id="cb26-98"><a href="#cb26-98"></a>    <span class="st">"CAEC"</span>: <span class="st">"Snacking"</span>,</span>
+<span id="cb26-99"><a href="#cb26-99"></a>    <span class="st">"SMOKE"</span>: <span class="st">"Smoking"</span>,</span>
+<span id="cb26-100"><a href="#cb26-100"></a>    <span class="st">"CH2O"</span>: <span class="st">"Water"</span>,</span>
+<span id="cb26-101"><a href="#cb26-101"></a>    <span class="st">"SCC"</span>: <span class="st">"MonitorCalories"</span>,</span>
+<span id="cb26-102"><a href="#cb26-102"></a>    <span class="st">"FAF"</span>: <span class="st">"PhysActivity"</span>,</span>
+<span id="cb26-103"><a href="#cb26-103"></a>    <span class="st">"TUE"</span>: <span class="st">"TechUse"</span>,</span>
+<span id="cb26-104"><a href="#cb26-104"></a>    <span class="st">"CALC"</span>: <span class="st">"Alcohol"</span>,</span>
+<span id="cb26-105"><a href="#cb26-105"></a>    <span class="st">"MTRANS"</span>: <span class="st">"Transport"</span>,</span>
+<span id="cb26-106"><a href="#cb26-106"></a>    <span class="st">"NObeyesdad"</span>: <span class="st">"Obesity"</span></span>
+<span id="cb26-107"><a href="#cb26-107"></a>}</span>
+<span id="cb26-108"><a href="#cb26-108"></a></span>
+<span id="cb26-109"><a href="#cb26-109"></a>df.rename(columns<span class="op">=</span>var_dict, inplace<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb26-110"><a href="#cb26-110"></a><span class="in">```</span></span>
+<span id="cb26-111"><a href="#cb26-111"></a></span>
+<span id="cb26-112"><a href="#cb26-112"></a></span>
+<span id="cb26-113"><a href="#cb26-113"></a></span>
+<span id="cb26-114"><a href="#cb26-114"></a><span class="fu">## Data Exploration</span></span>
+<span id="cb26-115"><a href="#cb26-115"></a></span>
+<span id="cb26-116"><a href="#cb26-116"></a></span>
+<span id="cb26-117"><a href="#cb26-117"></a><span class="fu">### Numeric summaries</span></span>
+<span id="cb26-118"><a href="#cb26-118"></a></span>
+<span id="cb26-121"><a href="#cb26-121"></a><span class="in">```{python}</span></span>
+<span id="cb26-122"><a href="#cb26-122"></a><span class="co">#| label: data_exploration</span></span>
+<span id="cb26-123"><a href="#cb26-123"></a><span class="bu">print</span>(<span class="ss">f'Missing Values: </span><span class="sc">{</span>df<span class="sc">.</span>isna()<span class="sc">.</span><span class="bu">sum</span>()<span class="sc">.</span><span class="bu">sum</span>()<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb26-124"><a href="#cb26-124"></a><span class="bu">print</span>(<span class="ss">f'Data Types: </span><span class="ch">\n</span><span class="sc">{</span>df<span class="sc">.</span>dtypes<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb26-125"><a href="#cb26-125"></a><span class="bu">print</span>(<span class="ss">f'Data Descriptions: </span><span class="ch">\n</span><span class="sc">{</span>df<span class="sc">.</span>describe()<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb26-126"><a href="#cb26-126"></a><span class="in">```</span></span>
+<span id="cb26-127"><a href="#cb26-127"></a></span>
+<span id="cb26-128"><a href="#cb26-128"></a>Large descriptive tables are not very useful!</span>
+<span id="cb26-129"><a href="#cb26-129"></a></span>
+<span id="cb26-130"><a href="#cb26-130"></a>Different data types require different exploration techniques. We can separate the numeric and categorical variables to explore them separately.</span>
+<span id="cb26-131"><a href="#cb26-131"></a></span>
+<span id="cb26-134"><a href="#cb26-134"></a><span class="in">```{python}</span></span>
+<span id="cb26-135"><a href="#cb26-135"></a><span class="co">#| label: separate_num_cat</span></span>
+<span id="cb26-136"><a href="#cb26-136"></a>num_cols <span class="op">=</span> df.select_dtypes(include<span class="op">=</span><span class="st">'number'</span>).columns</span>
+<span id="cb26-137"><a href="#cb26-137"></a>cat_cols <span class="op">=</span> df.select_dtypes(exclude<span class="op">=</span><span class="st">'number'</span>).columns</span>
+<span id="cb26-138"><a href="#cb26-138"></a><span class="in">```</span></span>
+<span id="cb26-139"><a href="#cb26-139"></a></span>
+<span id="cb26-140"><a href="#cb26-140"></a><span class="fu">### Data Visualization </span></span>
+<span id="cb26-141"><a href="#cb26-141"></a></span>
+<span id="cb26-144"><a href="#cb26-144"></a><span class="in">```{python}</span></span>
+<span id="cb26-145"><a href="#cb26-145"></a><span class="co">#| label: first_violins</span></span>
+<span id="cb26-146"><a href="#cb26-146"></a><span class="co">#| code-fold: true</span></span>
+<span id="cb26-147"><a href="#cb26-147"></a></span>
+<span id="cb26-148"><a href="#cb26-148"></a>num_long <span class="op">=</span> df[num_cols].melt(var_name<span class="op">=</span><span class="st">"variable"</span>, value_name<span class="op">=</span><span class="st">"value"</span>)</span>
+<span id="cb26-149"><a href="#cb26-149"></a>cat_long <span class="op">=</span> df[cat_cols].melt(var_name<span class="op">=</span><span class="st">"variable"</span>, value_name<span class="op">=</span><span class="st">"level"</span>).value_counts().unstack(fill_value<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb26-150"><a href="#cb26-150"></a></span>
+<span id="cb26-151"><a href="#cb26-151"></a>plt.figure(figsize<span class="op">=</span>FIGSIZE)</span>
+<span id="cb26-152"><a href="#cb26-152"></a>cat_long.plot(kind<span class="op">=</span><span class="st">"bar"</span>, stacked<span class="op">=</span><span class="va">True</span>, figsize<span class="op">=</span>FIGSIZE, legend<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb26-153"><a href="#cb26-153"></a>plt.ylabel(<span class="st">"Counts"</span>)</span>
+<span id="cb26-154"><a href="#cb26-154"></a>plt.xticks(rotation<span class="op">=</span><span class="dv">90</span>)</span>
+<span id="cb26-155"><a href="#cb26-155"></a>plt.title(<span class="st">"Stacked Bars: Categorical Variables"</span>)</span>
+<span id="cb26-156"><a href="#cb26-156"></a>plt.tight_layout()</span>
+<span id="cb26-157"><a href="#cb26-157"></a>plt.show()</span>
+<span id="cb26-158"><a href="#cb26-158"></a></span>
+<span id="cb26-159"><a href="#cb26-159"></a>plt.figure(figsize<span class="op">=</span>FIGSIZE)</span>
+<span id="cb26-160"><a href="#cb26-160"></a>sns.violinplot(data<span class="op">=</span>num_long, x<span class="op">=</span><span class="st">"variable"</span>, y<span class="op">=</span><span class="st">"value"</span>)</span>
+<span id="cb26-161"><a href="#cb26-161"></a>plt.xticks(rotation<span class="op">=</span><span class="dv">90</span>)</span>
+<span id="cb26-162"><a href="#cb26-162"></a>plt.title(<span class="st">"First Violins: Numeric Variables"</span>)</span>
+<span id="cb26-163"><a href="#cb26-163"></a>plt.tight_layout()</span>
+<span id="cb26-164"><a href="#cb26-164"></a>plt.show()</span>
+<span id="cb26-165"><a href="#cb26-165"></a><span class="in">```</span></span>
+<span id="cb26-166"><a href="#cb26-166"></a></span>
+<span id="cb26-167"><a href="#cb26-167"></a>::: {.callout-important}</span>
+<span id="cb26-168"><a href="#cb26-168"></a><span class="fu">### Question</span></span>
+<span id="cb26-169"><a href="#cb26-169"></a>In general variables are not comparable and have different units.</span>
+<span id="cb26-170"><a href="#cb26-170"></a></span>
+<span id="cb26-171"><a href="#cb26-171"></a><span class="ss">- </span>Why is this a problem?</span>
+<span id="cb26-172"><a href="#cb26-172"></a><span class="ss">- </span>What should be done before we proceed?</span>
+<span id="cb26-173"><a href="#cb26-173"></a>:::</span>
+<span id="cb26-174"><a href="#cb26-174"></a></span>
+<span id="cb26-175"><a href="#cb26-175"></a></span>
+<span id="cb26-176"><a href="#cb26-176"></a></span>
+<span id="cb26-177"><a href="#cb26-177"></a><span class="fu">## Variable Transformations</span></span>
+<span id="cb26-178"><a href="#cb26-178"></a></span>
+<span id="cb26-179"><a href="#cb26-179"></a></span>
+<span id="cb26-180"><a href="#cb26-180"></a><span class="fu">### Scaling (numerical variables)</span></span>
+<span id="cb26-181"><a href="#cb26-181"></a></span>
+<span id="cb26-182"><a href="#cb26-182"></a></span>
+<span id="cb26-183"><a href="#cb26-183"></a>The most common normalizations techniques are Standardization/Normalization</span>
+<span id="cb26-184"><a href="#cb26-184"></a></span>
+<span id="cb26-185"><a href="#cb26-185"></a>$$</span>
+<span id="cb26-186"><a href="#cb26-186"></a>X \to Z = \frac{X - \mu}{\sigma}</span>
+<span id="cb26-187"><a href="#cb26-187"></a>$$</span>
+<span id="cb26-188"><a href="#cb26-188"></a></span>
+<span id="cb26-189"><a href="#cb26-189"></a></span>
+<span id="cb26-192"><a href="#cb26-192"></a><span class="in">```{python}</span></span>
+<span id="cb26-193"><a href="#cb26-193"></a><span class="co">#| label: standard_scaling</span></span>
+<span id="cb26-194"><a href="#cb26-194"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
+<span id="cb26-195"><a href="#cb26-195"></a></span>
+<span id="cb26-196"><a href="#cb26-196"></a><span class="co"># numeric: standardization</span></span>
+<span id="cb26-197"><a href="#cb26-197"></a>scaler <span class="op">=</span> StandardScaler()</span>
+<span id="cb26-198"><a href="#cb26-198"></a>Z <span class="op">=</span> scaler.fit_transform(df[num_cols]) <span class="co"># Z: numpy array !</span></span>
+<span id="cb26-199"><a href="#cb26-199"></a><span class="in">```</span></span>
+<span id="cb26-200"><a href="#cb26-200"></a></span>
+<span id="cb26-201"><a href="#cb26-201"></a></span>
+<span id="cb26-202"><a href="#cb26-202"></a>and Min-Max scaling:</span>
+<span id="cb26-203"><a href="#cb26-203"></a>$$</span>
+<span id="cb26-204"><a href="#cb26-204"></a>X \to Z = \frac{X - X_{min}}{X_{max} - X_{min}}</span>
+<span id="cb26-205"><a href="#cb26-205"></a>$$</span>
+<span id="cb26-206"><a href="#cb26-206"></a></span>
+<span id="cb26-209"><a href="#cb26-209"></a><span class="in">```{python}</span></span>
+<span id="cb26-210"><a href="#cb26-210"></a><span class="co">#| label: minmax_scaling</span></span>
+<span id="cb26-211"><a href="#cb26-211"></a><span class="co">#| eval: false</span></span>
+<span id="cb26-212"><a href="#cb26-212"></a></span>
+<span id="cb26-213"><a href="#cb26-213"></a><span class="co"># alternative scaling only shown for illustration </span></span>
+<span id="cb26-214"><a href="#cb26-214"></a><span class="co"># not executed</span></span>
+<span id="cb26-215"><a href="#cb26-215"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> MinMaxScaler</span>
+<span id="cb26-216"><a href="#cb26-216"></a></span>
+<span id="cb26-217"><a href="#cb26-217"></a>scaler <span class="op">=</span> MinMaxScaler(feature_range<span class="op">=</span>(<span class="dv">0</span>, <span class="dv">1</span>))</span>
+<span id="cb26-218"><a href="#cb26-218"></a>Z <span class="op">=</span> scaler.fit_transform(df[num_cols])</span>
+<span id="cb26-219"><a href="#cb26-219"></a><span class="in">```</span></span>
+<span id="cb26-220"><a href="#cb26-220"></a></span>
+<span id="cb26-221"><a href="#cb26-221"></a></span>
+<span id="cb26-222"><a href="#cb26-222"></a><span class="fu">### Inverse Scaling</span></span>
+<span id="cb26-223"><a href="#cb26-223"></a></span>
+<span id="cb26-224"><a href="#cb26-224"></a>Scale transformations are **invertible**</span>
+<span id="cb26-225"><a href="#cb26-225"></a></span>
+<span id="cb26-226"><a href="#cb26-226"></a>$$</span>
+<span id="cb26-227"><a href="#cb26-227"></a>X = Z \sigma + \mu</span>
+<span id="cb26-228"><a href="#cb26-228"></a>$$</span>
+<span id="cb26-229"><a href="#cb26-229"></a></span>
+<span id="cb26-230"><a href="#cb26-230"></a>or </span>
+<span id="cb26-231"><a href="#cb26-231"></a></span>
+<span id="cb26-232"><a href="#cb26-232"></a>$$</span>
+<span id="cb26-233"><a href="#cb26-233"></a>X = Z (X_{max} - X_{min}) + X_{min}</span>
+<span id="cb26-234"><a href="#cb26-234"></a>$$</span>
+<span id="cb26-235"><a href="#cb26-235"></a></span>
+<span id="cb26-236"><a href="#cb26-236"></a></span>
+<span id="cb26-239"><a href="#cb26-239"></a><span class="in">```{python}</span></span>
+<span id="cb26-240"><a href="#cb26-240"></a><span class="co">#| label: inverse_transform</span></span>
+<span id="cb26-241"><a href="#cb26-241"></a>Z_inv <span class="op">=</span> scaler.inverse_transform(Z)</span>
+<span id="cb26-242"><a href="#cb26-242"></a></span>
+<span id="cb26-243"><a href="#cb26-243"></a><span class="cf">if</span> np.testing.assert_allclose(df[num_cols], Z_inv) <span class="kw">is</span> <span class="va">None</span>:</span>
+<span id="cb26-244"><a href="#cb26-244"></a>    <span class="bu">print</span>(<span class="st">"Scaling is invertible"</span>)</span>
+<span id="cb26-245"><a href="#cb26-245"></a><span class="in">```</span></span>
+<span id="cb26-246"><a href="#cb26-246"></a></span>
+<span id="cb26-247"><a href="#cb26-247"></a></span>
+<span id="cb26-248"><a href="#cb26-248"></a></span>
+<span id="cb26-251"><a href="#cb26-251"></a><span class="in">```{python}</span></span>
+<span id="cb26-252"><a href="#cb26-252"></a><span class="co">#| label: normalized_variables</span></span>
+<span id="cb26-253"><a href="#cb26-253"></a><span class="co">#| code-fold: true</span></span>
+<span id="cb26-254"><a href="#cb26-254"></a>num_norm <span class="op">=</span> ( </span>
+<span id="cb26-255"><a href="#cb26-255"></a>  pd.DataFrame(Z, columns<span class="op">=</span>num_cols)</span>
+<span id="cb26-256"><a href="#cb26-256"></a>  .melt(var_name<span class="op">=</span><span class="st">"variable"</span>, value_name<span class="op">=</span><span class="st">"value"</span>)</span>
+<span id="cb26-257"><a href="#cb26-257"></a>)</span>
+<span id="cb26-258"><a href="#cb26-258"></a></span>
+<span id="cb26-259"><a href="#cb26-259"></a>plt.figure(figsize<span class="op">=</span>FIGSIZE)</span>
+<span id="cb26-260"><a href="#cb26-260"></a>sns.violinplot(data<span class="op">=</span>num_norm, x<span class="op">=</span><span class="st">"variable"</span>, y<span class="op">=</span><span class="st">"value"</span>)</span>
+<span id="cb26-261"><a href="#cb26-261"></a>plt.xticks(rotation<span class="op">=</span><span class="dv">90</span>)</span>
+<span id="cb26-262"><a href="#cb26-262"></a>plt.ylabel(<span class="st">"Z-score"</span>)</span>
+<span id="cb26-263"><a href="#cb26-263"></a>plt.title(<span class="st">"Scaled Violins: Standardized Variables"</span>)</span>
+<span id="cb26-264"><a href="#cb26-264"></a>plt.tight_layout()</span>
+<span id="cb26-265"><a href="#cb26-265"></a>plt.show()</span>
+<span id="cb26-266"><a href="#cb26-266"></a><span class="in">```</span></span>
+<span id="cb26-267"><a href="#cb26-267"></a></span>
+<span id="cb26-268"><a href="#cb26-268"></a></span>
+<span id="cb26-269"><a href="#cb26-269"></a>::: {.callout-note}</span>
+<span id="cb26-270"><a href="#cb26-270"></a><span class="fu">### Notice</span></span>
+<span id="cb26-271"><a href="#cb26-271"></a><span class="ss">- </span>Z- or MinMax scaling does **not** change shape of distribtuion</span>
+<span id="cb26-272"><a href="#cb26-272"></a><span class="ss">- </span>it only shifts the mean and changes the scale</span>
+<span id="cb26-273"><a href="#cb26-273"></a><span class="ss">- </span>Z is dimensionless</span>
+<span id="cb26-274"><a href="#cb26-274"></a><span class="ss">- </span>Standardization centers data around mean=0 and scales to unit variance (std=1)</span>
+<span id="cb26-275"><a href="#cb26-275"></a><span class="ss">- </span>Useful for algorithms that depend on distances between samples (e.g. clustering)</span>
+<span id="cb26-276"><a href="#cb26-276"></a>:::</span>
+<span id="cb26-277"><a href="#cb26-277"></a></span>
+<span id="cb26-278"><a href="#cb26-278"></a></span>
+<span id="cb26-279"><a href="#cb26-279"></a></span>
+<span id="cb26-280"><a href="#cb26-280"></a>::: {.callout-important}</span>
+<span id="cb26-281"><a href="#cb26-281"></a><span class="fu">### Question</span></span>
+<span id="cb26-282"><a href="#cb26-282"></a>What could be the reason that not all distributions are unimodal?</span>
+<span id="cb26-283"><a href="#cb26-283"></a>:::</span>
+<span id="cb26-284"><a href="#cb26-284"></a></span>
+<span id="cb26-285"><a href="#cb26-285"></a></span>
+<span id="cb26-286"><a href="#cb26-286"></a>::: {.callout-note collapse="true"}</span>
+<span id="cb26-287"><a href="#cb26-287"></a><span class="fu">### Dealing with "Unnormality"</span></span>
+<span id="cb26-288"><a href="#cb26-288"></a>Often variables do not show Gaussian (Normal) Distributions:</span>
+<span id="cb26-289"><a href="#cb26-289"></a></span>
+<span id="cb26-290"><a href="#cb26-290"></a><span class="ss">- </span>outliers? measurement errors?</span>
+<span id="cb26-291"><a href="#cb26-291"></a><span class="ss">- </span>non-Gaussian processes: (multiplicative) growth (e.g population size, income distribution, ...)</span>
+<span id="cb26-292"><a href="#cb26-292"></a><span class="ss">- </span>integers: discrete values (e.g. count data, age in years)</span>
+<span id="cb26-293"><a href="#cb26-293"></a><span class="ss">- </span>multimodality: other variables (i.e not just random noise)?</span>
+<span id="cb26-294"><a href="#cb26-294"></a>:::</span>
+<span id="cb26-295"><a href="#cb26-295"></a></span>
+<span id="cb26-296"><a href="#cb26-296"></a></span>
+<span id="cb26-299"><a href="#cb26-299"></a><span class="in">```{python}</span></span>
+<span id="cb26-300"><a href="#cb26-300"></a><span class="co">#| label: normalized_variables_multimodal</span></span>
+<span id="cb26-301"><a href="#cb26-301"></a><span class="co">#| fig-cap: Multimodality in Weight is clearly due to other factors</span></span>
+<span id="cb26-302"><a href="#cb26-302"></a><span class="co">#| code-fold: true</span></span>
+<span id="cb26-303"><a href="#cb26-303"></a>df_norm <span class="op">=</span> pd.DataFrame(Z, columns<span class="op">=</span>num_cols)</span>
+<span id="cb26-304"><a href="#cb26-304"></a>df_norm[<span class="st">"Obesity"</span>] <span class="op">=</span> df[<span class="st">"Obesity"</span>]</span>
+<span id="cb26-305"><a href="#cb26-305"></a></span>
+<span id="cb26-306"><a href="#cb26-306"></a>plt.figure(figsize<span class="op">=</span>FIGSIZE)</span>
+<span id="cb26-307"><a href="#cb26-307"></a>sns.violinplot(data<span class="op">=</span>df_norm, x<span class="op">=</span><span class="st">"Obesity"</span>, y<span class="op">=</span><span class="st">"Weight"</span>, hue<span class="op">=</span><span class="st">"Obesity"</span>)</span>
+<span id="cb26-308"><a href="#cb26-308"></a>plt.xticks(rotation<span class="op">=</span><span class="dv">90</span>)</span>
+<span id="cb26-309"><a href="#cb26-309"></a>plt.ylabel(<span class="st">"Normalized Weight (Z-score)"</span>)</span>
+<span id="cb26-310"><a href="#cb26-310"></a>plt.title(<span class="st">"Multimodality and Other Factors"</span>)</span>
+<span id="cb26-311"><a href="#cb26-311"></a>plt.tight_layout()</span>
+<span id="cb26-312"><a href="#cb26-312"></a>plt.show()</span>
+<span id="cb26-313"><a href="#cb26-313"></a><span class="in">```</span></span>
+<span id="cb26-314"><a href="#cb26-314"></a></span>
+<span id="cb26-315"><a href="#cb26-315"></a></span>
+<span id="cb26-316"><a href="#cb26-316"></a><span class="fu">### Other Transformations</span></span>
+<span id="cb26-317"><a href="#cb26-317"></a></span>
+<span id="cb26-318"><a href="#cb26-318"></a><span class="fu">#### Sqrt-Transformation</span></span>
+<span id="cb26-319"><a href="#cb26-319"></a></span>
+<span id="cb26-320"><a href="#cb26-320"></a>Count data often follows a <span class="co">[</span><span class="ot">Poisson distribution</span><span class="co">](https://en.wikipedia.org/wiki/Poisson_distribution)</span>{target="_blank" rel="noopener"} with some parameter $\lambda$</span>
+<span id="cb26-321"><a href="#cb26-321"></a></span>
+<span id="cb26-322"><a href="#cb26-322"></a>$$</span>
+<span id="cb26-323"><a href="#cb26-323"></a>P(X=k) = \frac{\lambda^k e^{-\lambda}} {k!}</span>
+<span id="cb26-324"><a href="#cb26-324"></a>$$</span>
+<span id="cb26-325"><a href="#cb26-325"></a></span>
+<span id="cb26-326"><a href="#cb26-326"></a>For this distribution the variance increases with the mean</span>
+<span id="cb26-327"><a href="#cb26-327"></a>$$</span>
+<span id="cb26-328"><a href="#cb26-328"></a>Var(X) = E<span class="co">[</span><span class="ot">X</span><span class="co">]</span> = \lambda</span>
+<span id="cb26-329"><a href="#cb26-329"></a>$$</span>
+<span id="cb26-330"><a href="#cb26-330"></a>This is undesirable as large expected counts tend to have larger variance</span>
+<span id="cb26-331"><a href="#cb26-331"></a></span>
+<span id="cb26-332"><a href="#cb26-332"></a></span>
+<span id="cb26-333"><a href="#cb26-333"></a>For a general variable transformation $x \to z=f(x)$ we have</span>
+<span id="cb26-334"><a href="#cb26-334"></a></span>
+<span id="cb26-335"><a href="#cb26-335"></a>$$</span>
+<span id="cb26-336"><a href="#cb26-336"></a>Var(Z) = |f'(x)|^2 Var(X)</span>
+<span id="cb26-337"><a href="#cb26-337"></a>$$</span>
+<span id="cb26-338"><a href="#cb26-338"></a></span>
+<span id="cb26-339"><a href="#cb26-339"></a></span>
+<span id="cb26-340"><a href="#cb26-340"></a>It turns out that square-root transformations can **stabilize** the variance</span>
+<span id="cb26-341"><a href="#cb26-341"></a></span>
+<span id="cb26-342"><a href="#cb26-342"></a>$$</span>
+<span id="cb26-343"><a href="#cb26-343"></a>z = 2 \sqrt{x} \to Var(Z) = 1</span>
+<span id="cb26-344"><a href="#cb26-344"></a>$$</span>
+<span id="cb26-345"><a href="#cb26-345"></a></span>
+<span id="cb26-346"><a href="#cb26-346"></a></span>
+<span id="cb26-347"><a href="#cb26-347"></a>::: {.callout-tip collapse="true"}</span>
+<span id="cb26-348"><a href="#cb26-348"></a><span class="fu">#### Variance Stabilization Illustration</span></span>
+<span id="cb26-349"><a href="#cb26-349"></a></span>
+<span id="cb26-352"><a href="#cb26-352"></a><span class="in">```{python}</span></span>
+<span id="cb26-353"><a href="#cb26-353"></a><span class="co">#| label: variance_stabilzation_illustration</span></span>
+<span id="cb26-354"><a href="#cb26-354"></a><span class="co">#| code-fold: true</span></span>
+<span id="cb26-355"><a href="#cb26-355"></a></span>
+<span id="cb26-356"><a href="#cb26-356"></a>rng <span class="op">=</span> np.random.default_rng(<span class="dv">42</span>)</span>
+<span id="cb26-357"><a href="#cb26-357"></a></span>
+<span id="cb26-358"><a href="#cb26-358"></a><span class="co"># generate Poisson data with 3 means (lambdas)</span></span>
+<span id="cb26-359"><a href="#cb26-359"></a>N <span class="op">=</span> <span class="dv">1000</span> <span class="co"># number of observations</span></span>
+<span id="cb26-360"><a href="#cb26-360"></a>lambdas <span class="op">=</span> [<span class="dv">10</span>, <span class="dv">50</span>, <span class="dv">100</span>]</span>
+<span id="cb26-361"><a href="#cb26-361"></a></span>
+<span id="cb26-362"><a href="#cb26-362"></a><span class="co"># define groups g with mean mu</span></span>
+<span id="cb26-363"><a href="#cb26-363"></a>df <span class="op">=</span> pd.DataFrame({<span class="st">"g"</span>: np.repeat(lambdas, N)})</span>
+<span id="cb26-364"><a href="#cb26-364"></a></span>
+<span id="cb26-365"><a href="#cb26-365"></a><span class="co"># x-values drawn from Poisson</span></span>
+<span id="cb26-366"><a href="#cb26-366"></a>df[<span class="st">"x"</span>] <span class="op">=</span> np.concatenate([</span>
+<span id="cb26-367"><a href="#cb26-367"></a>    rng.poisson(lam<span class="op">=</span>l, size<span class="op">=</span>N) <span class="cf">for</span> l <span class="kw">in</span> lambdas</span>
+<span id="cb26-368"><a href="#cb26-368"></a>])</span>
+<span id="cb26-369"><a href="#cb26-369"></a></span>
+<span id="cb26-370"><a href="#cb26-370"></a><span class="co"># y-values from transformation</span></span>
+<span id="cb26-371"><a href="#cb26-371"></a>df[<span class="st">"y"</span>] <span class="op">=</span> <span class="dv">2</span> <span class="op">*</span> np.sqrt(df[<span class="st">"x"</span>])</span>
+<span id="cb26-372"><a href="#cb26-372"></a>df[<span class="st">"g"</span>] <span class="op">=</span> df[<span class="st">"g"</span>].astype(<span class="bu">str</span>)</span>
+<span id="cb26-373"><a href="#cb26-373"></a></span>
+<span id="cb26-374"><a href="#cb26-374"></a><span class="kw">def</span> marginal_scatter(data, ylabel):</span>
+<span id="cb26-375"><a href="#cb26-375"></a>    g <span class="op">=</span> sns.JointGrid(</span>
+<span id="cb26-376"><a href="#cb26-376"></a>        data<span class="op">=</span>data,</span>
+<span id="cb26-377"><a href="#cb26-377"></a>        x<span class="op">=</span><span class="st">"x"</span>,</span>
+<span id="cb26-378"><a href="#cb26-378"></a>        y<span class="op">=</span><span class="st">"y"</span>,</span>
+<span id="cb26-379"><a href="#cb26-379"></a>        height<span class="op">=</span><span class="dv">6</span>,</span>
+<span id="cb26-380"><a href="#cb26-380"></a>        ratio<span class="op">=</span><span class="dv">5</span>,</span>
+<span id="cb26-381"><a href="#cb26-381"></a>        space<span class="op">=</span><span class="fl">0.05</span></span>
+<span id="cb26-382"><a href="#cb26-382"></a>    )</span>
+<span id="cb26-383"><a href="#cb26-383"></a></span>
+<span id="cb26-384"><a href="#cb26-384"></a>    sns.scatterplot(</span>
+<span id="cb26-385"><a href="#cb26-385"></a>        data<span class="op">=</span>data,</span>
+<span id="cb26-386"><a href="#cb26-386"></a>        x<span class="op">=</span><span class="st">"x"</span>,</span>
+<span id="cb26-387"><a href="#cb26-387"></a>        y<span class="op">=</span><span class="st">"y"</span>,</span>
+<span id="cb26-388"><a href="#cb26-388"></a>        hue<span class="op">=</span><span class="st">"g"</span>,</span>
+<span id="cb26-389"><a href="#cb26-389"></a>        ax<span class="op">=</span>g.ax_joint</span>
+<span id="cb26-390"><a href="#cb26-390"></a>    )</span>
+<span id="cb26-391"><a href="#cb26-391"></a></span>
+<span id="cb26-392"><a href="#cb26-392"></a>    sns.histplot(</span>
+<span id="cb26-393"><a href="#cb26-393"></a>        data<span class="op">=</span>data,</span>
+<span id="cb26-394"><a href="#cb26-394"></a>        x<span class="op">=</span><span class="st">"x"</span>,</span>
+<span id="cb26-395"><a href="#cb26-395"></a>        hue<span class="op">=</span><span class="st">"g"</span>,</span>
+<span id="cb26-396"><a href="#cb26-396"></a>        bins<span class="op">=</span><span class="dv">100</span>,</span>
+<span id="cb26-397"><a href="#cb26-397"></a>        ax<span class="op">=</span>g.ax_marg_x,</span>
+<span id="cb26-398"><a href="#cb26-398"></a>        legend<span class="op">=</span><span class="va">False</span></span>
+<span id="cb26-399"><a href="#cb26-399"></a>    )</span>
+<span id="cb26-400"><a href="#cb26-400"></a></span>
+<span id="cb26-401"><a href="#cb26-401"></a>    sns.histplot(</span>
+<span id="cb26-402"><a href="#cb26-402"></a>        data<span class="op">=</span>data,</span>
+<span id="cb26-403"><a href="#cb26-403"></a>        y<span class="op">=</span><span class="st">"y"</span>,</span>
+<span id="cb26-404"><a href="#cb26-404"></a>        hue<span class="op">=</span><span class="st">"g"</span>,</span>
+<span id="cb26-405"><a href="#cb26-405"></a>        bins<span class="op">=</span><span class="dv">100</span>,</span>
+<span id="cb26-406"><a href="#cb26-406"></a>        ax<span class="op">=</span>g.ax_marg_y,</span>
+<span id="cb26-407"><a href="#cb26-407"></a>        legend<span class="op">=</span><span class="va">False</span></span>
+<span id="cb26-408"><a href="#cb26-408"></a>    )</span>
+<span id="cb26-409"><a href="#cb26-409"></a></span>
+<span id="cb26-410"><a href="#cb26-410"></a>    g.figure.suptitle(<span class="st">"Variance Stabilization"</span>, fontsize<span class="op">=</span><span class="dv">16</span>)</span>
+<span id="cb26-411"><a href="#cb26-411"></a>    g.ax_joint.set_xlim(<span class="dv">0</span>, <span class="dv">125</span>)</span>
+<span id="cb26-412"><a href="#cb26-412"></a>    g.ax_joint.set_xlabel(<span class="st">"X"</span>)</span>
+<span id="cb26-413"><a href="#cb26-413"></a>    g.ax_joint.set_ylabel(ylabel)</span>
+<span id="cb26-414"><a href="#cb26-414"></a>    g.ax_joint.legend(title<span class="op">=</span><span class="vs">r"</span><span class="dv">$</span><span class="er">\</span><span class="vs">lambda</span><span class="dv">$</span><span class="vs">"</span>, loc<span class="op">=</span><span class="st">"best"</span>)</span>
+<span id="cb26-415"><a href="#cb26-415"></a></span>
+<span id="cb26-416"><a href="#cb26-416"></a>    <span class="cf">return</span> g</span>
+<span id="cb26-417"><a href="#cb26-417"></a></span>
+<span id="cb26-418"><a href="#cb26-418"></a>g1 <span class="op">=</span> marginal_scatter(df, <span class="vs">r"</span><span class="dv">$</span><span class="vs">Z = 2</span><span class="op">*</span><span class="dv">\s</span><span class="vs">qrt{X}</span><span class="dv">$</span><span class="vs">"</span>)</span>
+<span id="cb26-419"><a href="#cb26-419"></a>plt.show()</span>
+<span id="cb26-420"><a href="#cb26-420"></a><span class="in">```</span></span>
+<span id="cb26-421"><a href="#cb26-421"></a>:::</span>
+<span id="cb26-422"><a href="#cb26-422"></a></span>
+<span id="cb26-423"><a href="#cb26-423"></a></span>
+<span id="cb26-424"><a href="#cb26-424"></a>**Real World Example**: Number of Medications</span>
+<span id="cb26-425"><a href="#cb26-425"></a></span>
+<span id="cb26-426"><a href="#cb26-426"></a>This is from a <span class="co">[</span><span class="ot">large dataset for diabetes patients</span><span class="co">](https://archive.ics.uci.edu/dataset/296/diabetes+130-us+hospitals+for+years+1999-2008)</span>{target="_blank" rel="noopener"}</span>
+<span id="cb26-429"><a href="#cb26-429"></a><span class="in">```{python}</span></span>
+<span id="cb26-430"><a href="#cb26-430"></a><span class="co">#| label: sqrt_transform</span></span>
+<span id="cb26-431"><a href="#cb26-431"></a><span class="co">#| fig-cap: Number of Medications. Count data is often Poisson distributed and can be transformed using square-root (Variance stabilization)</span></span>
+<span id="cb26-432"><a href="#cb26-432"></a><span class="co">#| code-fold: true</span></span>
+<span id="cb26-433"><a href="#cb26-433"></a></span>
+<span id="cb26-434"><a href="#cb26-434"></a><span class="co"># large dataset of patients diagnosed with diabetes (130 US hopsitals)</span></span>
+<span id="cb26-435"><a href="#cb26-435"></a><span class="co"># paper: https://onlinelibrary.wiley.com/doi/10.1155/2014/781670</span></span>
+<span id="cb26-436"><a href="#cb26-436"></a>dataset <span class="op">=</span> fetch_ucirepo(<span class="bu">id</span><span class="op">=</span><span class="dv">296</span>) </span>
+<span id="cb26-437"><a href="#cb26-437"></a></span>
+<span id="cb26-438"><a href="#cb26-438"></a><span class="co"># of interest here are the number of medications</span></span>
+<span id="cb26-439"><a href="#cb26-439"></a>VAR<span class="op">=</span><span class="st">"num_medications"</span></span>
+<span id="cb26-440"><a href="#cb26-440"></a>VAR_TRANS<span class="op">=</span><span class="st">"num_medications_sqrt"</span></span>
+<span id="cb26-441"><a href="#cb26-441"></a>X <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb26-442"><a href="#cb26-442"></a>    VAR: dataset.data.features[VAR],</span>
+<span id="cb26-443"><a href="#cb26-443"></a>    VAR_TRANS: <span class="dv">2</span><span class="op">*</span>np.sqrt(dataset.data.features[VAR]) <span class="co"># sqrt-transform</span></span>
+<span id="cb26-444"><a href="#cb26-444"></a>})</span>
+<span id="cb26-445"><a href="#cb26-445"></a><span class="in">```</span></span>
+<span id="cb26-446"><a href="#cb26-446"></a></span>
+<span id="cb26-449"><a href="#cb26-449"></a><span class="in">```{python}</span></span>
+<span id="cb26-450"><a href="#cb26-450"></a><span class="co">#| label: sqrt_trafo_compare</span></span>
+<span id="cb26-451"><a href="#cb26-451"></a><span class="co">#| code-fold: true</span></span>
+<span id="cb26-452"><a href="#cb26-452"></a>fig, ax <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>FIGSIZE)</span>
+<span id="cb26-453"><a href="#cb26-453"></a></span>
+<span id="cb26-454"><a href="#cb26-454"></a>sns.violinplot(data<span class="op">=</span>X, y<span class="op">=</span>VAR, ax<span class="op">=</span>ax[<span class="dv">0</span>])</span>
+<span id="cb26-455"><a href="#cb26-455"></a>ax[<span class="dv">0</span>].set_title(<span class="st">"Original: skewed distribution"</span>)</span>
+<span id="cb26-456"><a href="#cb26-456"></a></span>
+<span id="cb26-457"><a href="#cb26-457"></a>sns.violinplot(data<span class="op">=</span>X, y<span class="op">=</span>VAR_TRANS, ax<span class="op">=</span>ax[<span class="dv">1</span>])</span>
+<span id="cb26-458"><a href="#cb26-458"></a>ax[<span class="dv">1</span>].set_title(<span class="st">"Square-root transformed"</span>)</span>
+<span id="cb26-459"><a href="#cb26-459"></a></span>
+<span id="cb26-460"><a href="#cb26-460"></a>plt.tight_layout()</span>
+<span id="cb26-461"><a href="#cb26-461"></a>plt.show()</span>
+<span id="cb26-462"><a href="#cb26-462"></a><span class="in">```</span></span>
+<span id="cb26-463"><a href="#cb26-463"></a></span>
+<span id="cb26-464"><a href="#cb26-464"></a><span class="fu">#### Log-Transformation</span></span>
+<span id="cb26-465"><a href="#cb26-465"></a>Other common transformations include log transformation which can also be applied to skewed data. </span>
+<span id="cb26-466"><a href="#cb26-466"></a></span>
+<span id="cb26-467"><a href="#cb26-467"></a>This can be expected when data derives from multiplicative growth processes (population, wealth, cancer etc.). This frequently gives rise to log-normal distribution with large skew.</span>
+<span id="cb26-468"><a href="#cb26-468"></a></span>
+<span id="cb26-469"><a href="#cb26-469"></a>**Example**: Mean Area (for breast cancer samples)</span>
+<span id="cb26-472"><a href="#cb26-472"></a><span class="in">```{python}</span></span>
+<span id="cb26-473"><a href="#cb26-473"></a><span class="co">#| label: log_transform</span></span>
+<span id="cb26-474"><a href="#cb26-474"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> load_breast_cancer</span>
+<span id="cb26-475"><a href="#cb26-475"></a></span>
+<span id="cb26-476"><a href="#cb26-476"></a>df <span class="op">=</span> load_breast_cancer(as_frame<span class="op">=</span><span class="va">True</span>).frame</span>
+<span id="cb26-477"><a href="#cb26-477"></a></span>
+<span id="cb26-478"><a href="#cb26-478"></a>VAR<span class="op">=</span><span class="st">"mean area"</span></span>
+<span id="cb26-479"><a href="#cb26-479"></a>VAR_TRANS <span class="op">=</span> <span class="st">"mean area (log1p)"</span></span>
+<span id="cb26-480"><a href="#cb26-480"></a></span>
+<span id="cb26-481"><a href="#cb26-481"></a>X <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb26-482"><a href="#cb26-482"></a>    VAR: df[VAR],</span>
+<span id="cb26-483"><a href="#cb26-483"></a>    VAR_TRANS: np.log1p(df[VAR])</span>
+<span id="cb26-484"><a href="#cb26-484"></a>})</span>
+<span id="cb26-485"><a href="#cb26-485"></a></span>
+<span id="cb26-486"><a href="#cb26-486"></a></span>
+<span id="cb26-487"><a href="#cb26-487"></a>fig, ax <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>FIGSIZE)</span>
+<span id="cb26-488"><a href="#cb26-488"></a>sns.violinplot(data<span class="op">=</span>X, y<span class="op">=</span>VAR, ax<span class="op">=</span>ax[<span class="dv">0</span>])</span>
+<span id="cb26-489"><a href="#cb26-489"></a>ax[<span class="dv">0</span>].set_title(<span class="st">"Original: skewed distribution"</span>)</span>
+<span id="cb26-490"><a href="#cb26-490"></a></span>
+<span id="cb26-491"><a href="#cb26-491"></a>sns.violinplot(data<span class="op">=</span>X, y<span class="op">=</span>VAR_TRANS, ax<span class="op">=</span>ax[<span class="dv">1</span>])</span>
+<span id="cb26-492"><a href="#cb26-492"></a>ax[<span class="dv">1</span>].set_title(<span class="st">"Log transformed"</span>)</span>
+<span id="cb26-493"><a href="#cb26-493"></a></span>
+<span id="cb26-494"><a href="#cb26-494"></a>plt.tight_layout()</span>
+<span id="cb26-495"><a href="#cb26-495"></a>plt.show()</span>
+<span id="cb26-496"><a href="#cb26-496"></a><span class="in">```</span></span>
+<span id="cb26-497"><a href="#cb26-497"></a></span>
+<span id="cb26-498"><a href="#cb26-498"></a></span>
+<span id="cb26-499"><a href="#cb26-499"></a></span>
+<span id="cb26-500"><a href="#cb26-500"></a><span class="fu">#### Appendix: Box-Cox Transformation</span></span>
+<span id="cb26-501"><a href="#cb26-501"></a>a generalization of Log-transformation is the Box-Cox transformation (for strictly positive data) </span>
+<span id="cb26-502"><a href="#cb26-502"></a></span>
+<span id="cb26-503"><a href="#cb26-503"></a>$$</span>
+<span id="cb26-504"><a href="#cb26-504"></a>y = x(\lambda) = \begin{cases}</span>
+<span id="cb26-505"><a href="#cb26-505"></a>\frac{x^\lambda - 1}{\lambda} &amp; \text{if } \lambda \neq 0 <span class="sc">\\</span></span>
+<span id="cb26-506"><a href="#cb26-506"></a>\log(x) &amp; \text{if } \lambda = 0</span>
+<span id="cb26-507"><a href="#cb26-507"></a>\end{cases}</span>
+<span id="cb26-508"><a href="#cb26-508"></a>$$</span>
+<span id="cb26-509"><a href="#cb26-509"></a></span>
+<span id="cb26-510"><a href="#cb26-510"></a>Frequently Box-Cox transformed are also standardized $x \to y \to z$</span>
+<span id="cb26-511"><a href="#cb26-511"></a></span>
+<span id="cb26-512"><a href="#cb26-512"></a><span class="fu">##### Filter: Select numeric data with positive values</span></span>
+<span id="cb26-515"><a href="#cb26-515"></a><span class="in">```{python}</span></span>
+<span id="cb26-516"><a href="#cb26-516"></a><span class="co">#| label: data_prep</span></span>
+<span id="cb26-517"><a href="#cb26-517"></a></span>
+<span id="cb26-518"><a href="#cb26-518"></a><span class="co"># pick some numerical columns (mean values)</span></span>
+<span id="cb26-519"><a href="#cb26-519"></a>df <span class="op">=</span> df.<span class="bu">filter</span>(regex<span class="op">=</span><span class="vs">r"</span><span class="dv">^</span><span class="vs">mean"</span>) </span>
+<span id="cb26-520"><a href="#cb26-520"></a></span>
+<span id="cb26-521"><a href="#cb26-521"></a><span class="co"># ensure all columns are positive (or drop)</span></span>
+<span id="cb26-522"><a href="#cb26-522"></a>pos_cols <span class="op">=</span> df.columns[df.gt(<span class="dv">0</span>).<span class="bu">all</span>() <span class="op">&amp;</span> df.notna().<span class="bu">all</span>()] </span>
+<span id="cb26-523"><a href="#cb26-523"></a>X <span class="op">=</span> df[pos_cols]</span>
+<span id="cb26-524"><a href="#cb26-524"></a><span class="in">```</span></span>
+<span id="cb26-525"><a href="#cb26-525"></a></span>
+<span id="cb26-526"><a href="#cb26-526"></a></span>
+<span id="cb26-529"><a href="#cb26-529"></a><span class="in">```{python}</span></span>
+<span id="cb26-530"><a href="#cb26-530"></a><span class="co">#| label: scipy_boxcox</span></span>
+<span id="cb26-531"><a href="#cb26-531"></a><span class="co">#| echo: false</span></span>
+<span id="cb26-532"><a href="#cb26-532"></a><span class="co">#| eval: false</span></span>
+<span id="cb26-533"><a href="#cb26-533"></a><span class="im">from</span> scipy.stats <span class="im">import</span> boxcox</span>
+<span id="cb26-534"><a href="#cb26-534"></a></span>
+<span id="cb26-535"><a href="#cb26-535"></a><span class="co"># Box-Cox transformation (get df_transform and lambdas)</span></span>
+<span id="cb26-536"><a href="#cb26-536"></a>df_transform <span class="op">=</span> X.<span class="bu">apply</span>(<span class="kw">lambda</span> column: boxcox(column)[<span class="dv">0</span>])</span>
+<span id="cb26-537"><a href="#cb26-537"></a>lambdas <span class="op">=</span> X.<span class="bu">apply</span>(<span class="kw">lambda</span> column: boxcox(column)[<span class="dv">1</span>])</span>
+<span id="cb26-538"><a href="#cb26-538"></a></span>
+<span id="cb26-539"><a href="#cb26-539"></a>num_orig <span class="op">=</span> X.melt(var_name<span class="op">=</span><span class="st">"variable"</span>, value_name<span class="op">=</span><span class="st">"value"</span>)</span>
+<span id="cb26-540"><a href="#cb26-540"></a></span>
+<span id="cb26-541"><a href="#cb26-541"></a><span class="co"># scale BC-transformed data</span></span>
+<span id="cb26-542"><a href="#cb26-542"></a>Z <span class="op">=</span> scaler.fit_transform(df_transform) </span>
+<span id="cb26-543"><a href="#cb26-543"></a>num_Z <span class="op">=</span> ( </span>
+<span id="cb26-544"><a href="#cb26-544"></a>  pd.DataFrame(Z, columns<span class="op">=</span>X.columns)</span>
+<span id="cb26-545"><a href="#cb26-545"></a>  .melt(var_name<span class="op">=</span><span class="st">"variable"</span>, value_name<span class="op">=</span><span class="st">"value"</span>)</span>
+<span id="cb26-546"><a href="#cb26-546"></a>)</span>
+<span id="cb26-547"><a href="#cb26-547"></a><span class="in">```</span></span>
+<span id="cb26-548"><a href="#cb26-548"></a></span>
+<span id="cb26-549"><a href="#cb26-549"></a><span class="fu">##### Box-Cox (sklearn): Determine optimal $\lambda$</span></span>
+<span id="cb26-552"><a href="#cb26-552"></a><span class="in">```{python}</span></span>
+<span id="cb26-553"><a href="#cb26-553"></a><span class="co">#| label: sklearn_boxcox</span></span>
+<span id="cb26-554"><a href="#cb26-554"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> PowerTransformer</span>
+<span id="cb26-555"><a href="#cb26-555"></a></span>
+<span id="cb26-556"><a href="#cb26-556"></a><span class="co"># Box-Cox transform (default: ,standardize=True)</span></span>
+<span id="cb26-557"><a href="#cb26-557"></a>pt <span class="op">=</span> PowerTransformer(method<span class="op">=</span><span class="st">"box-cox"</span>)</span>
+<span id="cb26-558"><a href="#cb26-558"></a>X_bc <span class="op">=</span> pt.fit_transform(X)</span>
+<span id="cb26-559"><a href="#cb26-559"></a></span>
+<span id="cb26-560"><a href="#cb26-560"></a><span class="co"># get optimal lambdas</span></span>
+<span id="cb26-561"><a href="#cb26-561"></a>lambda_df <span class="op">=</span> pd.DataFrame({<span class="st">"var"</span>: X.columns, <span class="st">"lambda"</span>: pt.lambdas_})</span>
+<span id="cb26-562"><a href="#cb26-562"></a><span class="bu">print</span>(<span class="ss">f'Best BC-parameters:</span><span class="ch">\n</span><span class="ss"> </span><span class="sc">{</span>lambda_df<span class="sc">}</span><span class="ss">'</span>) </span>
+<span id="cb26-563"><a href="#cb26-563"></a></span>
+<span id="cb26-564"><a href="#cb26-564"></a><span class="co"># sanity check: inverse transformation</span></span>
+<span id="cb26-565"><a href="#cb26-565"></a>X_orig <span class="op">=</span> pt.inverse_transform(X_bc)</span>
+<span id="cb26-566"><a href="#cb26-566"></a><span class="cf">if</span> np.testing.assert_allclose(X, X_orig) <span class="kw">is</span> <span class="va">None</span>:</span>
+<span id="cb26-567"><a href="#cb26-567"></a>    <span class="bu">print</span>(<span class="st">"Transformation is invertible"</span>)</span>
+<span id="cb26-568"><a href="#cb26-568"></a></span>
+<span id="cb26-569"><a href="#cb26-569"></a><span class="in">```</span></span>
+<span id="cb26-570"><a href="#cb26-570"></a></span>
+<span id="cb26-571"><a href="#cb26-571"></a><span class="fu">##### Box-Cox (Visualization)</span></span>
+<span id="cb26-574"><a href="#cb26-574"></a><span class="in">```{python}</span></span>
+<span id="cb26-575"><a href="#cb26-575"></a><span class="co">#| label: visualize_boxcox</span></span>
+<span id="cb26-576"><a href="#cb26-576"></a></span>
+<span id="cb26-577"><a href="#cb26-577"></a><span class="co"># melt dfs for visualization</span></span>
+<span id="cb26-578"><a href="#cb26-578"></a></span>
+<span id="cb26-579"><a href="#cb26-579"></a>num_orig <span class="op">=</span> X.melt(var_name<span class="op">=</span><span class="st">"variable"</span>, value_name<span class="op">=</span><span class="st">"value"</span>)</span>
+<span id="cb26-580"><a href="#cb26-580"></a>num_bc <span class="op">=</span> ( </span>
+<span id="cb26-581"><a href="#cb26-581"></a>  pd.DataFrame(X_bc, columns<span class="op">=</span>X.columns)</span>
+<span id="cb26-582"><a href="#cb26-582"></a>  .melt(var_name<span class="op">=</span><span class="st">"variable"</span>, value_name<span class="op">=</span><span class="st">"value"</span>)</span>
+<span id="cb26-583"><a href="#cb26-583"></a>)</span>
+<span id="cb26-584"><a href="#cb26-584"></a></span>
+<span id="cb26-585"><a href="#cb26-585"></a>plt.figure(figsize<span class="op">=</span>FIGSIZE)</span>
+<span id="cb26-586"><a href="#cb26-586"></a>sns.violinplot(data<span class="op">=</span>num_orig, x<span class="op">=</span><span class="st">"variable"</span>, y<span class="op">=</span><span class="st">"value"</span>)</span>
+<span id="cb26-587"><a href="#cb26-587"></a>plt.xticks(rotation<span class="op">=</span><span class="dv">90</span>)</span>
+<span id="cb26-588"><a href="#cb26-588"></a>plt.title(<span class="st">"Original Variables"</span>)</span>
+<span id="cb26-589"><a href="#cb26-589"></a>plt.tight_layout()</span>
+<span id="cb26-590"><a href="#cb26-590"></a>plt.show()</span>
+<span id="cb26-591"><a href="#cb26-591"></a></span>
+<span id="cb26-592"><a href="#cb26-592"></a>plt.figure(figsize<span class="op">=</span>FIGSIZE)</span>
+<span id="cb26-593"><a href="#cb26-593"></a>sns.violinplot(data<span class="op">=</span>num_bc, x<span class="op">=</span><span class="st">"variable"</span>, y<span class="op">=</span><span class="st">"value"</span>)</span>
+<span id="cb26-594"><a href="#cb26-594"></a>plt.xticks(rotation<span class="op">=</span><span class="dv">90</span>)</span>
+<span id="cb26-595"><a href="#cb26-595"></a>plt.title(<span class="st">"Box-Cox Transformed"</span>)</span>
+<span id="cb26-596"><a href="#cb26-596"></a>plt.tight_layout()</span>
+<span id="cb26-597"><a href="#cb26-597"></a>plt.show()</span>
+<span id="cb26-598"><a href="#cb26-598"></a><span class="in">```</span></span>
+<span id="cb26-599"><a href="#cb26-599"></a></span>
+<span id="cb26-602"><a href="#cb26-602"></a><span class="in">```{python}</span></span>
+<span id="cb26-603"><a href="#cb26-603"></a><span class="co">#| label: BC_explore</span></span>
+<span id="cb26-604"><a href="#cb26-604"></a><span class="co">#| echo: false</span></span>
+<span id="cb26-605"><a href="#cb26-605"></a><span class="co">#| eval: false</span></span>
+<span id="cb26-606"><a href="#cb26-606"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb26-607"><a href="#cb26-607"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb26-608"><a href="#cb26-608"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> PowerTransformer</span>
+<span id="cb26-609"><a href="#cb26-609"></a><span class="im">from</span> scipy.stats <span class="im">import</span> boxcox_llf</span>
+<span id="cb26-610"><a href="#cb26-610"></a></span>
+<span id="cb26-611"><a href="#cb26-611"></a></span>
+<span id="cb26-612"><a href="#cb26-612"></a>VAR<span class="op">=</span><span class="st">"mean fractal dimension"</span></span>
+<span id="cb26-613"><a href="#cb26-613"></a>sns.histplot(X[VAR], kde<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb26-614"><a href="#cb26-614"></a>plt.show()</span>
+<span id="cb26-615"><a href="#cb26-615"></a></span>
+<span id="cb26-616"><a href="#cb26-616"></a><span class="co"># is large negative lambda robust for small X[VAR]?</span></span>
+<span id="cb26-617"><a href="#cb26-617"></a></span>
+<span id="cb26-618"><a href="#cb26-618"></a>x <span class="op">=</span> X[VAR].to_numpy()</span>
+<span id="cb26-619"><a href="#cb26-619"></a></span>
+<span id="cb26-620"><a href="#cb26-620"></a>lambdas <span class="op">=</span> np.linspace(<span class="op">-</span><span class="dv">4</span>, <span class="dv">2</span>, <span class="dv">300</span>)</span>
+<span id="cb26-621"><a href="#cb26-621"></a>ll <span class="op">=</span> np.array([boxcox_llf(lam, x) <span class="cf">for</span> lam <span class="kw">in</span> lambdas])</span>
+<span id="cb26-622"><a href="#cb26-622"></a>ll <span class="op">=</span> ll <span class="op">-</span> ll.<span class="bu">max</span>()</span>
+<span id="cb26-623"><a href="#cb26-623"></a></span>
+<span id="cb26-624"><a href="#cb26-624"></a>pt <span class="op">=</span> PowerTransformer(method<span class="op">=</span><span class="st">"box-cox"</span>, standardize<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb26-625"><a href="#cb26-625"></a>pt.fit(x.reshape(<span class="op">-</span><span class="dv">1</span>, <span class="dv">1</span>))</span>
+<span id="cb26-626"><a href="#cb26-626"></a></span>
+<span id="cb26-627"><a href="#cb26-627"></a>plt.plot(lambdas, ll)</span>
+<span id="cb26-628"><a href="#cb26-628"></a>plt.axvline(pt.lambdas_[<span class="dv">0</span>], linestyle<span class="op">=</span><span class="st">"--"</span>, label<span class="op">=</span><span class="ss">f"MLE λ = </span><span class="sc">{</span>pt<span class="sc">.</span>lambdas_[<span class="dv">0</span>]<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb26-629"><a href="#cb26-629"></a>plt.axhline(<span class="op">-</span><span class="fl">1.92</span>, linestyle<span class="op">=</span><span class="st">":"</span>, label<span class="op">=</span><span class="st">"approx. 95</span><span class="sc">% c</span><span class="st">utoff"</span>)</span>
+<span id="cb26-630"><a href="#cb26-630"></a>plt.xlabel(<span class="st">"λ"</span>)</span>
+<span id="cb26-631"><a href="#cb26-631"></a>plt.ylabel(<span class="st">"relative log-likelihood"</span>)</span>
+<span id="cb26-632"><a href="#cb26-632"></a>plt.title(<span class="st">"Box-Cox profile likelihood"</span>)</span>
+<span id="cb26-633"><a href="#cb26-633"></a>plt.legend()</span>
+<span id="cb26-634"><a href="#cb26-634"></a>plt.show()</span>
+<span id="cb26-635"><a href="#cb26-635"></a><span class="in">```</span></span>
+<span id="cb26-636"><a href="#cb26-636"></a></span>
+<span id="cb26-637"><a href="#cb26-637"></a>::: {.callout-important}</span>
+<span id="cb26-638"><a href="#cb26-638"></a><span class="ss">- </span>transformations are **data engineering** $\to$ design choices</span>
+<span id="cb26-639"><a href="#cb26-639"></a><span class="ss">- </span>no formal rules: subject expertise &amp; iterations!</span>
+<span id="cb26-640"><a href="#cb26-640"></a><span class="ss">- </span>guiding principles: scaling, variance stabilization, symmetric residuals</span>
+<span id="cb26-641"><a href="#cb26-641"></a><span class="ss">- </span>make variable more comparable, adjust for units, help reveal pattern</span>
+<span id="cb26-642"><a href="#cb26-642"></a><span class="ss">- </span>make some assumptions: additive or multiplicative</span>
+<span id="cb26-643"><a href="#cb26-643"></a><span class="ss">- </span>success is based on interpretability </span>
+<span id="cb26-644"><a href="#cb26-644"></a><span class="ss">- </span>general transformations $x \to z$ may change shape of distribution</span>
+<span id="cb26-645"><a href="#cb26-645"></a>:::</span>
+</code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>Made with Quatro</p>
+</div>   
+    <div class="nav-footer-center">
+      <ul class="footer-items list-unstyled">
+    <li class="nav-item">
+    <a class="nav-link" href="../general/about.html">
+<p>About</p>
+</a>
+  </li>  
+</ul>
+    </div>
+    <div class="nav-footer-right">
+      <ul class="footer-items list-unstyled">
+    <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/thomasmanke/blog">
+      <i class="bi bi-github" role="img">
+</i> 
+    </a>
+  </li>  
+</ul>
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

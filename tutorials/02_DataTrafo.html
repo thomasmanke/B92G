@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Thomas Manke">
-<meta name="dcterms.date" content="2026-06-17">
+<meta name="dcterms.date" content="2026-06-23">
 <meta name="description" content="Transforming Numerical and Categorical Variables">
 
 <title>Data Transformations – Analysis of Medical Data</title>
@@ -371,7 +371,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">June 17, 2026</p>
+      <p class="date">June 23, 2026</p>
     </div>
   </div>
   
@@ -460,7 +460,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <div class="callout-body-container callout-body">
 <p>Identify all categorical variables in the Obesity dataset.</p>
-<p>Use a joint One-Hot encoding of all variables and calculate the co-occurence of all category levels using the matrix formula from the lecture.</p>
+<p>Use a joint One-Hot encoding of all variables and explore the effect of using drop=None or drop=“first” as option in OneHotEncoder() from sklearn.</p>
+<p>Calculate the co-occurence of all category levels using the matrix formula from the lecture. Hint: For this last step, do not drop any levels from the One-Hot encoded matrix.</p>
 </div>
 </div>
 
@@ -1003,74 +1004,80 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb6-73"><a href="#cb6-73"></a></span>
 <span id="cb6-74"><a href="#cb6-74"></a>Identify all categorical variables in the Obesity dataset.</span>
 <span id="cb6-75"><a href="#cb6-75"></a></span>
-<span id="cb6-76"><a href="#cb6-76"></a>Use a joint One-Hot encoding of all variables and calculate the co-occurence of all category levels using the matrix formula from the lecture.</span>
-<span id="cb6-77"><a href="#cb6-77"></a>:::</span>
+<span id="cb6-76"><a href="#cb6-76"></a>Use a joint One-Hot encoding of all variables and </span>
+<span id="cb6-77"><a href="#cb6-77"></a>explore the effect of using drop=None or drop="first" as option in OneHotEncoder() from sklearn.</span>
 <span id="cb6-78"><a href="#cb6-78"></a></span>
-<span id="cb6-79"><a href="#cb6-79"></a></span>
-<span id="cb6-82"><a href="#cb6-82"></a><span class="in">```{python}</span></span>
-<span id="cb6-83"><a href="#cb6-83"></a><span class="co">#| label: oh_solution</span></span>
-<span id="cb6-84"><a href="#cb6-84"></a><span class="co">#| echo: false</span></span>
-<span id="cb6-85"><a href="#cb6-85"></a><span class="co">#| eval: false</span></span>
-<span id="cb6-86"><a href="#cb6-86"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> OneHotEncoder</span>
-<span id="cb6-87"><a href="#cb6-87"></a></span>
-<span id="cb6-88"><a href="#cb6-88"></a><span class="bu">print</span>(<span class="st">'df.dtypes: </span><span class="ch">\n</span><span class="st">'</span>, df.dtypes)</span>
-<span id="cb6-89"><a href="#cb6-89"></a>cat_cols <span class="op">=</span> df.select_dtypes(exclude<span class="op">=</span><span class="st">'number'</span>).columns</span>
-<span id="cb6-90"><a href="#cb6-90"></a></span>
+<span id="cb6-79"><a href="#cb6-79"></a>Calculate the co-occurence of all category levels using the matrix formula from the lecture.</span>
+<span id="cb6-80"><a href="#cb6-80"></a>Hint: For this last step, do not drop any levels from the One-Hot encoded matrix.</span>
+<span id="cb6-81"><a href="#cb6-81"></a>:::</span>
+<span id="cb6-82"><a href="#cb6-82"></a></span>
+<span id="cb6-83"><a href="#cb6-83"></a></span>
+<span id="cb6-86"><a href="#cb6-86"></a><span class="in">```{python}</span></span>
+<span id="cb6-87"><a href="#cb6-87"></a><span class="co">#| label: oh_solution</span></span>
+<span id="cb6-88"><a href="#cb6-88"></a><span class="co">#| echo: false</span></span>
+<span id="cb6-89"><a href="#cb6-89"></a><span class="co">#| eval: false</span></span>
+<span id="cb6-90"><a href="#cb6-90"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> OneHotEncoder</span>
 <span id="cb6-91"><a href="#cb6-91"></a></span>
-<span id="cb6-92"><a href="#cb6-92"></a>encoder <span class="op">=</span> OneHotEncoder(sparse_output<span class="op">=</span><span class="va">False</span>, drop<span class="op">=</span><span class="st">"first"</span>) </span>
-<span id="cb6-93"><a href="#cb6-93"></a>X_oh <span class="op">=</span> encoder.fit_transform(df[cat_cols]) </span>
+<span id="cb6-92"><a href="#cb6-92"></a><span class="bu">print</span>(<span class="st">'df.dtypes: </span><span class="ch">\n</span><span class="st">'</span>, df.dtypes)</span>
+<span id="cb6-93"><a href="#cb6-93"></a>cat_cols <span class="op">=</span> df.select_dtypes(exclude<span class="op">=</span><span class="st">'number'</span>).columns</span>
 <span id="cb6-94"><a href="#cb6-94"></a></span>
-<span id="cb6-95"><a href="#cb6-95"></a><span class="co"># back to pandas dataframe for visualization</span></span>
-<span id="cb6-96"><a href="#cb6-96"></a>X_oh_df <span class="op">=</span> pd.DataFrame(</span>
-<span id="cb6-97"><a href="#cb6-97"></a>    X_oh,</span>
-<span id="cb6-98"><a href="#cb6-98"></a>    columns<span class="op">=</span>encoder.get_feature_names_out(cat_cols),</span>
-<span id="cb6-99"><a href="#cb6-99"></a>    index<span class="op">=</span>df.index</span>
-<span id="cb6-100"><a href="#cb6-100"></a>)</span>
-<span id="cb6-101"><a href="#cb6-101"></a></span>
-<span id="cb6-102"><a href="#cb6-102"></a>sns.heatmap(X_oh_df.iloc[:<span class="dv">10</span>], cmap<span class="op">=</span><span class="st">"Greys"</span>, cbar<span class="op">=</span><span class="va">False</span>, annot<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb6-103"><a href="#cb6-103"></a>plt.title(<span class="ss">f'One-hot encoded. Shape: </span><span class="sc">{</span>X_encoded_df<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">.'</span>)</span>
-<span id="cb6-104"><a href="#cb6-104"></a>plt.show() </span>
-<span id="cb6-105"><a href="#cb6-105"></a><span class="in">```</span></span>
-<span id="cb6-106"><a href="#cb6-106"></a></span>
-<span id="cb6-109"><a href="#cb6-109"></a><span class="in">```{python}</span></span>
-<span id="cb6-110"><a href="#cb6-110"></a><span class="co">#| label: CT_solution</span></span>
-<span id="cb6-111"><a href="#cb6-111"></a><span class="co">#| echo: false</span></span>
-<span id="cb6-112"><a href="#cb6-112"></a><span class="co">#| eval: false</span></span>
-<span id="cb6-113"><a href="#cb6-113"></a></span>
-<span id="cb6-114"><a href="#cb6-114"></a><span class="co"># This calculates the full cross-tabulation</span></span>
-<span id="cb6-115"><a href="#cb6-115"></a>X_oh <span class="op">=</span> X_oh.astype(<span class="bu">int</span>) </span>
-<span id="cb6-116"><a href="#cb6-116"></a></span>
-<span id="cb6-117"><a href="#cb6-117"></a>Z <span class="op">=</span> (X_oh <span class="op">-</span> X_oh.mean()) <span class="op">/</span> X_oh.std()</span>
-<span id="cb6-118"><a href="#cb6-118"></a></span>
-<span id="cb6-119"><a href="#cb6-119"></a>CT <span class="op">=</span> X_oh.T <span class="op">@</span> X_oh <span class="co"># = intersections = observed</span></span>
+<span id="cb6-95"><a href="#cb6-95"></a>encoder <span class="op">=</span> OneHotEncoder(sparse_output<span class="op">=</span><span class="va">False</span>, drop<span class="op">=</span><span class="va">None</span>) </span>
+<span id="cb6-96"><a href="#cb6-96"></a><span class="co">#encoder = OneHotEncoder(sparse_output=False, drop="first") </span></span>
+<span id="cb6-97"><a href="#cb6-97"></a>X_oh <span class="op">=</span> encoder.fit_transform(df[cat_cols]) </span>
+<span id="cb6-98"><a href="#cb6-98"></a></span>
+<span id="cb6-99"><a href="#cb6-99"></a><span class="co"># back to pandas dataframe for visualization</span></span>
+<span id="cb6-100"><a href="#cb6-100"></a>X_oh_df <span class="op">=</span> pd.DataFrame(</span>
+<span id="cb6-101"><a href="#cb6-101"></a>    X_oh,</span>
+<span id="cb6-102"><a href="#cb6-102"></a>    columns<span class="op">=</span>encoder.get_feature_names_out(cat_cols),</span>
+<span id="cb6-103"><a href="#cb6-103"></a>    index<span class="op">=</span>df.index</span>
+<span id="cb6-104"><a href="#cb6-104"></a>)</span>
+<span id="cb6-105"><a href="#cb6-105"></a></span>
+<span id="cb6-106"><a href="#cb6-106"></a>sns.heatmap(X_oh_df.iloc[:<span class="dv">10</span>], cmap<span class="op">=</span><span class="st">"Greys"</span>, cbar<span class="op">=</span><span class="va">False</span>, annot<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb6-107"><a href="#cb6-107"></a>plt.title(<span class="ss">f'One-hot encoded. Shape: </span><span class="sc">{</span>X_encoded_df<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">.'</span>)</span>
+<span id="cb6-108"><a href="#cb6-108"></a>plt.show() </span>
+<span id="cb6-109"><a href="#cb6-109"></a><span class="in">```</span></span>
+<span id="cb6-110"><a href="#cb6-110"></a></span>
+<span id="cb6-113"><a href="#cb6-113"></a><span class="in">```{python}</span></span>
+<span id="cb6-114"><a href="#cb6-114"></a><span class="co">#| label: CT_solution</span></span>
+<span id="cb6-115"><a href="#cb6-115"></a><span class="co">#| echo: false</span></span>
+<span id="cb6-116"><a href="#cb6-116"></a><span class="co">#| eval: false</span></span>
+<span id="cb6-117"><a href="#cb6-117"></a></span>
+<span id="cb6-118"><a href="#cb6-118"></a><span class="co"># This calculates the full cross-tabulation</span></span>
+<span id="cb6-119"><a href="#cb6-119"></a>X_oh <span class="op">=</span> X_oh.astype(<span class="bu">int</span>) </span>
 <span id="cb6-120"><a href="#cb6-120"></a></span>
-<span id="cb6-121"><a href="#cb6-121"></a>counts <span class="op">=</span> X_oh.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb6-121"><a href="#cb6-121"></a>Z <span class="op">=</span> (X_oh <span class="op">-</span> X_oh.mean()) <span class="op">/</span> X_oh.std()</span>
 <span id="cb6-122"><a href="#cb6-122"></a></span>
-<span id="cb6-123"><a href="#cb6-123"></a>union <span class="op">=</span> (</span>
-<span id="cb6-124"><a href="#cb6-124"></a>    counts[:,<span class="va">None</span>]</span>
-<span id="cb6-125"><a href="#cb6-125"></a>    <span class="op">+</span> counts[<span class="va">None</span>,:]</span>
-<span id="cb6-126"><a href="#cb6-126"></a>    <span class="op">-</span> CT</span>
-<span id="cb6-127"><a href="#cb6-127"></a>)</span>
-<span id="cb6-128"><a href="#cb6-128"></a></span>
-<span id="cb6-129"><a href="#cb6-129"></a>expected <span class="op">=</span> np.outer(counts, counts) <span class="op">/</span> <span class="bu">len</span>(X_oh)</span>
-<span id="cb6-130"><a href="#cb6-130"></a>pearson <span class="op">=</span> (CT <span class="op">-</span> expected) <span class="op">/</span> np.sqrt(expected)</span>
-<span id="cb6-131"><a href="#cb6-131"></a>jaccard <span class="op">=</span> CT <span class="op">/</span> union</span>
-<span id="cb6-132"><a href="#cb6-132"></a></span>
-<span id="cb6-133"><a href="#cb6-133"></a>A <span class="op">=</span> jaccard</span>
-<span id="cb6-134"><a href="#cb6-134"></a></span>
-<span id="cb6-135"><a href="#cb6-135"></a></span>
-<span id="cb6-136"><a href="#cb6-136"></a><span class="co">#A = Z.T @ Z / (len(Z) - 1)</span></span>
+<span id="cb6-123"><a href="#cb6-123"></a><span class="co"># this requires drop=None</span></span>
+<span id="cb6-124"><a href="#cb6-124"></a>CT <span class="op">=</span> X_oh.T <span class="op">@</span> X_oh <span class="co"># = intersections = observed</span></span>
+<span id="cb6-125"><a href="#cb6-125"></a></span>
+<span id="cb6-126"><a href="#cb6-126"></a>counts <span class="op">=</span> X_oh.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb6-127"><a href="#cb6-127"></a></span>
+<span id="cb6-128"><a href="#cb6-128"></a>union <span class="op">=</span> (</span>
+<span id="cb6-129"><a href="#cb6-129"></a>    counts[:,<span class="va">None</span>]</span>
+<span id="cb6-130"><a href="#cb6-130"></a>    <span class="op">+</span> counts[<span class="va">None</span>,:]</span>
+<span id="cb6-131"><a href="#cb6-131"></a>    <span class="op">-</span> CT</span>
+<span id="cb6-132"><a href="#cb6-132"></a>)</span>
+<span id="cb6-133"><a href="#cb6-133"></a></span>
+<span id="cb6-134"><a href="#cb6-134"></a>expected <span class="op">=</span> np.outer(counts, counts) <span class="op">/</span> <span class="bu">len</span>(X_oh)</span>
+<span id="cb6-135"><a href="#cb6-135"></a>pearson <span class="op">=</span> (CT <span class="op">-</span> expected) <span class="op">/</span> np.sqrt(expected)</span>
+<span id="cb6-136"><a href="#cb6-136"></a>jaccard <span class="op">=</span> CT <span class="op">/</span> union</span>
 <span id="cb6-137"><a href="#cb6-137"></a></span>
-<span id="cb6-138"><a href="#cb6-138"></a>CT_df <span class="op">=</span> pd.DataFrame(</span>
-<span id="cb6-139"><a href="#cb6-139"></a>    A,</span>
-<span id="cb6-140"><a href="#cb6-140"></a>    columns<span class="op">=</span>encoder.get_feature_names_out(cat_cols),</span>
-<span id="cb6-141"><a href="#cb6-141"></a>    index<span class="op">=</span>encoder.get_feature_names_out(cat_cols)</span>
-<span id="cb6-142"><a href="#cb6-142"></a>)</span>
-<span id="cb6-143"><a href="#cb6-143"></a></span>
-<span id="cb6-144"><a href="#cb6-144"></a>sns.heatmap(CT_df, cmap<span class="op">=</span><span class="st">"Blues"</span>, cbar<span class="op">=</span><span class="va">True</span>, annot<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb6-145"><a href="#cb6-145"></a>plt.title(<span class="ss">f'CT from hot-encoded'</span>)</span>
-<span id="cb6-146"><a href="#cb6-146"></a>plt.show() </span>
-<span id="cb6-147"><a href="#cb6-147"></a><span class="in">```</span></span>
+<span id="cb6-138"><a href="#cb6-138"></a>A <span class="op">=</span> jaccard</span>
+<span id="cb6-139"><a href="#cb6-139"></a></span>
+<span id="cb6-140"><a href="#cb6-140"></a></span>
+<span id="cb6-141"><a href="#cb6-141"></a><span class="co">#A = Z.T @ Z / (len(Z) - 1)</span></span>
+<span id="cb6-142"><a href="#cb6-142"></a></span>
+<span id="cb6-143"><a href="#cb6-143"></a>CT_df <span class="op">=</span> pd.DataFrame(</span>
+<span id="cb6-144"><a href="#cb6-144"></a>    A,</span>
+<span id="cb6-145"><a href="#cb6-145"></a>    columns<span class="op">=</span>encoder.get_feature_names_out(cat_cols),</span>
+<span id="cb6-146"><a href="#cb6-146"></a>    index<span class="op">=</span>encoder.get_feature_names_out(cat_cols)</span>
+<span id="cb6-147"><a href="#cb6-147"></a>)</span>
+<span id="cb6-148"><a href="#cb6-148"></a></span>
+<span id="cb6-149"><a href="#cb6-149"></a><span class="co"># Beware that no all colun/row labels may be shown</span></span>
+<span id="cb6-150"><a href="#cb6-150"></a>sns.heatmap(CT_df, cmap<span class="op">=</span><span class="st">"Blues"</span>, cbar<span class="op">=</span><span class="va">True</span>, annot<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb6-151"><a href="#cb6-151"></a>plt.title(<span class="ss">f'CT from hot-encoded'</span>)</span>
+<span id="cb6-152"><a href="#cb6-152"></a>plt.show() </span>
+<span id="cb6-153"><a href="#cb6-153"></a><span class="in">```</span></span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
