@@ -1,0 +1,1340 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.27">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Thomas Manke">
+<meta name="dcterms.date" content="2026-06-30">
+<meta name="description" content="Cluster Framing Heart Study Data">
+
+<title>Clustering Methods – Analysis of Medical Data</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-8b4baf804e461d9b72633f0de59a0cac.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-f1aadacce99040138bbb613f9330654f.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-8b4baf804e461d9b72633f0de59a0cac.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-1abac204f8572279f73a3a6fba0370a3.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-6f36548bdacd96f03b119c706dbfb928.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-1abac204f8572279f73a3a6fba0370a3.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Analysis of Medical Data</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../lectures/index.html"> <i class="bi bi-book" role="img">
+</i> 
+<span class="menu-text">Lectures</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../tutorials/index.html"> <i class="bi bi-bricks" role="img">
+</i> 
+<span class="menu-text">Tutorials</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../general/Chalkboard.html"> <i class="bi bi-clipboard-fill" role="img">
+</i> 
+<span class="menu-text">Chalkboard</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/thomasmanke/"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#framingham-heart-study" id="toc-framingham-heart-study" class="nav-link active" data-scroll-target="#framingham-heart-study">Framingham Heart Study</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content column-page-left" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title">Clustering Methods</h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
+  <div class="quarto-categories">
+    <div class="quarto-category">clustering</div>
+    <div class="quarto-category">kmeans</div>
+    <div class="quarto-category">hierarchical</div>
+    <div class="quarto-category">silhouette</div>
+    <div class="quarto-category">adjusted-rand-index</div>
+  </div>
+  </div>
+
+<div>
+  <div class="description">
+    Cluster Framing Heart Study Data
+  </div>
+</div>
+
+
+<div class="quarto-title-meta column-page-left">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Thomas Manke </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">June 30, 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div id="load_packages" class="cell" data-code-summay="Imports" data-execution_count="1">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-3"><a href="#cb1-3"></a></span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-6"><a href="#cb1-6"></a></span>
+<span id="cb1-7"><a href="#cb1-7"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> load_breast_cancer</span>
+<span id="cb1-8"><a href="#cb1-8"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler, PowerTransformer</span>
+<span id="cb1-9"><a href="#cb1-9"></a><span class="im">from</span> sklearn.cluster <span class="im">import</span> KMeans, AgglomerativeClustering</span>
+<span id="cb1-10"><a href="#cb1-10"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> silhouette_samples, silhouette_score, adjusted_rand_score</span>
+<span id="cb1-11"><a href="#cb1-11"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> pairwise_distances</span>
+<span id="cb1-12"><a href="#cb1-12"></a></span>
+<span id="cb1-13"><a href="#cb1-13"></a><span class="im">from</span> scipy.cluster.hierarchy <span class="im">import</span> linkage, dendrogram, fcluster</span>
+<span id="cb1-14"><a href="#cb1-14"></a><span class="im">from</span> scipy.spatial.distance <span class="im">import</span> pdist, squareform</span>
+<span id="cb1-15"><a href="#cb1-15"></a></span>
+<span id="cb1-16"><a href="#cb1-16"></a>sns.set_theme(context<span class="op">=</span><span class="st">"notebook"</span>, style<span class="op">=</span><span class="st">"whitegrid"</span>)</span>
+<span id="cb1-17"><a href="#cb1-17"></a>FIGSIZE <span class="op">=</span> (<span class="dv">7</span>, <span class="dv">5</span>)</span>
+<span id="cb1-18"><a href="#cb1-18"></a>RANDOM_STATE <span class="op">=</span> <span class="dv">42</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+<section id="framingham-heart-study" class="level2">
+<h2 class="anchored" data-anchor-id="framingham-heart-study">Framingham Heart Study</h2>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>Tasks
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>Load data from Framingham Heart Study</li>
+<li>Extract the numerical variables for further analysis</li>
+<li>Apply proper filtering and transformations</li>
+<li>Determine pairwise distances between all samples and (numerical variables)</li>
+<li>Perform a hierarchical clustering using at least two different linkage methods</li>
+<li>chose a suitable threshold for the dendrogram and compare the clustering solutions</li>
+<li>run the k-means algorithm with different <span class="math inline">\(k\)</span> and decide on a suitable <span class="math inline">\(k\)</span> based on the total within-cluster SS (intertia)</li>
+</ul>
+</div>
+</div>
+<div id="load_fhs" class="cell" data-execution_count="2">
+<details open="" class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1"></a><span class="co"># FHS data from MIT</span></span>
+<span id="cb2-2"><a href="#cb2-2"></a>url <span class="op">=</span> <span class="st">"https://ocw.mit.edu/courses/15-071-the-analytics-edge-spring-2017/5d689a024551e672313f7fd7eb1bee8d_framingham.csv"</span></span>
+<span id="cb2-3"><a href="#cb2-3"></a>df <span class="op">=</span> pd.read_csv(url)</span>
+<span id="cb2-4"><a href="#cb2-4"></a></span>
+<span id="cb2-5"><a href="#cb2-5"></a><span class="bu">print</span>(<span class="ss">f'df.shape: </span><span class="sc">{</span>df<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb2-6"><a href="#cb2-6"></a><span class="bu">print</span>(<span class="ss">f'df.dtypes: </span><span class="ch">\n</span><span class="sc">{</span>df<span class="sc">.</span>dtypes<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb2-7"><a href="#cb2-7"></a><span class="bu">print</span>(<span class="ss">f'df.head: </span><span class="ch">\n</span><span class="sc">{</span>df<span class="sc">.</span>head()<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb2-8"><a href="#cb2-8"></a></span>
+<span id="cb2-9"><a href="#cb2-9"></a>num_cols <span class="op">=</span> df.select_dtypes(include<span class="op">=</span><span class="st">'number'</span>).columns</span>
+<span id="cb2-10"><a href="#cb2-10"></a></span>
+<span id="cb2-11"><a href="#cb2-11"></a>cat_cols <span class="op">=</span> [</span>
+<span id="cb2-12"><a href="#cb2-12"></a>    <span class="st">"male"</span>,</span>
+<span id="cb2-13"><a href="#cb2-13"></a>    <span class="st">"education"</span>,</span>
+<span id="cb2-14"><a href="#cb2-14"></a>    <span class="st">"BPMeds"</span>,</span>
+<span id="cb2-15"><a href="#cb2-15"></a>    <span class="st">"currentSmoker"</span>,</span>
+<span id="cb2-16"><a href="#cb2-16"></a>    <span class="st">"prevalentStroke"</span>,</span>
+<span id="cb2-17"><a href="#cb2-17"></a>    <span class="st">"prevalentHyp"</span>,</span>
+<span id="cb2-18"><a href="#cb2-18"></a>    <span class="st">"diabetes"</span>,</span>
+<span id="cb2-19"><a href="#cb2-19"></a>    <span class="st">"TenYearCHD"</span>,</span>
+<span id="cb2-20"><a href="#cb2-20"></a>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>df.shape: (4240, 16)
+df.dtypes: 
+male                 int64
+age                  int64
+education          float64
+currentSmoker        int64
+cigsPerDay         float64
+BPMeds             float64
+prevalentStroke      int64
+prevalentHyp         int64
+diabetes             int64
+totChol            float64
+sysBP              float64
+diaBP              float64
+BMI                float64
+heartRate          float64
+glucose            float64
+TenYearCHD           int64
+dtype: object
+df.head: 
+   male  age  education  currentSmoker  cigsPerDay  BPMeds  prevalentStroke  \
+0     1   39        4.0              0         0.0     0.0                0   
+1     0   46        2.0              0         0.0     0.0                0   
+2     1   48        1.0              1        20.0     0.0                0   
+3     0   61        3.0              1        30.0     0.0                0   
+4     0   46        3.0              1        23.0     0.0                0   
+
+   prevalentHyp  diabetes  totChol  sysBP  diaBP    BMI  heartRate  glucose  \
+0             0         0    195.0  106.0   70.0  26.97       80.0     77.0   
+1             0         0    250.0  121.0   81.0  28.73       95.0     76.0   
+2             0         0    245.0  127.5   80.0  25.34       75.0     70.0   
+3             1         0    225.0  150.0   95.0  28.58       65.0    103.0   
+4             0         0    285.0  130.0   84.0  23.10       85.0     85.0   
+
+   TenYearCHD  
+0           0  
+1           0  
+2           0  
+3           1  
+4           0  </code></pre>
+</div>
+</div>
+<hr>
+
+
+<!-- -->
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4" data-shortcodes="false"><pre class="sourceCode numberSource markdown number-lines code-with-copy"><code class="sourceCode markdown"><span id="cb4-1"><a href="#cb4-1"></a><span class="co">---</span></span>
+<span id="cb4-2"><a href="#cb4-2"></a><span class="an">title:</span><span class="co"> "Clustering Methods"</span></span>
+<span id="cb4-3"><a href="#cb4-3"></a><span class="an">categories:</span></span>
+<span id="cb4-4"><a href="#cb4-4"></a><span class="co">  - clustering</span></span>
+<span id="cb4-5"><a href="#cb4-5"></a><span class="co">  - kmeans</span></span>
+<span id="cb4-6"><a href="#cb4-6"></a><span class="co">  - hierarchical</span></span>
+<span id="cb4-7"><a href="#cb4-7"></a><span class="co">  - silhouette</span></span>
+<span id="cb4-8"><a href="#cb4-8"></a><span class="co">  - adjusted-rand-index</span></span>
+<span id="cb4-9"><a href="#cb4-9"></a><span class="an">description:</span><span class="co"> Cluster Framing Heart Study Data</span></span>
+<span id="cb4-10"><a href="#cb4-10"></a><span class="an">draft:</span><span class="co"> false</span></span>
+<span id="cb4-11"><a href="#cb4-11"></a><span class="an">eval:</span><span class="co"> false</span></span>
+<span id="cb4-12"><a href="#cb4-12"></a><span class="an">echo:</span><span class="co"> false</span></span>
+<span id="cb4-13"><a href="#cb4-13"></a><span class="an">jupyter:</span><span class="co"> b92g</span></span>
+<span id="cb4-14"><a href="#cb4-14"></a><span class="co">---</span></span>
+<span id="cb4-15"><a href="#cb4-15"></a></span>
+<span id="cb4-18"><a href="#cb4-18"></a><span class="in">```{python}</span></span>
+<span id="cb4-19"><a href="#cb4-19"></a><span class="co">#| label: load_packages</span></span>
+<span id="cb4-20"><a href="#cb4-20"></a><span class="co">#| warning: false</span></span>
+<span id="cb4-21"><a href="#cb4-21"></a><span class="co">#| echo: true</span></span>
+<span id="cb4-22"><a href="#cb4-22"></a><span class="co">#| eval: true</span></span>
+<span id="cb4-23"><a href="#cb4-23"></a><span class="co">#| code-fold: true</span></span>
+<span id="cb4-24"><a href="#cb4-24"></a><span class="co">#| code-summay: Imports</span></span>
+<span id="cb4-25"><a href="#cb4-25"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb4-26"><a href="#cb4-26"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb4-27"><a href="#cb4-27"></a></span>
+<span id="cb4-28"><a href="#cb4-28"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb4-29"><a href="#cb4-29"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb4-30"><a href="#cb4-30"></a></span>
+<span id="cb4-31"><a href="#cb4-31"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> load_breast_cancer</span>
+<span id="cb4-32"><a href="#cb4-32"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler, PowerTransformer</span>
+<span id="cb4-33"><a href="#cb4-33"></a><span class="im">from</span> sklearn.cluster <span class="im">import</span> KMeans, AgglomerativeClustering</span>
+<span id="cb4-34"><a href="#cb4-34"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> silhouette_samples, silhouette_score, adjusted_rand_score</span>
+<span id="cb4-35"><a href="#cb4-35"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> pairwise_distances</span>
+<span id="cb4-36"><a href="#cb4-36"></a></span>
+<span id="cb4-37"><a href="#cb4-37"></a><span class="im">from</span> scipy.cluster.hierarchy <span class="im">import</span> linkage, dendrogram, fcluster</span>
+<span id="cb4-38"><a href="#cb4-38"></a><span class="im">from</span> scipy.spatial.distance <span class="im">import</span> pdist, squareform</span>
+<span id="cb4-39"><a href="#cb4-39"></a></span>
+<span id="cb4-40"><a href="#cb4-40"></a>sns.set_theme(context<span class="op">=</span><span class="st">"notebook"</span>, style<span class="op">=</span><span class="st">"whitegrid"</span>)</span>
+<span id="cb4-41"><a href="#cb4-41"></a>FIGSIZE <span class="op">=</span> (<span class="dv">7</span>, <span class="dv">5</span>)</span>
+<span id="cb4-42"><a href="#cb4-42"></a>RANDOM_STATE <span class="op">=</span> <span class="dv">42</span></span>
+<span id="cb4-43"><a href="#cb4-43"></a><span class="in">```</span></span>
+<span id="cb4-44"><a href="#cb4-44"></a></span>
+<span id="cb4-45"><a href="#cb4-45"></a></span>
+<span id="cb4-46"><a href="#cb4-46"></a><span class="fu">## Framingham Heart Study</span></span>
+<span id="cb4-47"><a href="#cb4-47"></a></span>
+<span id="cb4-48"><a href="#cb4-48"></a></span>
+<span id="cb4-49"><a href="#cb4-49"></a>::: {.callout-important}</span>
+<span id="cb4-50"><a href="#cb4-50"></a><span class="fu">### Tasks</span></span>
+<span id="cb4-51"><a href="#cb4-51"></a><span class="ss">- </span>Load data from Framingham Heart Study </span>
+<span id="cb4-52"><a href="#cb4-52"></a><span class="ss">- </span>Extract the numerical variables for further analysis</span>
+<span id="cb4-53"><a href="#cb4-53"></a><span class="ss">- </span>Apply proper filtering and transformations</span>
+<span id="cb4-54"><a href="#cb4-54"></a><span class="ss">- </span>Determine pairwise distances between all samples and (numerical variables)</span>
+<span id="cb4-55"><a href="#cb4-55"></a><span class="ss">- </span>Perform a hierarchical clustering using at least two different linkage methods</span>
+<span id="cb4-56"><a href="#cb4-56"></a><span class="ss">- </span>chose a suitable threshold for the dendrogram and compare the clustering solutions</span>
+<span id="cb4-57"><a href="#cb4-57"></a><span class="ss">- </span>run the k-means algorithm with different $k$ and decide on a suitable $k$ based on the total within-cluster SS (intertia)</span>
+<span id="cb4-58"><a href="#cb4-58"></a>:::</span>
+<span id="cb4-59"><a href="#cb4-59"></a></span>
+<span id="cb4-60"><a href="#cb4-60"></a></span>
+<span id="cb4-63"><a href="#cb4-63"></a><span class="in">```{python}</span></span>
+<span id="cb4-64"><a href="#cb4-64"></a><span class="co">#| label: load_FHS</span></span>
+<span id="cb4-65"><a href="#cb4-65"></a><span class="co">#| echo: true</span></span>
+<span id="cb4-66"><a href="#cb4-66"></a><span class="co">#| eval: true</span></span>
+<span id="cb4-67"><a href="#cb4-67"></a></span>
+<span id="cb4-68"><a href="#cb4-68"></a><span class="co"># FHS data from MIT</span></span>
+<span id="cb4-69"><a href="#cb4-69"></a>url <span class="op">=</span> <span class="st">"https://ocw.mit.edu/courses/15-071-the-analytics-edge-spring-2017/5d689a024551e672313f7fd7eb1bee8d_framingham.csv"</span></span>
+<span id="cb4-70"><a href="#cb4-70"></a>df <span class="op">=</span> pd.read_csv(url)</span>
+<span id="cb4-71"><a href="#cb4-71"></a></span>
+<span id="cb4-72"><a href="#cb4-72"></a><span class="bu">print</span>(<span class="ss">f'df.shape: </span><span class="sc">{</span>df<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb4-73"><a href="#cb4-73"></a><span class="bu">print</span>(<span class="ss">f'df.dtypes: </span><span class="ch">\n</span><span class="sc">{</span>df<span class="sc">.</span>dtypes<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb4-74"><a href="#cb4-74"></a><span class="bu">print</span>(<span class="ss">f'df.head: </span><span class="ch">\n</span><span class="sc">{</span>df<span class="sc">.</span>head()<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb4-75"><a href="#cb4-75"></a></span>
+<span id="cb4-76"><a href="#cb4-76"></a>num_cols <span class="op">=</span> df.select_dtypes(include<span class="op">=</span><span class="st">'number'</span>).columns</span>
+<span id="cb4-77"><a href="#cb4-77"></a></span>
+<span id="cb4-78"><a href="#cb4-78"></a>cat_cols <span class="op">=</span> [</span>
+<span id="cb4-79"><a href="#cb4-79"></a>    <span class="st">"male"</span>,</span>
+<span id="cb4-80"><a href="#cb4-80"></a>    <span class="st">"education"</span>,</span>
+<span id="cb4-81"><a href="#cb4-81"></a>    <span class="st">"BPMeds"</span>,</span>
+<span id="cb4-82"><a href="#cb4-82"></a>    <span class="st">"currentSmoker"</span>,</span>
+<span id="cb4-83"><a href="#cb4-83"></a>    <span class="st">"prevalentStroke"</span>,</span>
+<span id="cb4-84"><a href="#cb4-84"></a>    <span class="st">"prevalentHyp"</span>,</span>
+<span id="cb4-85"><a href="#cb4-85"></a>    <span class="st">"diabetes"</span>,</span>
+<span id="cb4-86"><a href="#cb4-86"></a>    <span class="st">"TenYearCHD"</span>,</span>
+<span id="cb4-87"><a href="#cb4-87"></a>]</span>
+<span id="cb4-88"><a href="#cb4-88"></a><span class="in">```</span></span>
+<span id="cb4-89"><a href="#cb4-89"></a></span>
+<span id="cb4-90"><a href="#cb4-90"></a></span>
+<span id="cb4-91"><a href="#cb4-91"></a>---</span>
+<span id="cb4-92"><a href="#cb4-92"></a></span>
+<span id="cb4-93"><a href="#cb4-93"></a></span>
+<span id="cb4-96"><a href="#cb4-96"></a><span class="in">```{python}</span></span>
+<span id="cb4-97"><a href="#cb4-97"></a><span class="co">#| label: data_select</span></span>
+<span id="cb4-98"><a href="#cb4-98"></a></span>
+<span id="cb4-99"><a href="#cb4-99"></a>df_clean <span class="op">=</span> df.dropna()</span>
+<span id="cb4-100"><a href="#cb4-100"></a></span>
+<span id="cb4-101"><a href="#cb4-101"></a>ann <span class="op">=</span> df_clean[cat_cols].copy()</span>
+<span id="cb4-102"><a href="#cb4-102"></a>X <span class="op">=</span> df_clean.drop(columns<span class="op">=</span>cat_cols).copy()</span>
+<span id="cb4-103"><a href="#cb4-103"></a><span class="bu">print</span>(<span class="ss">f"X.shape: </span><span class="sc">{</span>X<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">, ann.shape: </span><span class="sc">{</span>ann<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb4-104"><a href="#cb4-104"></a></span>
+<span id="cb4-105"><a href="#cb4-105"></a><span class="co"># transform</span></span>
+<span id="cb4-106"><a href="#cb4-106"></a>X[<span class="st">"cigsPerDay"</span>] <span class="op">=</span> np.sqrt(X[<span class="st">"cigsPerDay"</span>])</span>
+<span id="cb4-107"><a href="#cb4-107"></a>X[<span class="st">"glucose"</span>] <span class="op">=</span> np.log1p(X[<span class="st">"glucose"</span>])</span>
+<span id="cb4-108"><a href="#cb4-108"></a>X[<span class="st">"totChol"</span>] <span class="op">=</span> np.log1p(X[<span class="st">"totChol"</span>])</span>
+<span id="cb4-109"><a href="#cb4-109"></a><span class="in">```</span></span>
+<span id="cb4-110"><a href="#cb4-110"></a></span>
+<span id="cb4-113"><a href="#cb4-113"></a><span class="in">```{python}</span></span>
+<span id="cb4-114"><a href="#cb4-114"></a><span class="co">#| label: data_transform</span></span>
+<span id="cb4-115"><a href="#cb4-115"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
+<span id="cb4-116"><a href="#cb4-116"></a></span>
+<span id="cb4-117"><a href="#cb4-117"></a>scaler <span class="op">=</span> StandardScaler()</span>
+<span id="cb4-118"><a href="#cb4-118"></a>Z <span class="op">=</span> scaler.fit_transform(X) <span class="co"># Z: numpy array !</span></span>
+<span id="cb4-119"><a href="#cb4-119"></a>Z <span class="op">=</span> pd.DataFrame(Z, columns<span class="op">=</span>X.columns, index<span class="op">=</span>X.index)</span>
+<span id="cb4-120"><a href="#cb4-120"></a>num_norm <span class="op">=</span> ( </span>
+<span id="cb4-121"><a href="#cb4-121"></a>  Z</span>
+<span id="cb4-122"><a href="#cb4-122"></a>  .melt(var_name<span class="op">=</span><span class="st">"variable"</span>, value_name<span class="op">=</span><span class="st">"value"</span>)</span>
+<span id="cb4-123"><a href="#cb4-123"></a>)</span>
+<span id="cb4-124"><a href="#cb4-124"></a></span>
+<span id="cb4-125"><a href="#cb4-125"></a>plt.figure(figsize<span class="op">=</span>FIGSIZE)</span>
+<span id="cb4-126"><a href="#cb4-126"></a>sns.violinplot(data<span class="op">=</span>num_norm, x<span class="op">=</span><span class="st">"variable"</span>, y<span class="op">=</span><span class="st">"value"</span>)</span>
+<span id="cb4-127"><a href="#cb4-127"></a>plt.xticks(rotation<span class="op">=</span><span class="dv">90</span>)</span>
+<span id="cb4-128"><a href="#cb4-128"></a>plt.ylabel(<span class="st">"Z-score"</span>)</span>
+<span id="cb4-129"><a href="#cb4-129"></a>plt.title(<span class="st">"Scaled Violins: Standardized Variables"</span>)</span>
+<span id="cb4-130"><a href="#cb4-130"></a>plt.tight_layout()</span>
+<span id="cb4-131"><a href="#cb4-131"></a>plt.show()</span>
+<span id="cb4-132"><a href="#cb4-132"></a><span class="in">```</span></span>
+<span id="cb4-133"><a href="#cb4-133"></a></span>
+<span id="cb4-136"><a href="#cb4-136"></a><span class="in">```{python}</span></span>
+<span id="cb4-137"><a href="#cb4-137"></a><span class="co">#| label: hierachical_clustering_dendogram</span></span>
+<span id="cb4-138"><a href="#cb4-138"></a></span>
+<span id="cb4-139"><a href="#cb4-139"></a>L <span class="op">=</span> linkage(Z, method<span class="op">=</span><span class="st">"complete"</span>, metric<span class="op">=</span><span class="st">"euclidean"</span>)</span>
+<span id="cb4-140"><a href="#cb4-140"></a></span>
+<span id="cb4-141"><a href="#cb4-141"></a><span class="co"># cut tree and define number of clusters</span></span>
+<span id="cb4-142"><a href="#cb4-142"></a>THRESH<span class="op">=</span><span class="dv">10</span></span>
+<span id="cb4-143"><a href="#cb4-143"></a>cluster_hclust <span class="op">=</span> fcluster(L, t<span class="op">=</span>THRESH, criterion<span class="op">=</span><span class="st">"distance"</span>)</span>
+<span id="cb4-144"><a href="#cb4-144"></a>n_clusters <span class="op">=</span> <span class="bu">len</span>(np.unique(cluster_hclust))</span>
+<span id="cb4-145"><a href="#cb4-145"></a></span>
+<span id="cb4-146"><a href="#cb4-146"></a>plt.figure(figsize<span class="op">=</span>FIGSIZE)</span>
+<span id="cb4-147"><a href="#cb4-147"></a>dendrogram(L, no_labels<span class="op">=</span><span class="va">True</span>, color_threshold<span class="op">=</span>THRESH)</span>
+<span id="cb4-148"><a href="#cb4-148"></a>plt.title(<span class="ss">f"Hierarchical clustering. </span><span class="sc">{</span>n_clusters<span class="sc">}</span><span class="ss"> clusters @ threshold = </span><span class="sc">{</span>THRESH<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb4-149"><a href="#cb4-149"></a>plt.xlabel(<span class="st">"Samples"</span>)</span>
+<span id="cb4-150"><a href="#cb4-150"></a>plt.ylabel(<span class="st">"Distance"</span>)</span>
+<span id="cb4-151"><a href="#cb4-151"></a>plt.tight_layout()</span>
+<span id="cb4-152"><a href="#cb4-152"></a>plt.show()</span>
+<span id="cb4-153"><a href="#cb4-153"></a><span class="in">```</span></span>
+<span id="cb4-154"><a href="#cb4-154"></a></span>
+<span id="cb4-155"><a href="#cb4-155"></a></span>
+<span id="cb4-158"><a href="#cb4-158"></a><span class="in">```{python}</span></span>
+<span id="cb4-159"><a href="#cb4-159"></a><span class="co">#| label: hierarchical_clustering_data</span></span>
+<span id="cb4-160"><a href="#cb4-160"></a></span>
+<span id="cb4-161"><a href="#cb4-161"></a><span class="co"># linkages for rows and columns</span></span>
+<span id="cb4-162"><a href="#cb4-162"></a>L_row <span class="op">=</span> linkage(Z, method<span class="op">=</span><span class="st">"complete"</span>, metric<span class="op">=</span><span class="st">"euclidean"</span>)</span>
+<span id="cb4-163"><a href="#cb4-163"></a>L_col <span class="op">=</span> linkage(Z.T, method<span class="op">=</span><span class="st">"complete"</span>, metric <span class="op">=</span> <span class="st">"correlation"</span>)</span>
+<span id="cb4-164"><a href="#cb4-164"></a></span>
+<span id="cb4-165"><a href="#cb4-165"></a>THRESH<span class="op">=</span><span class="dv">10</span></span>
+<span id="cb4-166"><a href="#cb4-166"></a>cluster_hclust <span class="op">=</span> fcluster(L_row, t<span class="op">=</span>THRESH, criterion<span class="op">=</span><span class="st">"distance"</span>)</span>
+<span id="cb4-167"><a href="#cb4-167"></a>n_clusters <span class="op">=</span> <span class="bu">len</span>(np.unique(cluster_hclust))</span>
+<span id="cb4-168"><a href="#cb4-168"></a><span class="bu">print</span>(<span class="ss">f"thresh=</span><span class="sc">{</span>THRESH<span class="sc">}</span><span class="ss"> -&gt; </span><span class="sc">{</span>n_clusters<span class="sc">}</span><span class="ss"> clusters"</span>)</span>
+<span id="cb4-169"><a href="#cb4-169"></a>ann[<span class="st">"h_cluster"</span>] <span class="op">=</span> pd.Categorical(cluster_hclust)</span>
+<span id="cb4-170"><a href="#cb4-170"></a></span>
+<span id="cb4-171"><a href="#cb4-171"></a>cluster_palette <span class="op">=</span> <span class="bu">dict</span>(<span class="bu">zip</span>(</span>
+<span id="cb4-172"><a href="#cb4-172"></a>    ann[<span class="st">"h_cluster"</span>].unique(),</span>
+<span id="cb4-173"><a href="#cb4-173"></a>    sns.color_palette(<span class="st">"tab10"</span>, n_clusters)</span>
+<span id="cb4-174"><a href="#cb4-174"></a>))</span>
+<span id="cb4-175"><a href="#cb4-175"></a></span>
+<span id="cb4-176"><a href="#cb4-176"></a>diagnosis_palette <span class="op">=</span> <span class="bu">dict</span>(<span class="bu">zip</span>([<span class="dv">1</span>, <span class="dv">0</span>], [<span class="st">"black"</span>, <span class="st">"white"</span>]))</span>
+<span id="cb4-177"><a href="#cb4-177"></a></span>
+<span id="cb4-178"><a href="#cb4-178"></a>row_colors <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb4-179"><a href="#cb4-179"></a>    <span class="st">"TenYearCHD"</span>: ann[<span class="st">"TenYearCHD"</span>].<span class="bu">map</span>(diagnosis_palette),</span>
+<span id="cb4-180"><a href="#cb4-180"></a>    <span class="st">"Smoker"</span>: ann[<span class="st">"currentSmoker"</span>].<span class="bu">map</span>(diagnosis_palette),</span>
+<span id="cb4-181"><a href="#cb4-181"></a>    <span class="st">"h_cluster"</span>: ann[<span class="st">"h_cluster"</span>].astype(<span class="bu">int</span>).<span class="bu">map</span>(cluster_palette),</span>
+<span id="cb4-182"><a href="#cb4-182"></a></span>
+<span id="cb4-183"><a href="#cb4-183"></a>})</span>
+<span id="cb4-184"><a href="#cb4-184"></a></span>
+<span id="cb4-185"><a href="#cb4-185"></a>g <span class="op">=</span> sns.clustermap(</span>
+<span id="cb4-186"><a href="#cb4-186"></a>    Z,</span>
+<span id="cb4-187"><a href="#cb4-187"></a>    row_linkage<span class="op">=</span>L_row,</span>
+<span id="cb4-188"><a href="#cb4-188"></a>    col_linkage<span class="op">=</span>L_col,</span>
+<span id="cb4-189"><a href="#cb4-189"></a>    cmap<span class="op">=</span><span class="st">"vlag"</span>,</span>
+<span id="cb4-190"><a href="#cb4-190"></a>    center<span class="op">=</span><span class="dv">0</span>,</span>
+<span id="cb4-191"><a href="#cb4-191"></a>    cbar_pos<span class="op">=</span>(<span class="fl">0.92</span>, <span class="fl">0.25</span>, <span class="fl">0.02</span>, <span class="fl">0.5</span>),</span>
+<span id="cb4-192"><a href="#cb4-192"></a>    cbar_kws<span class="op">=</span>{<span class="st">"label"</span>: <span class="st">"Z"</span>},</span>
+<span id="cb4-193"><a href="#cb4-193"></a>    row_colors<span class="op">=</span>row_colors,</span>
+<span id="cb4-194"><a href="#cb4-194"></a>    xticklabels<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb4-195"><a href="#cb4-195"></a>    yticklabels<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb4-196"><a href="#cb4-196"></a>    figsize<span class="op">=</span>(<span class="dv">7</span>, <span class="dv">7</span>)</span>
+<span id="cb4-197"><a href="#cb4-197"></a>)</span>
+<span id="cb4-198"><a href="#cb4-198"></a></span>
+<span id="cb4-199"><a href="#cb4-199"></a><span class="co"># Move colorbar next to heatmap</span></span>
+<span id="cb4-200"><a href="#cb4-200"></a>heat_pos <span class="op">=</span> g.ax_heatmap.get_position()</span>
+<span id="cb4-201"><a href="#cb4-201"></a>g.cax.set_position([</span>
+<span id="cb4-202"><a href="#cb4-202"></a>    heat_pos.x1 <span class="op">+</span> <span class="fl">0.015</span>,   <span class="co"># small gap to heatmap</span></span>
+<span id="cb4-203"><a href="#cb4-203"></a>    heat_pos.y0,</span>
+<span id="cb4-204"><a href="#cb4-204"></a>    <span class="fl">0.02</span>,                 <span class="co"># width</span></span>
+<span id="cb4-205"><a href="#cb4-205"></a>    heat_pos.height</span>
+<span id="cb4-206"><a href="#cb4-206"></a>])</span>
+<span id="cb4-207"><a href="#cb4-207"></a></span>
+<span id="cb4-208"><a href="#cb4-208"></a>plt.show()</span>
+<span id="cb4-209"><a href="#cb4-209"></a><span class="in">```</span></span>
+<span id="cb4-210"><a href="#cb4-210"></a></span>
+<span id="cb4-211"><a href="#cb4-211"></a></span>
+<span id="cb4-214"><a href="#cb4-214"></a><span class="in">```{python}</span></span>
+<span id="cb4-215"><a href="#cb4-215"></a><span class="co">#| label: screen_k</span></span>
+<span id="cb4-216"><a href="#cb4-216"></a></span>
+<span id="cb4-217"><a href="#cb4-217"></a>k_values <span class="op">=</span> <span class="bu">range</span>(<span class="dv">1</span>, <span class="dv">41</span>)</span>
+<span id="cb4-218"><a href="#cb4-218"></a>res_kmeans <span class="op">=</span> [</span>
+<span id="cb4-219"><a href="#cb4-219"></a>    KMeans(n_clusters<span class="op">=</span>k, n_init<span class="op">=</span><span class="dv">10</span>, random_state<span class="op">=</span>RANDOM_STATE).fit(Z)</span>
+<span id="cb4-220"><a href="#cb4-220"></a>    <span class="cf">for</span> k <span class="kw">in</span> k_values</span>
+<span id="cb4-221"><a href="#cb4-221"></a>]</span>
+<span id="cb4-222"><a href="#cb4-222"></a></span>
+<span id="cb4-223"><a href="#cb4-223"></a>screening <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb4-224"><a href="#cb4-224"></a>    <span class="st">"k"</span>: <span class="bu">list</span>(k_values),</span>
+<span id="cb4-225"><a href="#cb4-225"></a>    <span class="st">"within_ss"</span>: [model.inertia_ <span class="cf">for</span> model <span class="kw">in</span> res_kmeans],</span>
+<span id="cb4-226"><a href="#cb4-226"></a>})</span>
+<span id="cb4-227"><a href="#cb4-227"></a></span>
+<span id="cb4-228"><a href="#cb4-228"></a>plt.figure(figsize<span class="op">=</span>FIGSIZE)</span>
+<span id="cb4-229"><a href="#cb4-229"></a>sns.lineplot(data<span class="op">=</span>screening, x<span class="op">=</span><span class="st">"k"</span>, y<span class="op">=</span><span class="st">"within_ss"</span>, marker<span class="op">=</span><span class="st">"o"</span>)</span>
+<span id="cb4-230"><a href="#cb4-230"></a>plt.title(<span class="st">"Within-cluster SS vs k"</span>)</span>
+<span id="cb4-231"><a href="#cb4-231"></a>plt.xlabel(<span class="st">"Number of clusters k"</span>)</span>
+<span id="cb4-232"><a href="#cb4-232"></a>plt.ylabel(<span class="st">"Total within-cluster SS (inertia)"</span>)</span>
+<span id="cb4-233"><a href="#cb4-233"></a>plt.tight_layout()</span>
+<span id="cb4-234"><a href="#cb4-234"></a>plt.show()</span>
+<span id="cb4-235"><a href="#cb4-235"></a><span class="in">```</span></span>
+<span id="cb4-236"><a href="#cb4-236"></a></span>
+<span id="cb4-237"><a href="#cb4-237"></a></span>
+<span id="cb4-240"><a href="#cb4-240"></a><span class="in">```{python}</span></span>
+<span id="cb4-241"><a href="#cb4-241"></a><span class="co">#| label: select_k</span></span>
+<span id="cb4-242"><a href="#cb4-242"></a></span>
+<span id="cb4-243"><a href="#cb4-243"></a><span class="im">from</span> sklearn.cluster <span class="im">import</span> KMeans</span>
+<span id="cb4-244"><a href="#cb4-244"></a>km_res <span class="op">=</span> res_kmeans[<span class="dv">5</span>]</span>
+<span id="cb4-245"><a href="#cb4-245"></a></span>
+<span id="cb4-246"><a href="#cb4-246"></a><span class="bu">print</span>(<span class="st">"Number of iterations:"</span>, km_res.n_iter_)</span>
+<span id="cb4-247"><a href="#cb4-247"></a><span class="bu">print</span>(<span class="st">"Cluster sizes:"</span>, pd.Series(km_res.labels_).value_counts().sort_index().to_dict())</span>
+<span id="cb4-248"><a href="#cb4-248"></a><span class="bu">print</span>(<span class="st">"First 10 cluster labels:"</span>, km_res.labels_[:<span class="dv">10</span>])</span>
+<span id="cb4-249"><a href="#cb4-249"></a><span class="bu">print</span>(<span class="st">"Total within-cluster SS (inertia):"</span>, km_res.inertia_)</span>
+<span id="cb4-250"><a href="#cb4-250"></a></span>
+<span id="cb4-251"><a href="#cb4-251"></a>centers <span class="op">=</span> pd.DataFrame(km_res.cluster_centers_, columns<span class="op">=</span>Z.columns)</span>
+<span id="cb4-252"><a href="#cb4-252"></a>centers</span>
+<span id="cb4-253"><a href="#cb4-253"></a></span>
+<span id="cb4-254"><a href="#cb4-254"></a><span class="co"># add cluster label to annotation</span></span>
+<span id="cb4-255"><a href="#cb4-255"></a>ann[<span class="st">"km_cluster"</span>] <span class="op">=</span> pd.Categorical(km_res.labels_)</span>
+<span id="cb4-256"><a href="#cb4-256"></a>ann.sample(<span class="dv">5</span>, random_state<span class="op">=</span>RANDOM_STATE)</span>
+<span id="cb4-257"><a href="#cb4-257"></a></span>
+<span id="cb4-258"><a href="#cb4-258"></a>dist_to_center <span class="op">=</span> ((Z.to_numpy() <span class="op">-</span> km_res.cluster_centers_[km_res.labels_]) <span class="op">**</span> <span class="dv">2</span>).<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb4-259"><a href="#cb4-259"></a>withinss <span class="op">=</span> pd.Series(dist_to_center).groupby(km_res.labels_).<span class="bu">sum</span>()</span>
+<span id="cb4-260"><a href="#cb4-260"></a><span class="bu">print</span>(<span class="st">'Within-SS for clusters:'</span>)</span>
+<span id="cb4-261"><a href="#cb4-261"></a>withinss.sort_values().<span class="bu">round</span>()</span>
+<span id="cb4-262"><a href="#cb4-262"></a><span class="in">```</span></span>
+<span id="cb4-263"><a href="#cb4-263"></a></span>
+<span id="cb4-264"><a href="#cb4-264"></a></span>
+<span id="cb4-265"><a href="#cb4-265"></a></span>
+<span id="cb4-268"><a href="#cb4-268"></a><span class="in">```{python}</span></span>
+<span id="cb4-269"><a href="#cb4-269"></a><span class="co">#| label: silhouette_scores</span></span>
+<span id="cb4-270"><a href="#cb4-270"></a></span>
+<span id="cb4-271"><a href="#cb4-271"></a>km_res <span class="op">=</span> res_kmeans[<span class="dv">5</span>]</span>
+<span id="cb4-272"><a href="#cb4-272"></a>sil_values <span class="op">=</span> silhouette_samples(Z, km_res.labels_)</span>
+<span id="cb4-273"><a href="#cb4-273"></a>sil_mean <span class="op">=</span> silhouette_score(Z, km_res.labels_)</span>
+<span id="cb4-274"><a href="#cb4-274"></a></span>
+<span id="cb4-275"><a href="#cb4-275"></a>sil_df <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb4-276"><a href="#cb4-276"></a>    <span class="st">"cluster"</span>: km_res.labels_.astype(<span class="bu">str</span>),</span>
+<span id="cb4-277"><a href="#cb4-277"></a>    <span class="st">"silhouette"</span>: sil_values,</span>
+<span id="cb4-278"><a href="#cb4-278"></a>})</span>
+<span id="cb4-279"><a href="#cb4-279"></a></span>
+<span id="cb4-280"><a href="#cb4-280"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">7</span>, <span class="dv">5</span>))</span>
+<span id="cb4-281"><a href="#cb4-281"></a>ax <span class="op">=</span> sns.violinplot(</span>
+<span id="cb4-282"><a href="#cb4-282"></a>    data<span class="op">=</span>sil_df,</span>
+<span id="cb4-283"><a href="#cb4-283"></a>    x<span class="op">=</span><span class="st">"cluster"</span>,</span>
+<span id="cb4-284"><a href="#cb4-284"></a>    y<span class="op">=</span><span class="st">"silhouette"</span>,</span>
+<span id="cb4-285"><a href="#cb4-285"></a>    hue <span class="op">=</span> <span class="st">"cluster"</span>,</span>
+<span id="cb4-286"><a href="#cb4-286"></a>    palette<span class="op">=</span><span class="st">"muted"</span>,</span>
+<span id="cb4-287"><a href="#cb4-287"></a>    inner<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb4-288"><a href="#cb4-288"></a>    order<span class="op">=</span><span class="bu">sorted</span>(sil_df[<span class="st">"cluster"</span>].unique())</span>
+<span id="cb4-289"><a href="#cb4-289"></a>)</span>
+<span id="cb4-290"><a href="#cb4-290"></a></span>
+<span id="cb4-291"><a href="#cb4-291"></a><span class="co"># Optional jittered points</span></span>
+<span id="cb4-292"><a href="#cb4-292"></a>sns.stripplot(</span>
+<span id="cb4-293"><a href="#cb4-293"></a>    data<span class="op">=</span>sil_df,</span>
+<span id="cb4-294"><a href="#cb4-294"></a>    x<span class="op">=</span><span class="st">"cluster"</span>,</span>
+<span id="cb4-295"><a href="#cb4-295"></a>    y<span class="op">=</span><span class="st">"silhouette"</span>,</span>
+<span id="cb4-296"><a href="#cb4-296"></a>    color<span class="op">=</span><span class="st">"black"</span>,</span>
+<span id="cb4-297"><a href="#cb4-297"></a>    alpha<span class="op">=</span><span class="fl">0.3</span>,</span>
+<span id="cb4-298"><a href="#cb4-298"></a>    jitter<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb4-299"><a href="#cb4-299"></a>    size<span class="op">=</span><span class="dv">2</span>,</span>
+<span id="cb4-300"><a href="#cb4-300"></a>    ax<span class="op">=</span>ax</span>
+<span id="cb4-301"><a href="#cb4-301"></a>)</span>
+<span id="cb4-302"><a href="#cb4-302"></a></span>
+<span id="cb4-303"><a href="#cb4-303"></a><span class="co"># Overall mean</span></span>
+<span id="cb4-304"><a href="#cb4-304"></a>plt.axhline(sil_mean, linestyle<span class="op">=</span><span class="st">"--"</span>, color<span class="op">=</span><span class="st">"gray"</span>, label<span class="op">=</span><span class="ss">f"Mean = </span><span class="sc">{</span>sil_mean<span class="sc">:.3f}</span><span class="ss">"</span>)</span>
+<span id="cb4-305"><a href="#cb4-305"></a></span>
+<span id="cb4-306"><a href="#cb4-306"></a>plt.xlabel(<span class="st">"Cluster"</span>)</span>
+<span id="cb4-307"><a href="#cb4-307"></a>plt.ylabel(<span class="st">"Silhouette score"</span>)</span>
+<span id="cb4-308"><a href="#cb4-308"></a>plt.title(<span class="st">"Silhouette scores per cluster (k-Means)"</span>)</span>
+<span id="cb4-309"><a href="#cb4-309"></a>plt.legend()</span>
+<span id="cb4-310"><a href="#cb4-310"></a>plt.tight_layout()</span>
+<span id="cb4-311"><a href="#cb4-311"></a>plt.show()</span>
+<span id="cb4-312"><a href="#cb4-312"></a><span class="in">```</span></span>
+<span id="cb4-313"><a href="#cb4-313"></a></span>
+<span id="cb4-314"><a href="#cb4-314"></a></span>
+<span id="cb4-317"><a href="#cb4-317"></a><span class="in">```{python}</span></span>
+<span id="cb4-318"><a href="#cb4-318"></a><span class="co">#| label: cluster_comparison</span></span>
+<span id="cb4-319"><a href="#cb4-319"></a></span>
+<span id="cb4-320"><a href="#cb4-320"></a>ct <span class="op">=</span> pd.crosstab(ann[<span class="st">"h_cluster"</span>], ann[<span class="st">"km_cluster"</span>])</span>
+<span id="cb4-321"><a href="#cb4-321"></a>plt.figure(figsize<span class="op">=</span>FIGSIZE)</span>
+<span id="cb4-322"><a href="#cb4-322"></a>sns.heatmap(ct, annot<span class="op">=</span><span class="va">True</span>, fmt<span class="op">=</span><span class="st">"d"</span>, cmap<span class="op">=</span><span class="st">"Blues"</span>)</span>
+<span id="cb4-323"><a href="#cb4-323"></a>plt.show()</span>
+<span id="cb4-324"><a href="#cb4-324"></a></span>
+<span id="cb4-325"><a href="#cb4-325"></a>ari_score <span class="op">=</span> adjusted_rand_score(ann[<span class="st">"h_cluster"</span>], ann[<span class="st">"km_cluster"</span>])</span>
+<span id="cb4-326"><a href="#cb4-326"></a><span class="bu">print</span>(<span class="ss">f"Adjusted Rand Index (ARI): </span><span class="sc">{</span>ari_score<span class="sc">:.3f}</span><span class="ss">"</span>)</span>
+<span id="cb4-327"><a href="#cb4-327"></a><span class="in">```</span></span>
+</code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>Made with Quatro</p>
+</div>   
+    <div class="nav-footer-center">
+      <ul class="footer-items list-unstyled">
+    <li class="nav-item">
+    <a class="nav-link" href="../general/about.html">
+<p>About</p>
+</a>
+  </li>  
+</ul>
+    </div>
+    <div class="nav-footer-right">
+      <ul class="footer-items list-unstyled">
+    <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/thomasmanke/blog">
+      <i class="bi bi-github" role="img">
+</i> 
+    </a>
+  </li>  
+</ul>
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

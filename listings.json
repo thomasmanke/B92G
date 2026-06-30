@@ -4,7 +4,8 @@
     "items": [
       "/tutorials/00_ControlledVocabulary.html",
       "/tutorials/01_DataViz.html",
-      "/tutorials/02_DataTrafo.html"
+      "/tutorials/02_DataTrafo.html",
+      "/tutorials/03_Clustering.html"
     ]
   },
   {
@@ -13,7 +14,9 @@
       "/lectures/00_VisualizationBars.html",
       "/lectures/01_BeyondBarplots.html",
       "/lectures/02_VisualizationErrors.html",
-      "/lectures/03_EncodingNumericalVariables.html"
+      "/lectures/03_EncodingNumericalVariables.html",
+      "/lectures/04_EncodingCategoricalVariables.html",
+      "/lectures/05_Clustering.html"
     ]
   }
 ]
